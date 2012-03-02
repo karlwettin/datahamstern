@@ -3,6 +3,7 @@ package se.datahamstern;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author kalle
@@ -20,10 +21,13 @@ public class Datahamstern {
 
   private File homePath;
 
+  private Properties properties;
+
   private EntityStore entityStore;
 
 
   public void open() throws Exception {
+
 
     if (homePath == null) {
       homePath = new File("./");
@@ -44,13 +48,18 @@ public class Datahamstern {
     }
   }
 
-  public String getProperty(String key, String defaultValue) {
-    // todo!
-    return defaultValue;
+  public String getProperty(String key, String defaultValue) throws Exception {
+    if (properties == null) {
+      properties = new Properties();
+      properties.load(getClass().getResourceAsStream("/datahamstern.properties"));
+    }
+    String value = properties.getProperty(key);
+    return value == null ? defaultValue : value;
   }
 
-  public Integer getProperty(String key, Integer defaultValue) {
-    String nullValue = new String();
+  private static String nullValue = new String();
+
+  public Integer getProperty(String key, Integer defaultValue) throws Exception {
     String value = getProperty(key, nullValue);
     if (value == nullValue || value == null) {
       return defaultValue;

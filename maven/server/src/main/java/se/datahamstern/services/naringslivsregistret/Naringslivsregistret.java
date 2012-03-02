@@ -1,5 +1,6 @@
 package se.datahamstern.services.naringslivsregistret;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -26,7 +27,7 @@ public class Naringslivsregistret {
 
   private SeleniumAccessor selenium;
 
-  public void open() {
+  public void open() throws Exception {
     selenium = new SeleniumAccessor();
     selenium.start();
     selenium.openAndWaitForPageToLoad("http://www.bolagsverket.se/");
@@ -43,7 +44,7 @@ public class Naringslivsregistret {
 
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>();
 
-    selenium.getEval("window.document.getElementById('sokstrang').value='" + query + "';");
+    selenium.getEval("window.document.getElementById('sokstrang').value='" + StringEscapeUtils.escapeJavaScript(query) + "';");
     selenium.select("//SELECT[@id='sokalternativ']", "Företag");
     selenium.clickAndWaitForPageToLoad("//FORM[@name='sokForm']//INPUT[@type='submit']");
 
@@ -94,7 +95,14 @@ public class Naringslivsregistret {
 
     if (Mod10.isValidSwedishOrganizationNumber(query.replaceAll("\\p{Punct}", ""))) {
       for (NaringslivsregistretResult result : results) {
-        List<NaringslivsregistretResult> nameResults = search(result.getName());
+
+        List<NaringslivsregistretResult> nameResults;
+        try {
+          nameResults = search(result.getName());
+        } catch (Exception e) {
+          e.printStackTrace();
+          throw e;
+        }
         for (NaringslivsregistretResult nameResult : nameResults) {
           if (nameResult.getOrganizationNumber().equals(result.getOrganizationNumber())) {
             result.setNumericLänskod(nameResult.getNumericLänskod());

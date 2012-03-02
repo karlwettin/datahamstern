@@ -1,7 +1,6 @@
 package se.datahamstern.services.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
-import se.datahamstern.domain.Organization;
 import se.datahamstern.util.Mod10;
 
 import java.io.FileOutputStream;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * not thread safe!
+ *
  * @author kalle
  * @since 2012-03-02 01:42
  */
@@ -21,10 +22,10 @@ public class HarvestNaringslivsregistret {
 
 //  private static final Logger log = LoggerFactory.getLogger(HarvestNaringslivsregistret.class);
 
-public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
     try {
-    new HarvestNaringslivsregistret().harvest();
+      new HarvestNaringslivsregistret().harvest("5562990000", "5600000000");
     } finally {
       Datahamstern.getInstance().open();
     }
@@ -32,6 +33,11 @@ public static void main(String[] args) throws Exception {
 
   public HarvestNaringslivsregistret() throws Exception {
   }
+
+  private int[] organizationNumber = new int[]{5, 5, 6, 0, 0, 0, 0, 0, 0, 0};
+  private int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
+  private char[] chars = new char[10];
+
 
   private FileOutputStream fos;
   private ObjectOutputStream oos;
@@ -42,65 +48,76 @@ public static void main(String[] args) throws Exception {
   private boolean abort = false;
   private AtomicInteger withResults = new AtomicInteger(0);
 
-  public void harvest() throws Exception {
 
-    fos = new FileOutputStream("HarvestNaringslivsregistret.raw." + System.currentTimeMillis());
+  public void harvest(String start, String end) throws Exception {
+    setOrganizationNumber(start);
+    setEnd(end);
+
+    long started = System.currentTimeMillis();
+
+    fos = new FileOutputStream("HarvestNaringslivsregistret.raw." + start + "." + started);
     oos = new ObjectOutputStream(fos);
 
-    fosFailures = new FileOutputStream("HarvestNaringslivsregistret.failed.raw." + System.currentTimeMillis());
+    fosFailures = new FileOutputStream("HarvestNaringslivsregistret.failed.raw." + start + "." + started);
     oosFailures = new ObjectOutputStream(fosFailures);
 
     List<Thread> threads = new ArrayList<Thread>();
-    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 5); i++) {
+    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1); i++) {
       Thread thread = new Thread(new Runnable() {
         @Override
         public void run() {
           Naringslivsregistret nlr = new Naringslivsregistret();
-          nlr.open();
           try {
+            nlr.open();
+            try {
 
-            String organizationNumber;
-            while (!abort && (organizationNumber = pollOrganizationNumber()) != null) {
+              String organizationNumber;
+              while (!abort && (organizationNumber = pollOrganizationNumber()) != null) {
 
-              List<NaringslivsregistretResult> results = null;
-              int tries = 0;
-              while (true) {
-                try {
-                  tries++;
-                  results = nlr.search(organizationNumber);
-                  break;
-                } catch (Exception e) {
-                  if (tries > 3) {
-                    try {
-                      writeFailurePosting(organizationNumber);
-                    } catch (Exception e2) {
-                      abort = true;
-                      throw new RuntimeException(e2);
-                    }
-                    break;
-                  }
-                }
-              }
-              if (results == null) {
-                continue;
-              }
-              if (!results.isEmpty()) {
-                withResults.incrementAndGet();
-
-                for (NaringslivsregistretResult result : results) {
+                List<NaringslivsregistretResult> results = null;
+                int tries = 0;
+                while (true) {
                   try {
-                  writeOrganizationPosting(result);
+                    tries++;
+                    results = nlr.search(organizationNumber);
+                    break;
                   } catch (Exception e) {
-                    abort = true;
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
+                    if (tries > 3) {
+                      try {
+                        writeFailurePosting(organizationNumber);
+                      } catch (Exception e2) {
+                        abort = true;
+                        throw new RuntimeException(e2);
+                      }
+                      break;
+                    }
                   }
+                }
+                if (results == null) {
+                  continue;
+                }
+                if (!results.isEmpty()) {
+                  withResults.incrementAndGet();
 
+                  for (NaringslivsregistretResult result : results) {
+                    try {
+                      writeOrganizationPosting(result);
+                    } catch (Exception e) {
+                      abort = true;
+                      throw new RuntimeException(e);
+                    }
+
+                  }
                 }
               }
-            }
 
-          } finally {
-            nlr.close();
+            } finally {
+              nlr.close();
+            }
+          } catch (Exception e) {
+            abort = true;
+            throw new RuntimeException(e);
           }
 
 
@@ -149,10 +166,6 @@ public static void main(String[] args) throws Exception {
   }
 
 
-  private int[] organizationNumber = new int[]{5, 5, 6, 0, 0, 0, 0, 0, 0, 0};
-  private int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
-  private char[] chars = new char[10];
-
   private synchronized String pollOrganizationNumber() {
 
     while (!Arrays.equals(organizationNumber, end)) {
@@ -179,12 +192,41 @@ public static void main(String[] args) throws Exception {
     }
 
 
-
     return null;
   }
 
   public int found() {
     return withResults.get();
+  }
+
+  public int[] getOrganizationNumber() {
+    return organizationNumber;
+  }
+
+  public void setOrganizationNumber(String organizationNumber) {
+    for (int i = 0; i < 10; i++) {
+      this.organizationNumber[i] = organizationNumber.charAt(i) - 48;
+    }
+
+  }
+
+  public void setOrganizationNumber(int[] organizationNumber) {
+    this.organizationNumber = organizationNumber;
+  }
+
+  public int[] getEnd() {
+    return end;
+  }
+
+  public void setEnd(int[] end) {
+    this.end = end;
+  }
+
+  public void setEnd(String organizationNumber) {
+    for (int i = 0; i < 10; i++) {
+      this.end[i] = organizationNumber.charAt(i) - 48;
+    }
+
   }
 
 }

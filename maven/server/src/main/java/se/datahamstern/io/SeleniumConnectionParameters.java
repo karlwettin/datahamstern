@@ -25,7 +25,7 @@ public class SeleniumConnectionParameters implements Serializable {
   private String browserStartCommand;
   private String browserURL;
 
-  public SeleniumConnectionParameters() {
+  public SeleniumConnectionParameters() throws Exception {
     this(
         Datahamstern.getInstance().getProperty("selenium.host", defaultServerHost),
         Integer.valueOf(Datahamstern.getInstance().getProperty("selenium.port", String.valueOf(defaultServerPort))),
@@ -34,7 +34,7 @@ public class SeleniumConnectionParameters implements Serializable {
     );
   }
 
-  public SeleniumConnectionParameters(String browserStartCommand) {
+  public SeleniumConnectionParameters(String browserStartCommand) throws Exception {
     this(
         Datahamstern.getInstance().getProperty("selenium.host", defaultServerHost),
         Integer.valueOf(Datahamstern.getInstance().getProperty("selenium.port", String.valueOf(defaultServerPort))),

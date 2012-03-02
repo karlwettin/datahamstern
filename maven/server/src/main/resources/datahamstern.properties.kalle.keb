@@ -1,0 +1,11 @@
+selenium.host=192.168.1.190
+#selenium.host=localhost
+selenium.port=4444
+selenium.browser=*chrome
+selenium.url=file:///
+
+gs.path=/opt/local/bin/gs
+tesseract.path=/opt/local/bin/tesseract
+
+
+HarvestNaringslivsregistret.threads=1

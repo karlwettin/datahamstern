@@ -60,7 +60,7 @@ public class SeleniumAccessor extends DefaultSelenium {
     this.connectionParameters = connectionParameters;
   }
 
-  public SeleniumAccessor() {
+  public SeleniumAccessor() throws Exception {
     this(new SeleniumConnectionParameters());
   }
 
