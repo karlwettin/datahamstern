@@ -12,4 +12,11 @@
 
   <packaging>jar</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.sleepycat</groupId>
+      <artifactId>je</artifactId>
+    </dependency>
+
+  </dependencies>
 </project>
