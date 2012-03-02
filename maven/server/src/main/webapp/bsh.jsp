@@ -31,7 +31,7 @@
 <body>
 <form action="bsh.jsp" method="post">
   <%--<div><label>description: <input type="text" name="description" value=""/></label></div>--%>
-  <div><textarea rows="20" cols="160" name="script"><%=script%></textarea></div>
+  <div><textarea rows="4" cols="160" name="script"><%=script%></textarea></div>
   <div><input type="submit"/></div>
 </form>
 
