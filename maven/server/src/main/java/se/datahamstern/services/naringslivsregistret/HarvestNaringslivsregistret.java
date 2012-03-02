@@ -126,7 +126,7 @@ public static void main(String[] args) throws Exception {
 
   }
 
-  private void writeOrganizationPosting(NaringslivsregistretResult result) throws IOException {
+  private synchronized void writeOrganizationPosting(NaringslivsregistretResult result) throws IOException {
 
     oos.writeBoolean(true);
     oos.writeObject(new Date());
