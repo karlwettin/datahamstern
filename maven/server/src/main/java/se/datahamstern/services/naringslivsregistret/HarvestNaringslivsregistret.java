@@ -39,7 +39,7 @@ public static void main(String[] args) throws Exception {
   private ObjectOutputStream oosFailures;
 
   private boolean abort = false;
-  private AtomicInteger withResults = new AtomicInteger(0);
+  public static AtomicInteger withResults = new AtomicInteger(0);
 
   public void harvest() throws Exception {
 
