@@ -51,7 +51,7 @@ public static void main(String[] args) throws Exception {
     oosFailures = new ObjectOutputStream(fosFailures);
 
     List<Thread> threads = new ArrayList<Thread>();
-    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1); i++) {
+    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 5); i++) {
       Thread thread = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -149,9 +149,9 @@ public static void main(String[] args) throws Exception {
   }
 
 
-  int[] organizationNumber = new int[]{5, 5, 0, 0, 0, 0, 0, 0, 0, 0};
-  int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
-  char[] chars = new char[10];
+  private int[] organizationNumber = new int[]{5, 5, 5, 0, 0, 0, 0, 0, 0, 0};
+  private int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
+  private char[] chars = new char[10];
 
   private synchronized String pollOrganizationNumber() {
 
