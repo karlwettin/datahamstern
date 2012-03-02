@@ -149,7 +149,7 @@ public static void main(String[] args) throws Exception {
   }
 
 
-  private int[] organizationNumber = new int[]{5, 5, 5, 0, 0, 0, 0, 0, 0, 0};
+  private int[] organizationNumber = new int[]{5, 5, 6, 0, 0, 0, 0, 0, 0, 0};
   private int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
   private char[] chars = new char[10];
 
