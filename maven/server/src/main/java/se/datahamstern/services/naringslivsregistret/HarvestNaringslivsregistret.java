@@ -172,10 +172,13 @@ public static void main(String[] args) throws Exception {
 
       String string = new String(chars);
       if (Mod10.isValidSwedishOrganizationNumber(string)) {
+        Datahamstern.getInstance().glue.put("lastOrganizationNumber", string);
         return string;
       }
 
     }
+
+
 
     return null;
   }
