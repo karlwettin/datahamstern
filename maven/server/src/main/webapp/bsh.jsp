@@ -20,7 +20,10 @@
 <%
   String script = request.getParameter("script");
   if (script == null) {
-    script = "print(datahamstern.getEntityStore().getOrganizations().count());\n//se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret.main(null);";
+    script = "//print(datahamstern.getEntityStore().getOrganizations().count());\n" +
+    "//h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();\n"+
+    "//datahamstern.glue.put(\"h\", h);\n"+
+    "//datahamstern.glue.get(\"h\").found();\n";
   }
 %>
 <html>

@@ -1,6 +1,8 @@
 package se.datahamstern;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author kalle
@@ -12,6 +14,9 @@ public class Datahamstern {
 
   private Datahamstern() {
   }
+
+  /** for storing meta data when messing via bsh console, todo move to client session */
+  public transient Map glue = new HashMap();
 
   private File homePath;
 

@@ -1,6 +1,7 @@
 package se.datahamstern.services.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
+import se.datahamstern.domain.Organization;
 import se.datahamstern.util.Mod10;
 
 import java.io.FileOutputStream;
@@ -39,7 +40,7 @@ public static void main(String[] args) throws Exception {
   private ObjectOutputStream oosFailures;
 
   private boolean abort = false;
-  public static AtomicInteger withResults = new AtomicInteger(0);
+  private AtomicInteger withResults = new AtomicInteger(0);
 
   public void harvest() throws Exception {
 
@@ -50,7 +51,7 @@ public static void main(String[] args) throws Exception {
     oosFailures = new ObjectOutputStream(fosFailures);
 
     List<Thread> threads = new ArrayList<Thread>();
-    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 20); i++) {
+    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1); i++) {
       Thread thread = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -67,6 +68,7 @@ public static void main(String[] args) throws Exception {
                 try {
                   tries++;
                   results = nlr.search(organizationNumber);
+                  break;
                 } catch (Exception e) {
                   if (tries > 3) {
                     try {
@@ -136,6 +138,7 @@ public static void main(String[] args) throws Exception {
     oos.writeObject(result.getName());
     oos.writeObject(result.getStatus());
     oos.flush();
+
   }
 
 
@@ -175,6 +178,10 @@ public static void main(String[] args) throws Exception {
     }
 
     return null;
+  }
+
+  public int found() {
+    return withResults.get();
   }
 
 }
