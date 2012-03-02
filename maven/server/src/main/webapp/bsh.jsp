@@ -31,7 +31,7 @@
 <body>
 <form action="bsh.jsp" method="post">
   <%--<div><label>description: <input type="text" name="description" value=""/></label></div>--%>
-  <div><textarea rows="4" cols="20" name="script"><%=script%></textarea></div>
+  <div><textarea rows="8" cols="60" name="script"><%=script%></textarea></div>
   <div><input type="submit"/></div>
 </form>
 
@@ -60,7 +60,7 @@
   String bshErr = IOUtils.toString(new ByteArrayInputStream(bshErrBaos.toByteArray()));
 
 %>
-<%=evalMilliseconds%> milliseconds to evalute script.
+<%=evalMilliseconds%> milliseconds to evalute script.<br/>
 <strong>System.out</strong>
 <pre>
   <%=bshOut%>
