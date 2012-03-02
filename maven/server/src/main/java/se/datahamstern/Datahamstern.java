@@ -26,7 +26,7 @@ public class Datahamstern {
 
     System.out.println("Using home path " + homePath.getAbsolutePath());
 
-    if (entityStore != null) {
+    if (entityStore == null) {
       entityStore = new EntityStore();
       entityStore.setPath(new File(homePath, "data/entityStore"));
     }
