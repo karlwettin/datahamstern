@@ -31,7 +31,7 @@
 <body>
 <form action="bsh.jsp" method="post">
   <%--<div><label>description: <input type="text" name="description" value=""/></label></div>--%>
-  <div><textarea rows="4" cols="160" name="script"><%=script%></textarea></div>
+  <div><textarea rows="4" cols="20" name="script"><%=script%></textarea></div>
   <div><input type="submit"/></div>
 </form>
 
@@ -61,11 +61,11 @@
 
 %>
 <%=evalMilliseconds%> milliseconds to evalute script.
-<h1>System.out</h1>
+<strong>System.out</strong>
 <pre>
   <%=bshOut%>
 </pre>
-<h1>System.err</h1>
+<strong>System.err</strong>
 <pre>
   <%=bshErr%>
 </pre>
