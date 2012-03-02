@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export MAVEN_OPTS="-d32 -Xms1G -Xmx4G -server"
+export MAVEN_OPTS="-d32 -Xmx1G -server"
 
 mkdir logs >> /dev/null
 cd server
