@@ -20,20 +20,23 @@
 <%
   String script = request.getParameter("script");
   if (script == null) {
-    script = "\n" +
-    "\n" +
-    "h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();\n"+
-    "datahamstern.glue.put(\"h\", h);\n"+
-    "\n" +
-    "h = datahamstern.glue.get(\"h\");\n"+
-    "h.harvest(\"\", \"\")\n" +
-    "\n" +
-    "print(h.found());\n";
+    script = "";
   }
 %>
 <html>
 <head><title>bsh</title></head>
 <body>
+
+<pre>
+h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();
+datahamstern.glue.put("h", h);
+
+h = datahamstern.glue.get("h");
+h.harvest("5562999622", "5600000000");
+
+print(h.found());
+</pre>
+
 <form action="bsh.jsp#output" method="post">
   <%--<div><label>description: <input type="text" name="description" value=""/></label></div>--%>
   <div><textarea rows="8" cols="60" name="script"><%=script%></textarea></div>
