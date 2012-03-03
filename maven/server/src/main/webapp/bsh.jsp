@@ -20,10 +20,15 @@
 <%
   String script = request.getParameter("script");
   if (script == null) {
-    script = "//print(datahamstern.getEntityStore().getOrganizations().count());\n" +
-    "//h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();\n"+
-    "//datahamstern.glue.put(\"h\", h);\n"+
-    "//datahamstern.glue.get(\"h\").found();\n";
+    script = "\n" +
+    "\n" +
+    "h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();\n"+
+    "datahamstern.glue.put(\"h\", h);\n"+
+    "\n" +
+    "h = datahamstern.glue.get(\"h\");\n"+
+    "h.harvest(\"\", \"\")\n" +
+    "\n" +
+    "print(h.found());\n";
   }
 %>
 <html>

@@ -25,7 +25,8 @@ public class HarvestNaringslivsregistret {
   public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
     try {
-      new HarvestNaringslivsregistret().harvest("5562990000", "5600000000");
+//      new HarvestNaringslivsregistret().harvest("5562990000", "5600000000");
+      new HarvestNaringslivsregistret().harvest("5562999622", "5600000000");
     } finally {
       Datahamstern.getInstance().open();
     }
@@ -134,6 +135,8 @@ public class HarvestNaringslivsregistret {
 
 
     oos.writeBoolean(false);
+    // end
+    oos.writeObject(new String(chars));
     oos.close();
     fos.close();
 
