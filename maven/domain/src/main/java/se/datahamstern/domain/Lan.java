@@ -22,15 +22,16 @@ public class Lan extends AbstractSourced implements DomainEntityObject {
   /** for example "Hallands län" */
   private SourcedValue<String> namn =  new SourcedValue<String>();
 
+
   /** for example "N" as in "Hallands län" */
+  private SourcedValue<String> alfakod=  new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.MANY_TO_ONE)
   private String _index_alfakod;
-  private SourcedValue<String> alfakod=  new SourcedValue<String>();
 
   /** for example "13" as in "Hallands län"  */
+  private SourcedValue<String> nummerkod=  new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.MANY_TO_ONE)
   private String _index_nummerkod;
-  private SourcedValue<String> nummerkod=  new SourcedValue<String>();
 
   /** uuid, local bdb identity. */
   @PrimaryKey
@@ -84,5 +85,17 @@ public class Lan extends AbstractSourced implements DomainEntityObject {
 
   public void setNummerkod(SourcedValue<String> nummerkod) {
     this.nummerkod = nummerkod;
+  }
+
+  @Override
+  public String toString() {
+    return "Lan{" +
+        "identity='" + identity + '\'' +
+        ", alfakod=" + alfakod +
+        ", nummerkod=" + nummerkod +
+        ", namn=" + namn +
+        ", _index_alfakod='" + _index_alfakod + '\'' +
+        ", _index_nummerkod='" + _index_nummerkod + '\'' +
+        '}';
   }
 }

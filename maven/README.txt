@@ -22,7 +22,7 @@ Så här skulle en extremt utförlig transaktion kunna se ut från en robot som 
   "transactions" : [
     {
       "command" : {
-        "type" : "uppdatera län",
+        "name" : "uppdatera län",
         "version" : 1 /* bakåtkompatibilitet om logiken som skriver händelsen till databasen förändras. */
       },
       "sources" : [{

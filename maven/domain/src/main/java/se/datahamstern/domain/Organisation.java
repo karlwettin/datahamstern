@@ -22,21 +22,42 @@ public class Organisation extends AbstractSourced implements DomainEntityObject 
     visitor.visit(this);
   }
 
-  /**
-   * EK, BF, BRF, HB, KB, AB, etc
-   * todo enumeration?
-   */
-  private SourcedValue<String> typ = new SourcedValue<String>();
-
   private SourcedValue<String> namn = new SourcedValue<String>();
 
-  private SourcedValue<String> nummerPrefix = new SourcedValue<String>();
+  /**
+   * EK, BF, BRF, HB, KB, AB, etc
+   * todo enumeration? aggregated classes?
+   */
+  private SourcedValue<String> firmaform = new SourcedValue<String>();
 
+
+
+  /**
+   * todo finns tillgängligt från näringslivsregistret!
+   *
+   * todo osäker på hur detta hänger ihop, är det samma organisationsnummer med olika namn?
+   * todo lagras för närvarande inte i bdb.
+   *
+   *
+   * https://snr4.bolagsverket.se/snrgate/hjalp.do?method=hjalp.firmatyper
+   * Näringslivsregistret - Firmatyper
+   * Följande firmatyper kan visas:
+   * Firma: Företagsnamn
+   * Bifirma: Ett extra företagsnamn för en del av företagets verksamhet
+   * Parallellfirma: Företagets namn (firma) översatt till annat språk
+   */
+//  private String firmatyp;
+
+  /** 2 siffor */
+  private SourcedValue<String> nummerprefix = new SourcedValue<String>();
+
+  /** 10 siffor */
+  private SourcedValue<String> nummer = new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.MANY_TO_ONE)
   private String _index_nummer;
 
-  private SourcedValue<String> nummer = new SourcedValue<String>();
-  private SourcedValue<String> nummerSuffix = new SourcedValue<String>();
+  /** 3 siffor på enskilda firmor? */
+  private SourcedValue<String> nummersuffix = new SourcedValue<String>();
 
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Lan.class)
   private String _index_länIdentity;
@@ -66,20 +87,12 @@ public class Organisation extends AbstractSourced implements DomainEntityObject 
     this.identity = identity;
   }
 
-  public SourcedValue<String> getNamn() {
-    return namn;
+  public SourcedValue<String> getNummerprefix() {
+    return nummerprefix;
   }
 
-  public void setNamn(SourcedValue<String> namn) {
-    this.namn = namn;
-  }
-
-  public SourcedValue<String> getNummerPrefix() {
-    return nummerPrefix;
-  }
-
-  public void setNummerPrefix(SourcedValue<String> nummerPrefix) {
-    this.nummerPrefix = nummerPrefix;
+  public void setNummerprefix(SourcedValue<String> nummerprefix) {
+    this.nummerprefix = nummerprefix;
   }
 
   public SourcedValue<String> getNummer() {
@@ -90,20 +103,20 @@ public class Organisation extends AbstractSourced implements DomainEntityObject 
     this.nummer = nummer;
   }
 
-  public SourcedValue<String> getNummerSuffix() {
-    return nummerSuffix;
+  public SourcedValue<String> getNummersuffix() {
+    return nummersuffix;
   }
 
-  public void setNummerSuffix(SourcedValue<String> nummerSuffix) {
-    this.nummerSuffix = nummerSuffix;
+  public void setNummersuffix(SourcedValue<String> nummersuffix) {
+    this.nummersuffix = nummersuffix;
   }
 
-  public SourcedValue<String> getTyp() {
-    return typ;
+  public SourcedValue<String> getFirmaform() {
+    return firmaform;
   }
 
-  public void setTyp(SourcedValue<String> typ) {
-    this.typ = typ;
+  public void setFirmaform(SourcedValue<String> firmaform) {
+    this.firmaform = firmaform;
   }
 
   public List<SourcedValue<String>> getStatus() {
@@ -136,5 +149,29 @@ public class Organisation extends AbstractSourced implements DomainEntityObject 
 
   public void setLänIdentity(SourcedValue<String> länIdentity) {
     this.länIdentity = länIdentity;
+  }
+
+  public SourcedValue<String> getNamn() {
+    return namn;
+  }
+
+  public void setNamn(SourcedValue<String> namn) {
+    this.namn = namn;
+  }
+
+  @Override
+  public String toString() {
+    return "Organisation{" +
+        "identity='" + identity + '\'' +
+        ", nummerPrefix=" + nummerprefix +
+        ", nummer=" + nummer +
+        ", nummerSuffix=" + nummersuffix +
+        ", namn=" + namn+
+        ", firmaform=" + firmaform +
+        ", länIdentity=" + länIdentity +
+        ", status=" + status +
+        ", _index_nummer='" + _index_nummer + '\'' +
+        ", _index_länIdentity='" + _index_länIdentity + '\'' +
+        '}';
   }
 }

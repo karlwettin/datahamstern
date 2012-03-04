@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.Date;
 
 /**
+ * this is not the same as the one producing HarvestNaringslivsregistret.raw... etc
+ *
  * @author kalle
  * @since 2012-03-04 03:56
  */
@@ -33,8 +35,10 @@ public class RawAuditLogVisitor extends HarvestNaringslivsregistretVisitor {
   public void start(HarvestNaringslivsregistret harvester)  throws Exception{
 
     if (file == null) {
-      file = new File(Datahamstern.getInstance().getHomePath(), "data/naringslivsregistret");
-      file.mkdirs();
+      file = new File(Datahamstern.getInstance().getDataPath(), "services/bolagsverket/naringslivsregistret/RawAuditLogVisitor");
+      if (!file.exists()  && !file.mkdirs()) {
+        throw new IOException("Could not mkdirs " + file.getAbsolutePath());
+      }
       file = new File(file, HarvestNaringslivsregistret.toString(harvester.getOrganizationNumber())+ "-" + System.currentTimeMillis() + ".bin");
     }
 
@@ -57,7 +61,7 @@ public class RawAuditLogVisitor extends HarvestNaringslivsregistretVisitor {
     out.writeObject(result.getNummer());
     out.writeObject(result.getNummersuffix());
     out.writeObject(result.getLänsnummer());
-    out.writeObject(result.getTyp());
+    out.writeObject(result.getFirmaform());
     out.writeObject(result.getNamn());
     out.writeObject(result.getStatus());
                

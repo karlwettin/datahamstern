@@ -1,0 +1,968 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>500</x>
+      <y>260</y>
+      <w>330</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+SourcedInterface
+--
++getFirstSeen():Date
++setFirstSeen(firstSeen:Date)
+ 
++getLastSeen():Date
++setLastSeen(lastSeen:Date)
+ 
++getTrustworthiness():Float
++setTrustworthiness(trustworthiness:Float)
+ 
++getSources():List&lt;Source&gt;
++setSources(sources:List&lt;Source&gt;)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>410</x>
+      <y>610</y>
+      <w>240</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+SourcedValueInterface&lt;T&gt;
+--
++get():T
++set(value:T)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>550</x>
+      <y>470</y>
+      <w>50</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;140</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>580</x>
+      <y>810</y>
+      <w>180</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>SourcedValue&lt;T&gt;
+--
++value:T
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1100</x>
+      <y>580</y>
+      <w>220</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Source
+--
++author:String
++details:String
++license:String
++trustworthiness:Float
++timestamp:Date
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>570</x>
+      <y>670</y>
+      <w>50</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>30;30;30;140</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>700</x>
+      <y>600</y>
+      <w>220</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>/AbstractSourced&lt;T&gt;/
+--
++firstSeen:Date
++lastSeen:Date
++trustworthiness:Float
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>720</x>
+      <y>470</y>
+      <w>50</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>30;30;30;130</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>710</x>
+      <y>670</y>
+      <w>50</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;140</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>890</x>
+      <y>620</y>
+      <w>230</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m2=0..*</panel_attributes>
+    <additional_attributes>30;30;210;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>210</x>
+      <y>800</y>
+      <w>280</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Primitiva fältvärden 
+i klasser med stereotyp &lt;&lt;sourced&gt;&gt;
+lagras som en SourcedValue.
+ 
+Det betyder att
+fältvärdena även är associerade med:
+ 
+* När det först sågs till.
+* När det senast sågs till.
+* Hur mycket man kan lita på värdet.
+* Vem som kom fram till värdet
+  och med vilka licenser.
+ 
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>460</x>
+      <y>810</y>
+      <w>110</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>90;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>820</x>
+      <y>1150</y>
+      <w>510</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Organisation
+--
++nummerprefix:String
++nummer:String
++nummersuffix:String
++typ:String
++namn:String
++status:List&lt;String&gt;
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>310</x>
+      <y>1170</y>
+      <w>220</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Lan
+--
++nummerkod:String
++alfakod:String
++namn:String
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>500</x>
+      <y>1200</y>
+      <w>340</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&lt;
+m2=&lt;&lt;index&gt;&gt; 0..* 
+m1=0..1
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>30;50;320;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1790</x>
+      <y>710</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Bostadsrattsforening</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1780</x>
+      <y>780</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Bostadsforening</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1780</x>
+      <y>900</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Aktiebolag</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1450</x>
+      <y>910</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Organisationstyp</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1600</x>
+      <y>880</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;50;180;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1480</x>
+      <y>770</y>
+      <w>320</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;140;300;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1450</x>
+      <y>690</y>
+      <w>360</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;220;340;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1780</x>
+      <y>840</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>EkonomiskForening</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1540</x>
+      <y>830</y>
+      <w>260</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;80;240;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1790</x>
+      <y>960</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Komanditbolag</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1780</x>
+      <y>1010</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Handelsbolag</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1790</x>
+      <y>1060</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>EnskiltBolag</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1800</x>
+      <y>1120</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>EnskildFirma</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1580</x>
+      <y>910</y>
+      <w>230</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;210;60</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1530</x>
+      <y>910</y>
+      <w>270</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;250;110</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1480</x>
+      <y>910</y>
+      <w>330</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;310;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1440</x>
+      <y>910</y>
+      <w>380</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;360;230</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>980</x>
+      <y>1530</y>
+      <w>180</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Årsredovisning
+--
++år:Integer
++resultatårFrom:Date
++resultatårTo:Date
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1220</x>
+      <y>1580</y>
+      <w>220</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Ekonomiskplan
+--
++registreringsDatum:Date
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>980</x>
+      <y>1300</y>
+      <w>156</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=-&lt;
+m2=&lt;&lt;index&gt;&gt; 0..1 
+m1=0..1
+q1=+år:Integer
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>80;30;90;230</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1160</x>
+      <y>1300</y>
+      <w>228</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>lt=-&lt;
+m2=&lt;&lt;index&gt;&gt; 0..1 
+m1=0..1
+q1=+registreringsDatum:Date
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>120;30;130;280</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>690</x>
+      <y>1590</y>
+      <w>220</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Stadgar
+--
++registreringsDatum:Date
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>760</x>
+      <y>1300</y>
+      <w>226</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>lt=-&lt;
+m2=&lt;&lt;index&gt;&gt; 0..1 
+m1=0..1
+q1=+registreringsDatum:Date
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>120;30;110;290</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>980</x>
+      <y>1910</y>
+      <w>180</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Dokument
+--
++beskrivning:String
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>980</x>
+      <y>2140</y>
+      <w>180</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+&lt;&lt;domain entity&gt;&gt;
+Dokumentversion
+--
++checksum:SHA1
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>920</x>
+      <y>2370</y>
+      <w>270</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;soured&gt;&gt;
+Dokumentkalla
+--
++uri:String
++innehållsbeskrivningar:List&lt;String&gt;
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>990</x>
+      <y>1980</y>
+      <w>156</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+m2=0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>80;30;80;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>990</x>
+      <y>2210</y>
+      <w>156</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m2=0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>80;30;80;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>900</x>
+      <y>750</y>
+      <w>210</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+DomainEntityObject
+--
++getIdentity():String
++setIdentity(identity:String)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>990</x>
+      <y>1640</y>
+      <w>156</w>
+      <h>290</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1
+m2=&lt;&lt;index&gt;&gt; 0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>80;270;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>760</x>
+      <y>1660</y>
+      <w>260</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1
+m2=&lt;&lt;index&gt;&gt; 0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>240;250;60;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1100</x>
+      <y>1650</y>
+      <w>268</w>
+      <h>280</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1
+m2=&lt;&lt;index&gt;&gt; 0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>30;260;220;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>510</x>
+      <y>2090</y>
+      <w>300</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Innehållet av ett dokument 
+kan finnas i flera filer
+av olika dokumentformat eller kvalitet.
+ 
+Exempelvis en faxad kopia 
+från en utskrift av en pdf.
+ 
+Varje källa kan ha flera långa
+eller korta beskrivningar
+av vad det är dokumentet innehåller. </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>1200</x>
+      <y>2160</y>
+      <w>280</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Med plats för
+OCR,dokumentversionskvalitet, etc. </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>0</x>
+      <y>220</y>
+      <w>340</w>
+      <h>370</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Data med källhänvisning.
+
+Augmenterar en klass 
+eller ett fältvärde i en klass
+med:
+
+* När det först sågs till.
+* När det senast sågs till.
+* Hur mycket man kan lita på värdet.
+* Vem som kom fram till värdet
+  och med vilka licenser.
+ 
+Exempelvis är Organisation &lt;&lt;sourced&gt;&gt;,
+alltså vet man när en organisation först
+och senast sågs till, samt en lista
+på alla källor som känt till dess existens
+där mellan.
+ 
+Det kan nog bli mycket källor i framtiden
+så det får tänkas igenom lite om man kanske
+bara skall spara ner mindre, men det kräver
+logik som tar tid att utveckla...
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>310</x>
+      <y>360</y>
+      <w>210</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>190;30;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>1420</x>
+      <y>960</y>
+      <w>280</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Jag tänker högt...
+Skiljer sig organisationstyper på ett
+sådant sätt att det krävs mer än 
+enumerationen typ i Organisation?
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>910</x>
+      <y>1430</y>
+      <w>370</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Klasserna här nedanför finns ännu inte som kod.
+ 
+kommer med data från hydda.
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>390</x>
+      <y>0</y>
+      <w>580</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Detta är version 0.0.0 av den databas som rendereras utifrån händelseloggen.
+ 
+Klasser med stereotyp &lt;&lt;domain entity&gt;&gt; lagras som en serialiserad objekt graf
+tillsammans med all aggregerad data som inte pekar på en annan &lt;&lt;domain entity&gt;&gt;.
+ 
+Enbart entitetsklasser kan innehålla sekundära index.
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>490</x>
+      <y>1040</y>
+      <w>320</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+Även associationer kan vara &lt;&lt;sourced&gt;&gt;.
+I detta fallet betyder det att man vet
+vem som tyckte, när och hur
+att orgsanisationen finns i just det länet.
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>640</x>
+      <y>1090</y>
+      <w>60</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>30;30;40;110</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>850</x>
+      <y>900</y>
+      <w>320</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+För att verkligen förklara:
+här är alltså *alla* fältvärden spårbara:
+nummerprefix, nummer, nummersuffix, osv
+ 
+Det gäller även statuslistan, en lista av
+spårbara strängar med information som
+"fusion pågår", "försatt i konkurs", osv 
+som egentligen borde tolkas, strukturereas
+och läggas till i denna domänmodell.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>890</x>
+      <y>1040</y>
+      <w>130</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>110;30;30;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1320</x>
+      <y>1960</y>
+      <w>130</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+Fastighet
+--
++namn:String
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1570</x>
+      <y>2050</y>
+      <w>180</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+Tomt
+--
++taxeringsvärde:Float
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1560</x>
+      <y>1810</y>
+      <w>190</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;sourced&gt;&gt;
+Byggnad
+--
++påbörat:Date
++uppfört:Date
++taxeringsvärde:Float
++taxeringskod:Integer
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1960</x>
+      <y>1660</y>
+      <w>200</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Adress
+--
++gata:String
++husnummer:String
++uppgång:String
++postnummer:String
++postort:String
++kommun:String
++län:String
++latitude:Float
++longitude:Float
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1420</x>
+      <y>1860</y>
+      <w>160</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>30;110;140;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1420</x>
+      <y>1980</y>
+      <w>170</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>30;30;150;100</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1570</x>
+      <y>1910</y>
+      <w>156</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..*
+m2=0..*
+&lt;&lt;sourced&gt;&gt;</panel_attributes>
+    <additional_attributes>80;140;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>1700</x>
+      <y>1980</y>
+      <w>250</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>bg=yellow
+kommer med data från hydda</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

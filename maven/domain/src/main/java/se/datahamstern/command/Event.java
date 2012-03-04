@@ -5,6 +5,8 @@ import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
 import java.util.List;
 

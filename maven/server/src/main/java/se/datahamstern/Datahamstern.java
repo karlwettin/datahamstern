@@ -1,6 +1,7 @@
 package se.datahamstern;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -12,20 +13,31 @@ import java.util.UUID;
  */
 public class Datahamstern {
 
+  public static void main(String[] args) throws Exception {
+
+    getInstance().open();
+    try {
+
+      System.currentTimeMillis();
+
+    } finally {
+      getInstance().close();
+    }
+
+  }
+
   private static Datahamstern instance = new Datahamstern();
 
   private Datahamstern() {
   }
 
-  /** for storing meta data when messing via bsh console, todo move to client session */
-  public transient Map glue = new HashMap();
-
-  private File homePath;
+  /** the maven home directory */
+  private File mavenProjectPath;
+  /** where bdb, events, etc is stored  */
+  private File dataPath;
 
   private Properties properties;
 
-  private DomainStore domainStore;
-  private EventStore eventStore;
 
   private String systemUUID;
 
@@ -36,32 +48,39 @@ public class Datahamstern {
       throw new RuntimeException("property system.uuid not set! How about " + UUID.randomUUID().toString());
     }
 
-    if (homePath == null) {
-      homePath = new File("./");
+    if (mavenProjectPath == null) {
+      mavenProjectPath = new File("./");
     }
 
-    System.out.println("Using home path " + homePath.getAbsolutePath());
+    System.out.println("Using maven project path " + mavenProjectPath.getAbsolutePath());
 
-    if (domainStore == null) {
-      domainStore = new DomainStore();
-      domainStore.setPath(new File(homePath, "data/domainStore"));
+    if (dataPath == null) {
+      dataPath = new File(mavenProjectPath, "data");
+      if (!dataPath.exists()  && !dataPath.mkdirs()) {
+        throw new IOException("Could not mkdirs " + dataPath.getAbsolutePath());
+      }
     }
-    domainStore.open();
 
-    if (eventStore == null) {
-      eventStore = new EventStore();
-      eventStore.setPath(new File(homePath, "data/eventStore"));
-    }
-    eventStore.open();
+    System.out.println("Using data path " + dataPath.getAbsolutePath());
+
+
+
+
+    DomainStore.getInstance().setPath(new File(dataPath, "domainStore/bdb"));
+    DomainStore.getInstance().open();
+
+    EventStore.getInstance().setPath(new File(dataPath, "eventStore/bdb"));
+    EventStore.getInstance().open();
+
+    EventManager.getInstance().setDataPath(new File(dataPath, "eventManager"));
+    EventManager.getInstance().open();
+
   }
 
   public void close() throws Exception {
-    if (domainStore != null) {
-      domainStore.close();
-    }
-    if (eventStore != null) {
-      eventStore.close();
-    }
+    DomainStore.getInstance().close();
+    EventStore.getInstance().close();
+    EventManager.getInstance().close();
   }
 
   public String getProperty(String key, String defaultValue) throws Exception {
@@ -89,29 +108,15 @@ public class Datahamstern {
     return instance;
   }
 
-  public DomainStore getDomainStore() {
-    return domainStore;
+
+  public File getMavenProjectPath() {
+    return mavenProjectPath;
   }
 
-  public void setDomainStore(DomainStore domainStore) {
-    this.domainStore = domainStore;
+  public void setMavenProjectPath(File mavenProjectPath) {
+    this.mavenProjectPath = mavenProjectPath;
   }
 
-  public File getHomePath() {
-    return homePath;
-  }
-
-  public void setHomePath(File homePath) {
-    this.homePath = homePath;
-  }
-
-  public EventStore getEventStore() {
-    return eventStore;
-  }
-
-  public void setEventStore(EventStore eventStore) {
-    this.eventStore = eventStore;
-  }
 
   public String getSystemUUID() {
     return systemUUID;
@@ -119,6 +124,22 @@ public class Datahamstern {
 
   public void setSystemUUID(String systemUUID) {
     this.systemUUID = systemUUID;
+  }
+
+  public File getDataPath() {
+    return dataPath;
+  }
+
+  public void setDataPath(File dataPath) {
+    this.dataPath = dataPath;
+  }
+
+  public Properties getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Properties properties) {
+    this.properties = properties;
   }
 }
 

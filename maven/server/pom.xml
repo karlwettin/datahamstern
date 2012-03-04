@@ -31,11 +31,26 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+
+    <!--
+      todo does not need -kalle branch!
+      either find 1.1 in a maven repo
+      or switch code to org.json in jdk!
+     -->
+    <dependency>
+      <!-- https://github.com/karlwettin/json-simple-kalle -->
       <groupId>json-simple</groupId>
       <artifactId>json-simple</artifactId>
       <version>1.1-kalle-8</version>
     </dependency>
 
+    <!--
+      todo only required to execute bsh scripts editor from webapp.
+      replace with jsp editor hack instead! that's real java!
+    -->
     <dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>

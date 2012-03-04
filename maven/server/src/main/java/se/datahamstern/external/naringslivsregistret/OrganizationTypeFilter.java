@@ -24,7 +24,7 @@ public class OrganizationTypeFilter extends NaringslivsregistretResultsFilter {
   public List<NaringslivsregistretResult> filter(List<NaringslivsregistretResult> input) {
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>(input.size());
     for (NaringslivsregistretResult result : input) {
-      if (acceptedTypes.contains(result.getTyp())) {
+      if (acceptedTypes.contains(result.getFirmaform())) {
         results.add(result);
       }
     }

@@ -1,6 +1,5 @@
 package se.datahamstern.sourced;
 
-import com.sleepycat.persist.model.KeyField;
 import com.sleepycat.persist.model.Persistent;
 
 /**
@@ -8,7 +7,7 @@ import com.sleepycat.persist.model.Persistent;
  * @since 2012-03-04 00:40
  */
 @Persistent(version = 1)
-public class SourcedValue<T> extends AbstractSourcedValue<T> {
+public class SourcedValue<T> extends AbstractSourced implements SourcedValueInterface<T> {
 
   public SourcedValue() {
   }

@@ -69,7 +69,8 @@ public class Naringslivsregistret {
         }
 
         result.setNamn(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-firma']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
-        result.setTyp(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-form']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
+        result.setFirmaform(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-form']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
+        result.setFirmatyp(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-typ']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
         result.setLänsnummer(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-lan']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
         result.setStatus(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-status']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
         if (result.getStatus().isEmpty()) {

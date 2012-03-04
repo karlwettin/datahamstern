@@ -20,6 +20,16 @@ import java.util.UUID;
  */
 public class DomainStore {
 
+  private static DomainStore instance = new DomainStore();
+
+  private DomainStore() {
+  }
+
+  public static DomainStore getInstance() {
+    return instance;
+  }
+
+
   private File path;
 
   private String storeName = "datahamstern/domain";

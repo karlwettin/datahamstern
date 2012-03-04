@@ -6,14 +6,20 @@ import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.simple.parser.BufferedJSONStreamReader;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.JSONStreamReader;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Event;
 import se.datahamstern.command.Source;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -21,6 +27,15 @@ import java.util.UUID;
  * @since 2012-03-02 03:09
  */
 public class EventStore {
+
+  private static EventStore instance = new EventStore();
+
+  private EventStore() {
+  }
+
+  public static EventStore getInstance() {
+    return instance;
+  }
 
   private File path;
 
@@ -128,99 +143,12 @@ public class EventStore {
   }
 
 
-  private synchronized String identityFactory() throws Exception {
+  public synchronized String identityFactory() throws Exception {
     StringBuilder identity = new StringBuilder(100);
     identity.append(Datahamstern.getInstance().getSystemUUID());
     identity.append("/");
     identity.append(UUID.randomUUID().toString());
     return identity.toString();
-  }
-
-  public Event put(Event event) throws Exception {
-    if (event.getIdentity() == null) {
-      event.setIdentity(identityFactory());
-    }
-    assertWellDescribedEvent(event);
-
-    // add to queue of events to be executed
-    event.set_local_timestamp(new Date());
-
-    // todo save audit log serialized as json.
-
-    return events.put(event);
-  }
-
-  private void assertWellDescribedEvent(Event event) {
-    if (event.getCommandName() == null) {
-      throw new NullPointerException("Command name not set in event!");
-    }
-    if (event.getCommandVersion() == null) {
-      throw new NullPointerException("Command version not set in event!");
-    }
-    if (event.getSources() == null || event.getSources().isEmpty()) {
-      throw new NullPointerException("No sources in event!");
-    }
-    if (event.getJsonData() == null) {
-      throw new NullPointerException("No jsonData in event!");
-    }
-
-    for (Source source : event.getSources()) {
-      if (source.getTimestamp() == null) {
-        throw new NullPointerException("Source is missing timestamp! " + source);
-      }
-      if (source.getAuthor() == null) {
-        throw new NullPointerException("Source is missing author! " + source);
-      }
-      if (source.getLicense() == null) {
-        throw new NullPointerException("Source is missing license! " + source);
-      }
-      if (source.getTrustworthiness() == null) {
-        throw new NullPointerException("Source is missing trustworthiness! " + source);
-      }
-      if (source.getDetails() == null) {
-//        log.debug("Source is missing details! " + source);
-      }
-    }
-  }
-
-  private void execute(Event event, JSONParser jsonParser) throws Exception {
-    CommandManager.getInstance().commandFactory(event.getCommandName(), event.getCommandVersion()).execute(event, jsonParser);
-  }
-
-
-  // todo persistent
-  private Date lastRunStartedTimestamp = new Date(0);
-
-  public synchronized void executeUpdatedEvents() {
-
-    int totalCounter = 0;
-    int failedCounter = 0;
-
-    Date started = new Date();
-    Date lastRunStartedTimestamp = this.lastRunStartedTimestamp;
-
-    JSONParser jsonParser = new JSONParser();
-    EntityCursor<Event> events = Datahamstern.getInstance().getEventStore().getEventsByTimestamp().entities(lastRunStartedTimestamp, true, started, false);
-    try {
-      Event event;
-      while ((event = events.next()) != null) {
-        totalCounter++;
-        try {
-          execute(event, jsonParser);
-        } catch (Exception e) {
-          e.printStackTrace();
-          // log.error("Exception while executing event " + event, e);
-          failedCounter++;
-
-        }
-      }
-    } finally {
-      events.close();
-    }
-
-    this.lastRunStartedTimestamp = started;
-
-    // log.info("Executed " + totalCounter + " events. " + failedCounter + " of them failed.");
   }
 
 
