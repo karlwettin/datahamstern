@@ -4,55 +4,85 @@ import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
+import se.datahamstern.sourced.AbstractSourced;
+import se.datahamstern.sourced.SourcedValue;
 
 /**
  * @author kalle
  * @since 2012-03-02 03:22
  */
 @Entity(version = 1)
-public class Lan {
+public class Lan extends AbstractSourced implements DomainEntityObject {
 
+  @Override
+  public void accept(DomainObjectVisitor visitor) {
+    visitor.visit(this);
+  }
+
+  /** for example "Hallands län" */
+  private SourcedValue<String> namn =  new SourcedValue<String>();
+
+  /** for example "N" as in "Hallands län" */
+  @SecondaryKey(relate = Relationship.MANY_TO_ONE)
+  private String _index_alfakod;
+  private SourcedValue<String> alfakod=  new SourcedValue<String>();
+
+  /** for example "13" as in "Hallands län"  */
+  @SecondaryKey(relate = Relationship.MANY_TO_ONE)
+  private String _index_nummerkod;
+  private SourcedValue<String> nummerkod=  new SourcedValue<String>();
+
+  /** uuid, local bdb identity. */
   @PrimaryKey
-  private Long identity;
+  private String identity;
 
-
-  private String name;
-
-  @SecondaryKey(relate = Relationship.ONE_TO_ONE, name = "alphaCode")
-  private String alphaCode;
-
-  @SecondaryKey(relate = Relationship.ONE_TO_ONE, name = "numericCode")
-  private String numericCode;
-
-  public Long getIdentity() {
+  @Override
+  public String getIdentity() {
     return identity;
   }
 
-  public void setIdentity(Long identity) {
+  @Override
+  public void setIdentity(String identity) {
     this.identity = identity;
   }
 
-  public String getName() {
-    return name;
+  public SourcedValue<String> getNamn() {
+    return namn;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setNamn(SourcedValue<String> namn) {
+    this.namn = namn;
   }
 
-  public String getAlphaCode() {
-    return alphaCode;
+  public String get_index_alfakod() {
+    return _index_alfakod;
   }
 
-  public void setAlphaCode(String alphaCode) {
-    this.alphaCode = alphaCode;
+  public void set_index_alfakod(String _index_alfakod) {
+    this._index_alfakod = _index_alfakod;
   }
 
-  public String getNumericCode() {
-    return numericCode;
+  public SourcedValue<String> getAlfakod() {
+    return alfakod;
   }
 
-  public void setNumericCode(String numericCode) {
-    this.numericCode = numericCode;
+  public void setAlfakod(SourcedValue<String> alfakod) {
+    this.alfakod = alfakod;
+  }
+
+  public String get_index_nummerkod() {
+    return _index_nummerkod;
+  }
+
+  public void set_index_nummerkod(String _index_nummerkod) {
+    this._index_nummerkod = _index_nummerkod;
+  }
+
+  public SourcedValue<String> getNummerkod() {
+    return nummerkod;
+  }
+
+  public void setNummerkod(SourcedValue<String> nummerkod) {
+    this.nummerkod = nummerkod;
   }
 }

@@ -1,4 +1,4 @@
-package se.datahamstern.services.naringslivsregistret;
+package se.datahamstern.external.naringslivsregistret;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,7 +24,7 @@ public class OrganizationTypeFilter extends NaringslivsregistretResultsFilter {
   public List<NaringslivsregistretResult> filter(List<NaringslivsregistretResult> input) {
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>(input.size());
     for (NaringslivsregistretResult result : input) {
-      if (acceptedTypes.contains(result.getType())) {
+      if (acceptedTypes.contains(result.getTyp())) {
         results.add(result);
       }
     }

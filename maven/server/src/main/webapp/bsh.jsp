@@ -28,11 +28,11 @@
 <body>
 
 <pre>
-h = new se.datahamstern.services.naringslivsregistret.HarvestNaringslivsregistret();
-datahamstern.glue.put("h", h);
+h = new se.datahamstern.external.naringslivsregistret.HarvestNaringslivsregistret();
+datahamstern.glue.put(&quot;h&quot;, h);
 
-h = datahamstern.glue.get("h");
-h.harvest("5562999622", "5600000000");
+h = datahamstern.glue.get(&quot;h&quot;);
+h.harvest(&quot;5562999622&quot;, &quot;5600000000&quot;);
 
 print(h.found());
 </pre>

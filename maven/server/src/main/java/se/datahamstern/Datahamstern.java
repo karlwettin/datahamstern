@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * @author kalle
@@ -23,11 +24,17 @@ public class Datahamstern {
 
   private Properties properties;
 
-  private EntityStore entityStore;
+  private DomainStore domainStore;
+  private EventStore eventStore;
 
+  private String systemUUID;
 
   public void open() throws Exception {
 
+    systemUUID = getProperty("system.uuid", (String)null);
+    if (systemUUID == null) {
+      throw new RuntimeException("property system.uuid not set! How about " + UUID.randomUUID().toString());
+    }
 
     if (homePath == null) {
       homePath = new File("./");
@@ -35,16 +42,25 @@ public class Datahamstern {
 
     System.out.println("Using home path " + homePath.getAbsolutePath());
 
-    if (entityStore == null) {
-      entityStore = new EntityStore();
-      entityStore.setPath(new File(homePath, "data/entityStore"));
+    if (domainStore == null) {
+      domainStore = new DomainStore();
+      domainStore.setPath(new File(homePath, "data/domainStore"));
     }
-    entityStore.open();
+    domainStore.open();
+
+    if (eventStore == null) {
+      eventStore = new EventStore();
+      eventStore.setPath(new File(homePath, "data/eventStore"));
+    }
+    eventStore.open();
   }
 
   public void close() throws Exception {
-    if (entityStore != null) {
-      entityStore.close();
+    if (domainStore != null) {
+      domainStore.close();
+    }
+    if (eventStore != null) {
+      eventStore.close();
     }
   }
 
@@ -73,12 +89,12 @@ public class Datahamstern {
     return instance;
   }
 
-  public EntityStore getEntityStore() {
-    return entityStore;
+  public DomainStore getDomainStore() {
+    return domainStore;
   }
 
-  public void setEntityStore(EntityStore entityStore) {
-    this.entityStore = entityStore;
+  public void setDomainStore(DomainStore domainStore) {
+    this.domainStore = domainStore;
   }
 
   public File getHomePath() {
@@ -87,6 +103,22 @@ public class Datahamstern {
 
   public void setHomePath(File homePath) {
     this.homePath = homePath;
+  }
+
+  public EventStore getEventStore() {
+    return eventStore;
+  }
+
+  public void setEventStore(EventStore eventStore) {
+    this.eventStore = eventStore;
+  }
+
+  public String getSystemUUID() {
+    return systemUUID;
+  }
+
+  public void setSystemUUID(String systemUUID) {
+    this.systemUUID = systemUUID;
   }
 }
 

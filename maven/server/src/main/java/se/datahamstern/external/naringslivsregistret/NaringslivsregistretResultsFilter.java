@@ -1,4 +1,4 @@
-package se.datahamstern.services.naringslivsregistret;
+package se.datahamstern.external.naringslivsregistret;
 
 import java.util.List;
 

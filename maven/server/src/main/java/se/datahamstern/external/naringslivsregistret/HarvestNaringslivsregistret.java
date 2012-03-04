@@ -1,6 +1,7 @@
-package se.datahamstern.services.naringslivsregistret;
+package se.datahamstern.external.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
+import se.datahamstern.Glue;
 import se.datahamstern.util.Mod10;
 
 import java.io.FileOutputStream;
@@ -26,7 +27,7 @@ public class HarvestNaringslivsregistret {
     Datahamstern.getInstance().open();
     try {
 //      new HarvestNaringslivsregistret().harvest("5562990000", "5600000000");
-      new HarvestNaringslivsregistret().harvest("5562999622", "5600000000");
+      new HarvestNaringslivsregistret().harvest("5562999622", "5600000000", new RawAuditLogVisitor());
     } finally {
       Datahamstern.getInstance().open();
     }
@@ -40,27 +41,18 @@ public class HarvestNaringslivsregistret {
   private char[] chars = new char[10];
 
 
-  private FileOutputStream fos;
-  private ObjectOutputStream oos;
-
-  private FileOutputStream fosFailures;
-  private ObjectOutputStream oosFailures;
-
   private boolean abort = false;
-  private AtomicInteger withResults = new AtomicInteger(0);
 
 
-  public void harvest(String start, String end) throws Exception {
+  public void harvest(String start, String end, final HarvestNaringslivsregistretVisitor visitor) throws Exception {
+
     setOrganizationNumber(start);
     setEnd(end);
 
+    visitor.start(this);
+
     long started = System.currentTimeMillis();
 
-    fos = new FileOutputStream("HarvestNaringslivsregistret.raw." + start + "." + started);
-    oos = new ObjectOutputStream(fos);
-
-    fosFailures = new FileOutputStream("HarvestNaringslivsregistret.failed.raw." + start + "." + started);
-    oosFailures = new ObjectOutputStream(fosFailures);
 
     List<Thread> threads = new ArrayList<Thread>();
     for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1); i++) {
@@ -86,7 +78,7 @@ public class HarvestNaringslivsregistret {
                     e.printStackTrace();
                     if (tries > 3) {
                       try {
-                        writeFailurePosting(organizationNumber);
+                        visitor.failed(HarvestNaringslivsregistret.this, organizationNumber, e);
                       } catch (Exception e2) {
                         abort = true;
                         throw new RuntimeException(e2);
@@ -96,14 +88,14 @@ public class HarvestNaringslivsregistret {
                   }
                 }
                 if (results == null) {
+                  visitor.missing(HarvestNaringslivsregistret.this, organizationNumber);
                   continue;
                 }
                 if (!results.isEmpty()) {
-                  withResults.incrementAndGet();
 
                   for (NaringslivsregistretResult result : results) {
                     try {
-                      writeOrganizationPosting(result);
+                      visitor.found(HarvestNaringslivsregistret.this, result);
                     } catch (Exception e) {
                       abort = true;
                       throw new RuntimeException(e);
@@ -133,39 +125,9 @@ public class HarvestNaringslivsregistret {
       thread.join();
     }
 
-
-    oos.writeBoolean(false);
-    // end
-    oos.writeObject(new String(chars));
-    oos.close();
-    fos.close();
-
-    oosFailures.writeBoolean(false);
-    oosFailures.close();
-    fosFailures.close();
-
-  }
-
-  private synchronized void writeOrganizationPosting(NaringslivsregistretResult result) throws IOException {
-
-    oos.writeBoolean(true);
-    oos.writeObject(new Date());
-    oos.writeObject(result.getOrganizationNumberPrefix());
-    oos.writeObject(result.getOrganizationNumber());
-    oos.writeObject(result.getOrganizationNumberSuffix());
-    oos.writeObject(result.getNumericLänskod());
-    oos.writeObject(result.getType());
-    oos.writeObject(result.getName());
-    oos.writeObject(result.getStatus());
-    oos.flush();
-
-  }
+    visitor.end(this);
 
 
-  private synchronized void writeFailurePosting(String organizationNumber) throws IOException {
-    oosFailures.writeBoolean(true);
-    oosFailures.writeObject(organizationNumber);
-    oosFailures.flush();
   }
 
 
@@ -188,7 +150,6 @@ public class HarvestNaringslivsregistret {
 
       String string = new String(chars);
       if (Mod10.isValidSwedishOrganizationNumber(string)) {
-        Datahamstern.getInstance().glue.put("lastOrganizationNumber", string);
         return string;
       }
 
@@ -196,10 +157,6 @@ public class HarvestNaringslivsregistret {
 
 
     return null;
-  }
-
-  public int found() {
-    return withResults.get();
   }
 
   public int[] getOrganizationNumber() {
@@ -231,5 +188,14 @@ public class HarvestNaringslivsregistret {
     }
 
   }
+
+  public static String toString(int[] ints) {
+    char[] chars = new char[ints.length];
+    for (int i = 0; i < ints.length; i++) {
+      chars[i] = (char) (48 + ints[i]);
+    }
+    return new String(chars);
+  }
+
 
 }

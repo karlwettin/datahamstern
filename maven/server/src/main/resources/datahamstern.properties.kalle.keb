@@ -9,3 +9,5 @@ tesseract.path=/opt/local/bin/tesseract
 
 
 HarvestNaringslivsregistret.threads=1
+
+system.uuid=keb.kodapan.se

@@ -1,8 +1,6 @@
-package se.datahamstern.services.naringslivsregistret;
+package se.datahamstern.external.naringslivsregistret;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.io.SeleniumAccessor;
@@ -12,7 +10,6 @@ import se.datahamstern.xml.DomUtils;
 
 import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,18 +59,18 @@ public class Naringslivsregistret {
           throw new SourceChangedException();
         }
         if (matcher.group(1) != null) {
-          result.setOrganizationNumberPrefix(matcher.group(1).trim());
+          result.setNummerprefix(matcher.group(1).trim());
         }
 
-        result.setOrganizationNumber(matcher.group(2).trim() + matcher.group(3).trim());
+        result.setNummer(matcher.group(2).trim() + matcher.group(3).trim());
 
         if (matcher.group(4) != null) {
-          result.setOrganizationNumberSuffix(matcher.group(4).trim());
+          result.setNummersuffix(matcher.group(4).trim());
         }
 
-        result.setName(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-firma']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
-        result.setType(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-form']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
-        result.setNumericLänskod(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-lan']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
+        result.setNamn(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-firma']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
+        result.setTyp(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-form']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
+        result.setLänsnummer(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-lan']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
         result.setStatus(DomUtils.replaceNonBreakingSpaces(selenium.xpath.compile("TD[@headers='h-status']").evaluate(resultNode)).replaceAll("\\s+", " ").trim());
         if (result.getStatus().isEmpty()) {
           result.setStatus(null);
@@ -98,14 +95,14 @@ public class Naringslivsregistret {
 
         List<NaringslivsregistretResult> nameResults;
         try {
-          nameResults = search(result.getName());
+          nameResults = search(result.getNamn());
         } catch (Exception e) {
           e.printStackTrace();
           throw e;
         }
         for (NaringslivsregistretResult nameResult : nameResults) {
-          if (nameResult.getOrganizationNumber().equals(result.getOrganizationNumber())) {
-            result.setNumericLänskod(nameResult.getNumericLänskod());
+          if (nameResult.getNummer().equals(result.getNummer())) {
+            result.setLänsnummer(nameResult.getLänsnummer());
             break;
           }
         }
