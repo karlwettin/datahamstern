@@ -1,12 +1,11 @@
-package se.datahamstern.command;
+package se.datahamstern.event;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
+import se.datahamstern.command.Source;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Date;
 import java.util.List;
 

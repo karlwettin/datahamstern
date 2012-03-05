@@ -1,12 +1,12 @@
-package se.datahamstern;
+package se.datahamstern.event;
 
 import com.sleepycat.persist.EntityCursor;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.Nop;
 import se.datahamstern.command.CommandManager;
-import se.datahamstern.command.Event;
 import se.datahamstern.command.Source;
 
 import java.io.*;
@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
+ * This is where you add and process incoming events
+ *
  * @author kalle
  * @since 2012-03-04 23:07
  */
@@ -77,7 +79,7 @@ public class EventManager {
 
   /**
    * Adds an event to the queue.
-   * Next time you call upon {@link se.datahamstern.EventManager#flushQueue()} it will be flushed to your database.
+   * Next time you call upon {@link EventManager#flushQueue()} it will be flushed to your database.
    *
    * @param event
    * @return
@@ -157,9 +159,15 @@ public class EventManager {
         totalCounter++;
         try {
           execute(event, jsonParser);
-          if (!events.delete()) {
-            // log.warn("why was event already deleted? this this be synchronized!"); // todo create event store lock
-            Nop.breakpoint();
+          // if this was turned off then we would keep all events in the bdb
+          // todo but that requires that the most recent seen event date is PERSISTENT
+          // property? setting? todo a file in data/eventManager
+          if (true) {
+            if (!events.delete()) {
+              // todo create event store lock?
+              Nop.breakpoint();
+              throw new Exception("Why was event " + event.toString() + " already deleted? This is supposed to be synchronized but really isn't, so don't go touching the event store when executing this method!!");
+            }
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -186,27 +194,27 @@ public class EventManager {
     // todo it would be faster. lots of ++ here!
 
 
-    JSONObject object = (JSONObject)new JSONParser().parse(json);
+    JSONObject object = (JSONObject) new JSONParser().parse(json);
     Event domainEvent = new Event();
-    domainEvent.setCommandName((String)((JSONObject)object.get("command")).get("name"));
-    domainEvent.setCommandVersion((String)((JSONObject)object.get("command")).get("version"));
+    domainEvent.setCommandName((String) ((JSONObject) object.get("command")).get("name"));
+    domainEvent.setCommandVersion((String) ((JSONObject) object.get("command")).get("version"));
     if (object.get("data") != null) {
       // todo this silly thing would not be needed then
-      domainEvent.setJsonData(((JSONObject)object.get("data")).toJSONString());
+      domainEvent.setJsonData(((JSONObject) object.get("data")).toJSONString());
     }
-    JSONArray sources = (JSONArray)object.get("sources");
+    JSONArray sources = (JSONArray) object.get("sources");
     if (sources != null) {
       domainEvent.setSources(new ArrayList<Source>(sources.size()));
-      for (int i=0; i<sources.size(); i++) {
-        JSONObject source = (JSONObject)sources.get(i);
+      for (int i = 0; i < sources.size(); i++) {
+        JSONObject source = (JSONObject) sources.get(i);
         Source domainSource = new Source();
-        domainSource.setAuthor((String)source.get("author"));
+        domainSource.setAuthor((String) source.get("author"));
         if (source.get("trustworthiness") != null) {
-          domainSource.setTrustworthiness(((Double)source.get("trustworthiness")).floatValue());
+          domainSource.setTrustworthiness(((Double) source.get("trustworthiness")).floatValue());
         }
-        domainSource.setDetails((String)source.get("details"));
-        domainSource.setLicense((String)source.get("licence"));
-        domainSource.setTimestamp(new Date((Long)source.get("timestamp")));
+        domainSource.setDetails((String) source.get("details"));
+        domainSource.setLicense((String) source.get("licence"));
+        domainSource.setTimestamp(new Date((Long) source.get("timestamp")));
         domainEvent.getSources().add(domainSource);
       }
     }
@@ -300,6 +308,7 @@ public class EventManager {
     json.write("}\n");
 
   }
+
 
 
 }

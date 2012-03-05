@@ -1,9 +1,11 @@
 package se.datahamstern;
 
+import se.datahamstern.domain.DomainStore;
+import se.datahamstern.event.EventManager;
+import se.datahamstern.event.EventStore;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -51,6 +53,10 @@ public class Datahamstern {
     if (mavenProjectPath == null) {
       mavenProjectPath = new File("./");
     }
+    mavenProjectPath = new File(mavenProjectPath.getAbsolutePath());
+    while (".".equals(mavenProjectPath.getName())) {
+      mavenProjectPath = mavenProjectPath.getParentFile();
+    }
 
     System.out.println("Using maven project path " + mavenProjectPath.getAbsolutePath());
 
@@ -60,6 +66,11 @@ public class Datahamstern {
         throw new IOException("Could not mkdirs " + dataPath.getAbsolutePath());
       }
     }
+    dataPath = new File(dataPath.getAbsolutePath());
+    while (".".equals(dataPath.getName())) {
+      dataPath = dataPath.getParentFile();
+    }
+
 
     System.out.println("Using data path " + dataPath.getAbsolutePath());
 
@@ -92,11 +103,11 @@ public class Datahamstern {
     return value == null ? defaultValue : value;
   }
 
-  private static String nullValue = new String();
+  private static String defaultPropertyNullValue = new String();
 
   public Integer getProperty(String key, Integer defaultValue) throws Exception {
-    String value = getProperty(key, nullValue);
-    if (value == nullValue || value == null) {
+    String value = getProperty(key, defaultPropertyNullValue);
+    if (value == defaultPropertyNullValue || value == null) {
       return defaultValue;
     } else {
       return Integer.valueOf(value);

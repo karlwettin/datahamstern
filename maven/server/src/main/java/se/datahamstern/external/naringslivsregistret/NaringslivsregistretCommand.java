@@ -3,11 +3,10 @@ package se.datahamstern.external.naringslivsregistret;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import se.datahamstern.Datahamstern;
-import se.datahamstern.DomainStore;
+import se.datahamstern.domain.DomainStore;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
-import se.datahamstern.command.Event;
+import se.datahamstern.event.Event;
 import se.datahamstern.command.Source;
 import se.datahamstern.domain.Lan;
 import se.datahamstern.domain.Organisation;

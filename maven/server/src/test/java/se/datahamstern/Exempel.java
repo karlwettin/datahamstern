@@ -1,6 +1,8 @@
 package se.datahamstern;
 
+import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Organisation;
+import se.datahamstern.event.EventManager;
 import se.datahamstern.external.naringslivsregistret.CreateEventsVisitor;
 import se.datahamstern.external.naringslivsregistret.HarvestNaringslivsregistret;
 

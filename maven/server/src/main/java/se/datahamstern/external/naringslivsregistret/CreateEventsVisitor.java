@@ -1,8 +1,8 @@
 package se.datahamstern.external.naringslivsregistret;
 
-import se.datahamstern.EventManager;
+import se.datahamstern.event.Event;
+import se.datahamstern.event.EventManager;
 import se.datahamstern.Nop;
-import se.datahamstern.command.Event;
 import se.datahamstern.command.Source;
 
 import java.util.Date;

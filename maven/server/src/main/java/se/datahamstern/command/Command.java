@@ -1,6 +1,7 @@
 package se.datahamstern.command;
 
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.event.Event;
 import se.datahamstern.sourced.SourcedInterface;
 import se.datahamstern.sourced.SourcedValue;
 

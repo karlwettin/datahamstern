@@ -1,17 +1,17 @@
-package se.datahamstern;
+package se.datahamstern.domain;
 
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainObjectVisitor;
-import se.datahamstern.domain.Lan;
-import se.datahamstern.domain.Organisation;
+import se.datahamstern.Datahamstern;
+import se.datahamstern.sourced.SourcedValue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 /**
@@ -49,6 +49,12 @@ public class DomainStore {
   private SecondaryIndex<String, String, Organisation> organisationByNummer;
   private SecondaryIndex<String, String, Organisation> organisationerByLän;
 
+  private PrimaryIndex<String, Arsredovisning> årsredovisningar;
+  private PrimaryIndex<String, EkonomiskPlan> ekonomiskaPlaner;
+  private PrimaryIndex<String, Stadgar> stadgar;
+
+  private PrimaryIndex<String, Dokument> dokument;
+  private PrimaryIndex<String, Dokumentversion> dokumentversioner;
 
   public void open() throws Exception {
 
@@ -125,6 +131,14 @@ public class DomainStore {
     länByAlfakod = entityStore.getSecondaryIndex(län, String.class, "_index_alfakod");
     länByNummerkod = entityStore.getSecondaryIndex(län, String.class, "_index_nummerkod");
 
+    // todo add indices etc initialize
+    årsredovisningar = entityStore.getPrimaryIndex(String.class, Arsredovisning.class);
+    ekonomiskaPlaner = entityStore.getPrimaryIndex(String.class, EkonomiskPlan.class);
+    stadgar = entityStore.getPrimaryIndex(String.class, Stadgar.class);
+    dokument = entityStore.getPrimaryIndex(String.class, Dokument.class);
+    dokumentversioner = entityStore.getPrimaryIndex(String.class, Dokumentversion.class);
+
+
 //    log.info("BDB has been opened.");
 
   }
@@ -182,6 +196,58 @@ public class DomainStore {
       getOrganisationer().put(organisation);
     }
 
+    @Override
+    public void visit(Arsredovisning årsredovisning) {
+      assignIdentity(årsredovisning);
+      if (årsredovisning.getOrganisationIdentity().get() != null) {
+        årsredovisning.set_index_organisationIdentity(årsredovisning.getOrganisationIdentity().get());
+      }
+      if (årsredovisning.getDatumFrom().get() != null) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(årsredovisning.getDatumFrom().get());
+        årsredovisning.set_index_år(calendar.get(Calendar.YEAR));
+      }
+      getÅrsredovisningar().put(årsredovisning);
+
+    }
+
+    @Override
+    public void visit(EkonomiskPlan ekonomiskPlan) {
+      assignIdentity(ekonomiskPlan);
+      if (ekonomiskPlan.getOrganisationIdentity().get() != null) {
+        ekonomiskPlan.set_index_organisationIdentity(ekonomiskPlan.getOrganisationIdentity().get());
+      }
+      getEkonomiskaPlaner().put(ekonomiskPlan);
+
+    }
+
+    @Override
+    public void visit(Stadgar stadgar) {
+      assignIdentity(stadgar);
+      if (stadgar.getOrganisationIdentity().get() != null) {
+        stadgar.set_index_organisationIdentity(stadgar.getOrganisationIdentity().get());
+      }
+      getStadgar().put(stadgar);
+    }
+
+    @Override
+    public void visit(Dokument dokument) {
+      assignIdentity(dokument);
+      if (dokument.getDokumentversionerIdentity() != null && !dokument.getDokumentversionerIdentity().isEmpty()) {
+        dokument.set_index_dokumentversionerIdentity(new ArrayList<String>(dokument.getDokumentversionerIdentity().size()));
+        for (SourcedValue<String> dokumentVersionIdentity : dokument.getDokumentversionerIdentity()) {
+          dokument.get_index_dokumentversionerIdentity().add(dokumentVersionIdentity.get());
+        }
+      }
+      getDokument().put(dokument);
+
+    }
+
+    @Override
+    public void visit(Dokumentversion dokumentversion) {
+      assignIdentity(dokumentversion);
+      getDokumentversioner().put(dokumentversion);
+    }
   };
 
 
@@ -255,5 +321,45 @@ public class DomainStore {
 
   public void setLänByAlfakod(SecondaryIndex<String, String, Lan> länByAlfakod) {
     this.länByAlfakod = länByAlfakod;
+  }
+
+  public PrimaryIndex<String, Arsredovisning> getÅrsredovisningar() {
+    return årsredovisningar;
+  }
+
+  public void setÅrsredovisningar(PrimaryIndex<String, Arsredovisning> årsredovisningar) {
+    this.årsredovisningar = årsredovisningar;
+  }
+
+  public PrimaryIndex<String, EkonomiskPlan> getEkonomiskaPlaner() {
+    return ekonomiskaPlaner;
+  }
+
+  public void setEkonomiskaPlaner(PrimaryIndex<String, EkonomiskPlan> ekonomiskaPlaner) {
+    this.ekonomiskaPlaner = ekonomiskaPlaner;
+  }
+
+  public PrimaryIndex<String, Stadgar> getStadgar() {
+    return stadgar;
+  }
+
+  public void setStadgar(PrimaryIndex<String, Stadgar> stadgar) {
+    this.stadgar = stadgar;
+  }
+
+  public PrimaryIndex<String, Dokument> getDokument() {
+    return dokument;
+  }
+
+  public void setDokument(PrimaryIndex<String, Dokument> dokument) {
+    this.dokument = dokument;
+  }
+
+  public PrimaryIndex<String, Dokumentversion> getDokumentversioner() {
+    return dokumentversioner;
+  }
+
+  public void setDokumentversioner(PrimaryIndex<String, Dokumentversion> dokumentversioner) {
+    this.dokumentversioner = dokumentversioner;
   }
 }

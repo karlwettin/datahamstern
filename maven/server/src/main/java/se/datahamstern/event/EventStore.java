@@ -1,28 +1,21 @@
-package se.datahamstern;
+package se.datahamstern.event;
 
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.simple.parser.BufferedJSONStreamReader;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.JSONStreamReader;
-import se.datahamstern.command.CommandManager;
-import se.datahamstern.command.Event;
-import se.datahamstern.command.Source;
+import se.datahamstern.Datahamstern;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.UUID;
 
 /**
+ * This is where events are stored.
+ *
+ * In order to add a new event see {@link EventManager#queue(Event)}
+ *
  * @author kalle
  * @since 2012-03-02 03:09
  */

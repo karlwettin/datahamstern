@@ -16,12 +16,15 @@ import java.util.List;
 public class HarvestNaringslivsregistret {
 
 //  private static final Logger log = LoggerFactory.getLogger(HarvestNaringslivsregistret.class);
+  // todo 76960-76963++
+  // todo 9166-9167
 
   public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
     try {
       new HarvestNaringslivsregistret().harvest(
-          "5568860000",
+//        "5568860000",
+          "5564437308",
           "5560000000",
           new CreateEventsVisitor());
     } finally {

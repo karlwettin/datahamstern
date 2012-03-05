@@ -35,7 +35,8 @@ public class Source {
 
   /**
    * Hur mycket vi litar på att informationen är korrekt i det som källan beskriver.
-   * Ett värde ej lägre än 0 (litar inte alls) och ej högre än 1 (litar fullständigt)
+   * Ett värde ej lägre än 0 (litar inte alls) och ej högre än 1 (litar fullständigt).
+   * 0.5 innebär att vi är ganska säkra på vad det är.
    */
   private Float trustworthiness;
 

@@ -1,8 +1,11 @@
 package se.datahamstern;
 
 import junit.framework.TestCase;
+import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Lan;
 import se.datahamstern.domain.Organisation;
+import se.datahamstern.event.EventManager;
+import se.datahamstern.event.EventStore;
 import se.datahamstern.external.naringslivsregistret.Naringslivsregistret;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretResult;
