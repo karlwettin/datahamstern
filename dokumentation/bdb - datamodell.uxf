@@ -197,7 +197,7 @@ Organisation
 +nummerprefix:String
 +nummer:String
 +nummersuffix:String
-+typ:String
++firmaform:String
 +namn:String
 +status:List&lt;String&gt;
 --</panel_attributes>
@@ -447,13 +447,13 @@ m1=0..1
       <x>1220</x>
       <y>1580</y>
       <w>220</w>
-      <h>100</h>
+      <h>90</h>
     </coordinates>
     <panel_attributes>&lt;&lt;sourced&gt;&gt;
 &lt;&lt;domain entity&gt;&gt;
 Ekonomiskplan
 --
-+registreringsDatum:Date
++registreringsdatum:Date
 --</panel_attributes>
     <additional_attributes/>
   </element>
@@ -483,7 +483,7 @@ q1=+år:Integer
     <panel_attributes>lt=-&lt;
 m2=&lt;&lt;index&gt;&gt; 0..1 
 m1=0..1
-q1=+registreringsDatum:Date
+q1=+registreringsdatum:Date
 &lt;&lt;sourced&gt;&gt;</panel_attributes>
     <additional_attributes>120;30;130;280</additional_attributes>
   </element>
@@ -499,7 +499,7 @@ q1=+registreringsDatum:Date
 &lt;&lt;domain entity&gt;&gt;
 Stadgar
 --
-+registreringsDatum:Date
++registreringsdatum:Date
 --</panel_attributes>
     <additional_attributes/>
   </element>
@@ -514,7 +514,7 @@ Stadgar
     <panel_attributes>lt=-&lt;
 m2=&lt;&lt;index&gt;&gt; 0..1 
 m1=0..1
-q1=+registreringsDatum:Date
+q1=+registreringsdatum:Date
 &lt;&lt;sourced&gt;&gt;</panel_attributes>
     <additional_attributes>120;30;110;290</additional_attributes>
   </element>
@@ -642,15 +642,15 @@ m2=&lt;&lt;index&gt;&gt; 0..*
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>1100</x>
-      <y>1650</y>
-      <w>268</w>
-      <h>280</h>
+      <y>1640</y>
+      <w>260</w>
+      <h>290</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 m1=0..1
 m2=&lt;&lt;index&gt;&gt; 0..*
 &lt;&lt;sourced&gt;&gt;</panel_attributes>
-    <additional_attributes>30;260;220;30</additional_attributes>
+    <additional_attributes>30;270;220;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>

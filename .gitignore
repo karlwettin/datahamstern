@@ -1,0 +1,4 @@
+maven/data/*
+main/target/*
+maven/server/target/*
+maven/domain/target/*
