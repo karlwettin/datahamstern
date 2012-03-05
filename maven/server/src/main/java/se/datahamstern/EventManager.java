@@ -2,8 +2,8 @@ package se.datahamstern;
 
 import com.sleepycat.persist.EntityCursor;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Event;
@@ -37,12 +37,16 @@ public class EventManager {
     if (dataPath == null) {
       throw new NullPointerException("No data path set");
     }
+    if (!dataPath.exists() && !dataPath.mkdirs()) {
+      throw new IOException("Could not mkdirs " + dataPath);
+    }
 
     if (locallyCreatedEventsAudit == null) {
-      locallyCreatedEventsAudit = new OutputStreamWriter(new FileOutputStream(new File(System.currentTimeMillis() + ".events.json")));
+      locallyCreatedEventsAudit = new OutputStreamWriter(new FileOutputStream(new File(dataPath, System.currentTimeMillis() + ".events.json")));
       locallyCreatedEventsAudit.write("{\n  \"created\" : ");
       locallyCreatedEventsAudit.write(String.valueOf(System.currentTimeMillis()));
       locallyCreatedEventsAudit.write(",\n  \"events\" : [\n");
+      locallyCreatedEventsAudit.flush();
     }
   }
 
@@ -86,6 +90,7 @@ public class EventManager {
       event.setIdentity(EventStore.getInstance().identityFactory());
       locallyCreatedEventsAudit.write(toJSON(event));
       locallyCreatedEventsAudit.write("\n,\n");
+      locallyCreatedEventsAudit.flush();
     }
 
     // add to queue of events to be executed,
@@ -152,7 +157,10 @@ public class EventManager {
         totalCounter++;
         try {
           execute(event, jsonParser);
-
+          if (!events.delete()) {
+            // log.warn("why was event already deleted? this this be synchronized!"); // todo create event store lock
+            Nop.breakpoint();
+          }
         } catch (Exception e) {
           e.printStackTrace();
           // log.error("Exception while executing event " + event, e);
@@ -180,25 +188,25 @@ public class EventManager {
 
     JSONObject object = (JSONObject)new JSONParser().parse(json);
     Event domainEvent = new Event();
-    domainEvent.setCommandName(object.getJSONObject("command").getString("name"));
-    domainEvent.setCommandVersion(object.getJSONObject("command").getString("version"));
+    domainEvent.setCommandName((String)((JSONObject)object.get("command")).get("name"));
+    domainEvent.setCommandVersion((String)((JSONObject)object.get("command")).get("version"));
     if (object.get("data") != null) {
       // todo this silly thing would not be needed then
-      domainEvent.setJsonData(object.getJSONObject("data").toString());
+      domainEvent.setJsonData(((JSONObject)object.get("data")).toJSONString());
     }
-    JSONArray sources = object.getJSONArray("sources");
+    JSONArray sources = (JSONArray)object.get("sources");
     if (sources != null) {
-      domainEvent.setSources(new ArrayList<Source>(sources.length()));
-      for (int i=0; i<sources.length(); i++) {
+      domainEvent.setSources(new ArrayList<Source>(sources.size()));
+      for (int i=0; i<sources.size(); i++) {
         JSONObject source = (JSONObject)sources.get(i);
         Source domainSource = new Source();
-        domainSource.setAuthor(source.getString("author"));
+        domainSource.setAuthor((String)source.get("author"));
         if (source.get("trustworthiness") != null) {
-          domainSource.setTrustworthiness(new Double(source.getDouble("trustworthiness")).floatValue());
+          domainSource.setTrustworthiness(((Double)source.get("trustworthiness")).floatValue());
         }
-        domainSource.setDetails(source.getString("details"));
-        domainSource.setLicense(source.getString("licence"));
-        domainSource.setTimestamp(new Date(source.getLong("timestamp")));
+        domainSource.setDetails((String)source.get("details"));
+        domainSource.setLicense((String)source.get("licence"));
+        domainSource.setTimestamp(new Date((Long)source.get("timestamp")));
         domainEvent.getSources().add(domainSource);
       }
     }
@@ -228,7 +236,7 @@ public class EventManager {
     json.write(",  \"data\" : ");
     json.write(event.getJsonData());
 
-    json.write(",  \"sources\" : ");
+    json.write(",\n  \"sources\" : ");
     if (event.getSources() == null || event.getSources().isEmpty()) {
       json.write("null");
     } else {
@@ -239,54 +247,54 @@ public class EventManager {
         json.write("{");
 
 
-        json.write("\n      \"author\" : ");
+        json.write("\n    \"author\" : ");
         if (source.getAuthor() == null) {
-          json.write(" null");
+          json.write("null");
         } else {
           json.write('"');
           json.write(StringEscapeUtils.escapeJavaScript(source.getAuthor()));
           json.write('"');
         }
 
-        json.write(",\n      \"trustworthiness\" :");
+        json.write(",\n    \"trustworthiness\" : ");
         if (source.getTrustworthiness() == null) {
-          json.write(" null");
+          json.write("null");
         } else {
           json.write(source.getTrustworthiness().toString());
         }
 
-        json.write(",\n      \"details\" :");
+        json.write(",\n    \"details\" : ");
         if (source.getDetails() == null) {
-          json.write(" null");
+          json.write("null");
         } else {
           json.write('"');
           json.write(StringEscapeUtils.escapeJavaScript(source.getDetails()));
           json.write('"');
         }
 
-        json.write(",\n      \"licence\" :");
+        json.write(",\n    \"licence\" : ");
         if (source.getLicense() == null) {
-          json.write(" null");
+          json.write("null");
         } else {
           json.write('"');
           json.write(StringEscapeUtils.escapeJavaScript(source.getLicense()));
           json.write('"');
         }
 
-        json.write(",\n      \"timestamp\" :");
+        json.write(",\n    \"timestamp\" : ");
         if (source.getTrustworthiness() == null) {
-          json.write(" null");
+          json.write("null");
         } else {
           json.write(String.valueOf(source.getTimestamp().getTime()));
         }
 
-        json.write("\n    }");
+        json.write("\n  }");
 
         if (sourceIterator.hasNext()) {
           json.write(", ");
         }
       }
-      json.write("  ]\n");
+      json.write("]\n");
     }
 
     json.write("}\n");

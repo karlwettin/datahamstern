@@ -92,6 +92,18 @@ public class Event {
     return identity != null ? identity.hashCode() : 0;
   }
 
+  @Override
+  public String toString() {
+    return "Event{" +
+        "commandName='" + commandName + '\'' +
+        ", commandVersion='" + commandVersion + '\'' +
+        ", sources=" + sources +
+        ", jsonData='" + jsonData + '\'' +
+        ", identity='" + identity + '\'' +
+        ", _local_timestamp=" + _local_timestamp +
+        '}';
+  }
+
   public String getIdentity() {
     return identity;
   }

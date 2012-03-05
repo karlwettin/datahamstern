@@ -10,6 +10,7 @@ import se.datahamstern.sourced.SourcedValue;
 import se.datahamstern.util.Mod10;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class TestNaringslivsregistret extends TestCase {
       nlr.open();
       try {
 
-        List<NaringslivsregistretResult> results = nlr.search("volvo personvagnar");
+        List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>(nlr.search("volvo personvagnar").keySet());
         for (NaringslivsregistretResult result : results) {
           EventManager.getInstance().queue(NaringslivsregistretCommand.eventFactory(result));
         }

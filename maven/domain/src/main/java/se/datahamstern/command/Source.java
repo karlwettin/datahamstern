@@ -87,6 +87,17 @@ public class Source {
     return result;
   }
 
+  @Override
+  public String toString() {
+    return "Source{" +
+        "author='" + author + '\'' +
+        ", trustworthiness=" + trustworthiness +
+        ", timestamp=" + timestamp +
+        ", license='" + license + '\'' +
+        ", details='" + details + '\'' +
+        '}';
+  }
+
   public String getAuthor() {
     return author;
   }

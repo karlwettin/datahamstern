@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import se.datahamstern.io.SeleniumAccessor;
 import se.datahamstern.io.SourceChangedException;
 import se.datahamstern.util.Mod10;
+import se.datahamstern.util.ScoreMap;
 import se.datahamstern.xml.DomUtils;
 
 import javax.xml.xpath.XPathConstants;
@@ -37,7 +38,7 @@ public class Naringslivsregistret {
 
   // todo milliseconds delay?
 
-  public List<NaringslivsregistretResult> search(String query) throws Exception {
+  public ScoreMap<NaringslivsregistretResult> search(String query) throws Exception {
 
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>();
 
@@ -91,26 +92,36 @@ public class Naringslivsregistret {
     // if query is organization number then we don't get the county code
     // so place a secondary query using the name and then find the result in the list using the organization number
 
-    if (Mod10.isValidSwedishOrganizationNumber(query.replaceAll("\\p{Punct}", ""))) {
+    ScoreMap<NaringslivsregistretResult> allResults = new ScoreMap<NaringslivsregistretResult>();
+
+    if (!Mod10.isValidSwedishOrganizationNumber(query.replaceAll("\\p{Punct}", ""))) {
+      for (NaringslivsregistretResult result : results) {
+        allResults.increaseAndGet(result);
+      }
+    } else {
+
       for (NaringslivsregistretResult result : results) {
 
-        List<NaringslivsregistretResult> nameResults;
+        ScoreMap<NaringslivsregistretResult> nameResults;
         try {
           nameResults = search(result.getNamn());
         } catch (Exception e) {
           e.printStackTrace();
           throw e;
         }
-        for (NaringslivsregistretResult nameResult : nameResults) {
+
+        for (NaringslivsregistretResult nameResult : nameResults.keySet()) {
           if (nameResult.getNummer().equals(result.getNummer())) {
-            result.setLänsnummer(nameResult.getLänsnummer());
-            break;
+            allResults.set(nameResult, 1);
+          } else {
+            allResults.set(nameResult, 0);
           }
         }
+
       }
     }
 
-    return results;
+    return allResults;
   }
 
 }

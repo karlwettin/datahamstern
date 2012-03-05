@@ -1,17 +1,11 @@
 package se.datahamstern.external.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
-import se.datahamstern.Glue;
 import se.datahamstern.util.Mod10;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * not thread safe!
@@ -26,25 +20,33 @@ public class HarvestNaringslivsregistret {
   public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
     try {
-//      new HarvestNaringslivsregistret().harvest("5562990000", "5600000000");
-      new HarvestNaringslivsregistret().harvest("5562999622", "5600000000", new RawAuditLogVisitor());
+      new HarvestNaringslivsregistret().harvest(
+          "5568860000",
+          "5560000000",
+          new CreateEventsVisitor());
     } finally {
-      Datahamstern.getInstance().open();
+      Datahamstern.getInstance().close();
     }
   }
 
   public HarvestNaringslivsregistret() throws Exception {
   }
 
-  private int[] organizationNumber = new int[]{5, 5, 6, 0, 0, 0, 0, 0, 0, 0};
-  private int[] end = new int[]{5, 6, 0, 0, 0, 0, 0, 0, 0, 0};
+  private int[] organizationNumber = new int[10];
+  private int[] end = new int[10];
   private char[] chars = new char[10];
 
 
   private boolean abort = false;
 
+  private boolean increase;
 
   public void harvest(String start, String end, final HarvestNaringslivsregistretVisitor visitor) throws Exception {
+    harvest(Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1), start, end, visitor);
+  }
+  public void harvest(int numberOfThreads, String start, String end, final HarvestNaringslivsregistretVisitor visitor) throws Exception {
+
+    increase = Long.valueOf(start) < Long.valueOf(end);
 
     setOrganizationNumber(start);
     setEnd(end);
@@ -55,7 +57,7 @@ public class HarvestNaringslivsregistret {
 
 
     List<Thread> threads = new ArrayList<Thread>();
-    for (int i = 0; i < Datahamstern.getInstance().getProperty("HarvestNaringslivsregistret.threads", 1); i++) {
+    for (int i = 0; i < numberOfThreads; i++) {
       Thread thread = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -72,7 +74,7 @@ public class HarvestNaringslivsregistret {
                 while (true) {
                   try {
                     tries++;
-                    results = nlr.search(organizationNumber);
+                    results = new ArrayList<NaringslivsregistretResult>(nlr.search(organizationNumber).keySet());
                     break;
                   } catch (Exception e) {
                     e.printStackTrace();
@@ -135,12 +137,26 @@ public class HarvestNaringslivsregistret {
 
     while (!Arrays.equals(organizationNumber, end)) {
 
-      for (int i = 9; i >= 0; i--) {
-        if (organizationNumber[i] != 9) {
-          organizationNumber[i]++;
-          break;
-        } else {
-          organizationNumber[i] = 0;
+      if (increase) {
+
+        for (int i = 9; i >= 0; i--) {
+          if (organizationNumber[i] != 9) {
+            organizationNumber[i]++;
+            break;
+          } else {
+            organizationNumber[i] = 0;
+          }
+        }
+
+      } else {
+
+        for (int i = 9; i >= 0; i--) {
+          if (organizationNumber[i] != 0) {
+            organizationNumber[i]--;
+            break;
+          } else {
+            organizationNumber[i] = 9;
+          }
         }
       }
 
