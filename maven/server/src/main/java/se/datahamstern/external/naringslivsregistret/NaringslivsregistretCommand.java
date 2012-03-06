@@ -66,8 +66,8 @@ public class NaringslivsregistretCommand extends Command {
    */
   public static String COMMAND_VERSION = "1";
 
-  static {
-    CommandManager.getInstance().registerCommandClass(NaringslivsregistretCommand.class, COMMAND_NAME, COMMAND_VERSION);
+  public void register(CommandManager commandManager) {
+    commandManager.registerCommandClass(NaringslivsregistretCommand.class, COMMAND_NAME, COMMAND_VERSION);
   }
 
   @Override

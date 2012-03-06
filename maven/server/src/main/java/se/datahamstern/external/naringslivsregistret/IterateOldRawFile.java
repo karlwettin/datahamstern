@@ -1,10 +1,10 @@
 package se.datahamstern.external.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
-import se.datahamstern.event.Event;
-import se.datahamstern.event.EventQueue;
 import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
+import se.datahamstern.event.Event;
+import se.datahamstern.event.EventQueue;
 
 import java.io.*;
 import java.util.Date;
@@ -33,7 +33,7 @@ public class IterateOldRawFile {
 
       Source source = NaringslivsregistretCommand.defaultSourceFactory(null);
 
-      File path = new File(Datahamstern.getInstance().getDataPath(), "services/bolagsverket/naringslivsregistret");
+      File path = new File(Datahamstern.getInstance().getDataPath(), "event/oo");
       if (!path.exists() && !path.mkdirs()) {
         throw new IOException("Could not mkdirs " + path.getAbsolutePath());
       }
@@ -45,28 +45,37 @@ public class IterateOldRawFile {
         }
       })) {
 
-        source.setDetails(file.getName());
+//        source.setDetails(file.getName());
 
-        FileInputStream fis = new FileInputStream(file);
-        iterator.open(fis);
-        Posting posting;
-        while ((posting = iterator.next()) != null) {
+        try {
 
-          result.setLänsnummer(posting.getLänsnummer());
-          result.setNamn(posting.getNamn());
-          result.setNummerprefix(posting.getNummerprefix());
-          result.setNummer(posting.getNummer());
-          result.setNummersuffix(posting.getNummersuffix());
-          result.setFirmaform(posting.getTyp());
-          result.setStatus(posting.getStatus());
+          FileInputStream fis = new FileInputStream(file);
+          iterator.open(fis);
+          Posting posting;
+          while ((posting = iterator.next()) != null) {
 
-          Event event = NaringslivsregistretCommand.eventFactory(result, source);
-          EventQueue.getInstance().queue(event);
-          Nop.breakpoint();
+            result.setLänsnummer(posting.getLänsnummer());
+            result.setNamn(posting.getNamn());
+            result.setNummerprefix(posting.getNummerprefix());
+            result.setNummer(posting.getNummer());
+            result.setNummersuffix(posting.getNummersuffix());
+            result.setFirmaform(posting.getFirmaform());
+            result.setStatus(posting.getStatus());
 
+            source.setTimestamp(posting.getTimestamp());
+            Event event = NaringslivsregistretCommand.eventFactory(result, source);
+
+            EventQueue.getInstance().queue(event);
+            Nop.breakpoint();
+
+          }
+          iterator.close();
+          fis.close();
+
+        } catch (Exception e) {
+          // log.error("Could not import " + file.getAbsoulutPath(), e);
+          e.printStackTrace();
         }
-        iterator.close();
-        fis.close();
       }
 
       EventQueue.getInstance().flushQueue();
@@ -96,7 +105,7 @@ public class IterateOldRawFile {
     private String nummer;
     private String nummersuffix;
     private String länsnummer;
-    private String typ;
+    private String firmaform;
     private String namn;
     private String status;
 
@@ -120,8 +129,8 @@ public class IterateOldRawFile {
       return länsnummer;
     }
 
-    public String getTyp() {
-      return typ;
+    public String getFirmaform() {
+      return firmaform;
     }
 
     public String getNamn() {
@@ -145,7 +154,7 @@ public class IterateOldRawFile {
         posting.nummer = (String) ois.readObject();
         posting.nummersuffix = (String) ois.readObject();
         posting.länsnummer = (String) ois.readObject();
-        posting.typ = (String) ois.readObject();
+        posting.firmaform = (String) ois.readObject();
         posting.namn = (String) ois.readObject();
         posting.status = (String) ois.readObject();
 

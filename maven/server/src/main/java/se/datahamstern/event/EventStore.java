@@ -135,12 +135,8 @@ public class EventStore {
   }
 
 
-  public synchronized String identityFactory() throws Exception {
-    StringBuilder identity = new StringBuilder(100);
-    identity.append(Datahamstern.getInstance().getSystemUUID());
-    identity.append("/");
-    identity.append(UUID.randomUUID().toString());
-    return identity.toString();
+  public String identityFactory() throws Exception {
+    return UUID.randomUUID().toString();
   }
 
 

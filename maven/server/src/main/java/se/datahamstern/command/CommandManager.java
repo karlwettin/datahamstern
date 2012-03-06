@@ -1,8 +1,6 @@
 package se.datahamstern.command;
 
-import com.sleepycat.persist.EntityCursor;
-import org.json.simple.parser.JSONParser;
-import se.datahamstern.Datahamstern;
+import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +14,7 @@ public class CommandManager {
   private static CommandManager instance = new CommandManager();
 
   private CommandManager() {
+    registerCommandClass(NaringslivsregistretCommand.class, NaringslivsregistretCommand.COMMAND_NAME, NaringslivsregistretCommand.COMMAND_VERSION);
   }
 
   public static CommandManager getInstance() {

@@ -52,6 +52,10 @@ public class Event implements Serializable {
 
   private static final long serialVersionUID = 1l;
 
+  /** universally unique identity for this event */
+  @PrimaryKey
+  private String identity;
+
   /**
    * when this event was put to the local bdb event store
    * used to find out what events to execute
@@ -69,13 +73,6 @@ public class Event implements Serializable {
   private List<Source> sources;
 
   private String jsonData;
-
-
-  /**
-   * internal identity
-   */
-  @PrimaryKey
-  private String identity;
 
 
   /**

@@ -7,6 +7,7 @@ import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Source;
+import se.datahamstern.event.v0.StreamingJsonEventReader;
 import se.datahamstern.io.FileUtils;
 
 import java.io.*;
@@ -93,6 +94,30 @@ public class EventQueue {
     this.currentOutboxEventLog = currentOutboxEventLog;
   }
 
+  public void pollInbox() throws Exception {
+    for(File file : inbox.listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        return file.isFile() && file.getName().endsWith(".json");
+      }
+    })) {
+      File seen = new File(file.getAbsolutePath() + ".seen");
+      if (!seen.exists()) {
+        try {
+        new FileOutputStream(seen, false).close();
+        StreamingJsonEventLogReader events = new StreamingJsonEventLogReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+        Event event;
+        while ((event = events.next()) != null) {
+          queue(event);
+        }
+        } catch (Exception e) {
+          // log.error("Exception while importing event log " + file.getAbsolutePath(), e);
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
   /**
    * Adds an event to the queue.
    * Next time you call upon {@link EventQueue#flushQueue()} it will be flushed to your database.
@@ -121,7 +146,7 @@ public class EventQueue {
         currentOutboxEventLog.flush();
       }
 
-      EventJsonWriter.writeJSON(currentOutboxEventLog, event);
+      JsonEventWriter.writeJSON(currentOutboxEventLog, event);
       currentOutboxEventLog.write("\n,\n");
       currentOutboxEventLog.flush();
     }
@@ -219,13 +244,13 @@ public class EventQueue {
 
   @Deprecated
   public static Event fromJSON(Reader json) throws Exception {
-    return new StreamingJsonReader(json).next();
+    return new StreamingJsonEventReader(json).next();
   }
 
   @Deprecated
   public static String toJSON(Event event) throws IOException {
     StringWriter json = new StringWriter(4096);
-    EventJsonWriter.writeJSON(json, event);
+    JsonEventWriter.writeJSON(json, event);
     return json.toString();
   }
 

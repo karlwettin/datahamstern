@@ -12,8 +12,8 @@ import java.util.Date;
 /**
  * Reads *well formatted* events from a log in JSON format.
  * <p/>
- * This is the same log format as produced by {@link EventQueue#queue(Event)}
- * and the same event JSON as produced by {@link EventQueue#toJSON(Event)}.
+ * This is the same log format as produced by {@link se.datahamstern.event.EventQueue#queue(se.datahamstern.event.Event)}
+ * and the same event JSON as produced by {@link se.datahamstern.event.EventQueue#toJSON(se.datahamstern.event.Event)}.
  * <p/>
  * It uses a lexer for performance reasons,
  * which also is the reason for the following:
@@ -52,7 +52,7 @@ import java.util.Date;
  * @author kalle
  * @since 2012-03-05 22:46
  */
-public class StreamingJsonEventLogReader extends StreamingJsonReader {
+public class StreamingJsonEventLogReader extends StreamingJsonEventReader  implements JsonEventLogReader {
 
   public static void main(String[] args) throws Exception {
 
@@ -75,6 +75,15 @@ public class StreamingJsonEventLogReader extends StreamingJsonReader {
 
     assertNextAnyOfEvents(JSONStreamReader.Event.START_OBJECT);
 
+    String version = assertNextElementValueString("version");
+    if (!"1".equals(version)) {
+      throw new RuntimeException("Expected version 1 but was " + version);
+    }
+
+    assertNextAnyOfEvents(JSONStreamReader.Event.NEXT_VALUE);
+    String system = assertNextElementValueString("system");
+
+    assertNextAnyOfEvents(JSONStreamReader.Event.NEXT_VALUE);
     created = new Date(assertNextElementValueLong("created"));
 
     assertNextAnyOfEvents(JSONStreamReader.Event.NEXT_VALUE);

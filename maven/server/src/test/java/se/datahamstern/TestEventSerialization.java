@@ -3,9 +3,9 @@ package se.datahamstern;
 import junit.framework.TestCase;
 import se.datahamstern.command.Source;
 import se.datahamstern.event.*;
+import se.datahamstern.event.StreamingJsonEventReader;
 import se.datahamstern.util.CloneUtils;
 
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,9 +38,9 @@ public class TestEventSerialization extends TestCase {
 
     Event deepClone = CloneUtils.deepClone(event);
 
-    String jsonClone = EventJsonWriter.toJSON(event);
+    String jsonClone = JsonEventWriter.toJSON(event);
 
-    Event fromJsonClone = new StreamingJsonReader(new StringReader(jsonClone)).next();
+    Event fromJsonClone = new StreamingJsonEventReader(new StringReader(jsonClone)).next();
 
     assertEquals(deepClone, event);
     assertEquals(event, deepClone);

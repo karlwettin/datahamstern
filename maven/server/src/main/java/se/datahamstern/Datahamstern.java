@@ -21,6 +21,9 @@ public class Datahamstern {
     getInstance().open();
     try {
 
+      EventQueue.getInstance().pollInbox();
+      EventQueue.getInstance().flushQueue();
+
       System.currentTimeMillis();
 
     } finally {
