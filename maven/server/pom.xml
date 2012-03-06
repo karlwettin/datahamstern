@@ -36,12 +36,19 @@
     </dependency>
 
     <!--
-      todo does not need -kalle branch!
-      either find 1.1 in a maven repo
-      or switch code to org.json in jdk!
+      1.1-kalle is a branch that also feature a stream reader API.
+      It is used when loading large amounts of events from JSON,
+      for example when executing old event logs.
+
+      https://github.com/karlwettin/json-simple-kalle
+
+      git clone git://github.com/karlwettin/json-simple-kalle.git
+      cd json-simple-kalle
+      mvn -Dtest=false -DfailIfNoTests=false install
+
+      (It is the bean unmarshal tests that fail, not in use here.)
      -->
     <dependency>
-      <!-- https://github.com/karlwettin/json-simple-kalle -->
       <groupId>json-simple</groupId>
       <artifactId>json-simple</artifactId>
       <version>1.1-kalle-8</version>
@@ -49,7 +56,7 @@
 
     <!--
       todo only required to execute bsh scripts editor from webapp.
-      replace with jsp editor hack instead! that's real java!
+      replace with jsp editor hack instead! that's real java! and no deps!
     -->
     <dependency>
       <groupId>org.beanshell</groupId>

@@ -14,19 +14,57 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
+ * Reads *well formatted* events from a log in JSON format.
+ * <p/>
+ * This is the same log format as produced by {@link EventManager#queue(Event)}
+ * and the same event JSON as produced by {@link EventManager#toJSON(Event)}.
+ * <p/>
+ * It uses a lexer for performance reasons,
+ * which also is the reason for the following:
+ * <p/>
+ * Order of fields must be exactly as defined here
+ * and all fields must be present but may contains value null.
+ * <p/>
+ * It throws an exception if there is a problem.
+ * <p/>
+ * <p/>
+ * Example log:
+ * <p/>
+ * <pre>
+ * {
+ *   "created" : 1330988126187
+ *   "events" : [{
+ *   "command" : {
+ *   "name" : "foo"
+ *   "version" : "1"
+ *   },
+ *   "data" : null,
+ *   "sources" : [{
+ *     "author" : "should be someone",
+ *     "trustworthiness" : 1.0,
+ *     "details" : null,
+ *     "licence" : "should be something",
+ *     "timestamp" : 1330988126187
+ *     }]
+ *   }],
+ *   "closed" : 1330988526643
+ * }
+ * </pre>
+ * <p/>
+ *
  * @author kalle
  * @since 2012-03-05 22:46
  */
-public class EventJsonReader {
+public class JsonEventLogReader {
 
   public static void main(String[] args) throws Exception {
 
-    EventJsonReader r = new EventJsonReader();
+    JsonEventLogReader r = new JsonEventLogReader();
     r.open(new InputStreamReader(new FileInputStream(new File("data/eventManager/1330980462488.events.json")), "UTF8"));
 
     Event event;
     while ((event = r.next()) != null) {
-      System.out.println(event);
+      System.out.println(EventManager.toJSON(event));
     }
 
     Nop.breakpoint();
@@ -55,7 +93,6 @@ public class EventJsonReader {
 
   private Date created;
   private Date closed;
-
 
 
   /**
@@ -87,7 +124,6 @@ public class EventJsonReader {
 //      "version" : "1"
 //    },
 
-
     assertNextElementKey("command");
     assertNextStartObject();
 
@@ -97,16 +133,20 @@ public class EventJsonReader {
 
     assertNextEndObject();
 
-
 //    "data" : {"firmatyp":"Firma","länsnummer":"01","status":"Konkurs avslutad","namn":"Bertil Enström Anläggnings & Byggnads Aktiebolag","nummersuffix":null,"nummer":"5564437282","nummerprefix":null,"firmaform":"AB"},
+
+
+    // read content from field "data" which is of any type.
 
     assertNextAnyOfEvents(JSONStreamReader.Event.NEXT_VALUE);
     assertNextElementKey("data");
 
-    jsr.next(); // any value, array or object.
-    assertAnyOfEvents(JSONStreamReader.Event.START_ELEMENT_VALUE, JSONStreamReader.Event.START_ARRAY, JSONStreamReader.Event.START_OBJECT);
+
+    assertNextAnyOfEvents(JSONStreamReader.Event.START_ELEMENT_VALUE, JSONStreamReader.Event.START_ARRAY, JSONStreamReader.Event.START_OBJECT);
     if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_VALUE) {
       Object object = jsr.getObjectValue();
+      // todo this instanceof is terrible for performance!
+      // todo extend json-simple-kalle in order to read the raw data instead!
       if (object == null) {
         // do nothing
       } else if (object instanceof String) {
@@ -131,6 +171,7 @@ public class EventJsonReader {
 
       StringBuilder jsonData = new StringBuilder(4096);
 
+
       jsr.back(1);
 
       int level = 0;
@@ -143,8 +184,42 @@ public class EventJsonReader {
           level--;
         }
 
-        // todo write event as json to stringbuilder!
 
+        if (jsr.getEvent() == JSONStreamReader.Event.START_OBJECT) {
+          jsonData.append("{");
+        } else if (jsr.getEvent() == JSONStreamReader.Event.END_OBJECT) {
+          jsonData.append("}");
+        } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_KEY) {
+          jsonData.append('"');
+          jsonData.append(jsr.getStringValue());
+          jsonData.append("\":");
+        } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_VALUE) {
+
+          // todo this instanceof is terrible for performance!
+          // todo extend json-simple-kalle in order to read the raw data instead!
+
+          Object object = jsr.getObjectValue();
+          if (object == null) {
+            jsonData.append("null");
+          } else if (object instanceof String) {
+            jsonData.append("\"").append(object).append("\"");
+          } else if (object instanceof Number) {
+            jsonData.append(object.toString());
+          } else if (object instanceof Boolean) {
+            jsonData.append((Boolean) object ? "true" : "false");
+          } else {
+            throw new RuntimeException("Unexpected event value: " + object);
+          }
+
+        } else if (jsr.getEvent() == JSONStreamReader.Event.START_ARRAY) {
+          jsonData.append("[");
+        } else if (jsr.getEvent() == JSONStreamReader.Event.END_ARRAY) {
+          jsonData.append("]");
+        } else if (jsr.getEvent() == JSONStreamReader.Event.NEXT_VALUE) {
+          jsonData.append(",");
+        } else {
+          throw new RuntimeException("Unexpected event " + jsr.getEvent());
+        }
 
 
       } while (level > 0);
@@ -215,7 +290,6 @@ public class EventJsonReader {
     if (jsr.getEvent() == JSONStreamReader.Event.END_ARRAY) {
       jsr.back(1);
     }
-
 
 
     return event;
