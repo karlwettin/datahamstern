@@ -157,7 +157,7 @@ public class StreamingJsonEventReader implements EventReader {
           jsonData.append("}");
         } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_KEY) {
           jsonData.append('"');
-          jsonData.append(jsr.getStringValue());
+          jsonData.append(StringEscapeUtils.escapeJavaScript(jsr.getStringValue()));
           jsonData.append("\":");
         } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_VALUE) {
 
@@ -168,7 +168,7 @@ public class StreamingJsonEventReader implements EventReader {
           if (object == null) {
             jsonData.append("null");
           } else if (object instanceof String) {
-            jsonData.append("\"").append(object).append("\"");
+            jsonData.append("\"").append(StringEscapeUtils.escapeJavaScript((String)object)).append("\"");
           } else if (object instanceof Number) {
             jsonData.append(object.toString());
           } else if (object instanceof Boolean) {

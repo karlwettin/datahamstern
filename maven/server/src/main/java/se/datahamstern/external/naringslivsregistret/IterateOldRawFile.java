@@ -5,9 +5,11 @@ import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
 import se.datahamstern.event.EventQueue;
+import se.datahamstern.event.JsonEventLogWriter;
 
 import java.io.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * laddar in data från de råfiler jag först skapade för att skörda näringslivsregistret
@@ -26,14 +28,13 @@ public class IterateOldRawFile {
     Datahamstern.getInstance().open();
     try {
 
-
       IterateOldRawFile iterator = new IterateOldRawFile();
       NaringslivsregistretResult result = new NaringslivsregistretResult();
 
 
       Source source = NaringslivsregistretCommand.defaultSourceFactory(null);
 
-      File path = new File(Datahamstern.getInstance().getDataPath(), "event/oo");
+      File path = new File("datafactory/oldrawfiles");
       if (!path.exists() && !path.mkdirs()) {
         throw new IOException("Could not mkdirs " + path.getAbsolutePath());
       }
@@ -47,7 +48,10 @@ public class IterateOldRawFile {
 
 //        source.setDetails(file.getName());
 
+        JsonEventLogWriter w = new JsonEventLogWriter(new File("data/event/outbox/" + System.currentTimeMillis() + ".events.json"));
         try {
+
+
 
           FileInputStream fis = new FileInputStream(file);
           iterator.open(fis);
@@ -64,21 +68,25 @@ public class IterateOldRawFile {
 
             source.setTimestamp(posting.getTimestamp());
             Event event = NaringslivsregistretCommand.eventFactory(result, source);
-
-            EventQueue.getInstance().queue(event);
+            if (event.getIdentity() == null) {
+              event.setIdentity(UUID.randomUUID().toString());
+            }
+            w.write(event);
             Nop.breakpoint();
 
           }
           iterator.close();
           fis.close();
 
+
         } catch (Exception e) {
           // log.error("Could not import " + file.getAbsoulutPath(), e);
           e.printStackTrace();
         }
-      }
 
-      EventQueue.getInstance().flushQueue();
+        w.close();
+
+      }
 
     } finally {
       Datahamstern.getInstance().close();

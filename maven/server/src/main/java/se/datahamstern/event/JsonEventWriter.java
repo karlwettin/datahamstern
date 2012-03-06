@@ -29,10 +29,10 @@ public class JsonEventWriter {
     json.write("{");
     json.write("\n  \"command\" : { ");
     json.write("\n    \"name\" : \"");
-    json.write(event.getCommandName());
+    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandName()));
     json.write("\"");
     json.write(",\n    \"version\" : \"");
-    json.write(event.getCommandVersion());
+    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandVersion()));
     json.write("\"");
     json.write("\n  }");
 
@@ -119,10 +119,10 @@ public class JsonEventWriter {
     }
     json.write(",\n  \"command\" : { ");
     json.write("\n    \"name\" : \"");
-    json.write(event.getCommandName());
+    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandName()));
     json.write("\"");
     json.write(",\n    \"version\" : \"");
-    json.write(event.getCommandVersion());
+    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandVersion()));
     json.write("\"");
     json.write(",\n    \"data\" : ");
     json.write(event.getJsonData());

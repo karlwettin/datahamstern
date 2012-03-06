@@ -1,5 +1,6 @@
 package se.datahamstern.event.v0;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.parser.BufferedJSONStreamReader;
 import org.json.simple.parser.JSONStreamReader;
 import se.datahamstern.command.Source;
@@ -105,9 +106,9 @@ public class StreamingJsonEventReader implements EventReader {
           // todo this instanceof is terrible for performance!
           // todo extend json-simple-kalle in order to read the raw data instead!
           if (object == null) {
-            // do nothing
+            event.setJsonData("null");
           } else if (object instanceof String) {
-            event.setJsonData("\"" + object + "\"");
+            event.setJsonData("\"" + StringEscapeUtils.escapeJavaScript((String)object) + "\"");
           } else if (object instanceof Double) {
             event.setJsonData(object.toString());
           } else if (object instanceof Long) {
@@ -148,7 +149,7 @@ public class StreamingJsonEventReader implements EventReader {
               jsonData.append("}");
             } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_KEY) {
               jsonData.append('"');
-              jsonData.append(jsr.getStringValue());
+              jsonData.append(StringEscapeUtils.escapeJavaScript(jsr.getStringValue()));
               jsonData.append("\":");
             } else if (jsr.getEvent() == JSONStreamReader.Event.START_ELEMENT_VALUE) {
 
@@ -159,7 +160,7 @@ public class StreamingJsonEventReader implements EventReader {
               if (object == null) {
                 jsonData.append("null");
               } else if (object instanceof String) {
-                jsonData.append("\"").append(object).append("\"");
+                jsonData.append("\"").append(StringEscapeUtils.escapeJavaScript((String)object)).append("\"");
               } else if (object instanceof Number) {
                 jsonData.append(object.toString());
               } else if (object instanceof Boolean) {

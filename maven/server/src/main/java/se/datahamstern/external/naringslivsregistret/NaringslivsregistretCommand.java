@@ -1,6 +1,7 @@
 package se.datahamstern.external.naringslivsregistret;
 
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.domain.DomainStore;
@@ -109,15 +110,82 @@ public class NaringslivsregistretCommand extends Command {
     event.setSources(new ArrayList<Source>(1));
     event.getSources().add(source);
 
-    JSONObject json = new JSONObject();
-    json.put("nummerprefix", result.getNummerprefix());
-    json.put("nummer", result.getNummer());
-    json.put("nummersuffix", result.getNummersuffix());
-    json.put("namn", result.getNamn());
-    json.put("länsnummer", result.getLänsnummer());
-    json.put("firmaform", result.getFirmaform());
-    json.put("firmatyp", result.getFirmatyp());
-    json.put("status", result.getStatus());
+    StringBuilder json = new StringBuilder();
+    json.append("{\"nummerprefix\":");
+    if (result.getNummerprefix() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getNummerprefix()));
+      json.append('"');
+    }
+    json.append(",\"nummer\":");
+    if (result.getNummer() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getNummer()));
+      json.append('"');
+    }
+
+    json.append(",\"nummersuffix\":");
+    if (result.getNummersuffix() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getNummersuffix()));
+      json.append('"');
+    }
+
+    json.append(",\"namn\":");
+    if (result.getNamn() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getNamn()));
+      json.append('"');
+    }
+
+    json.append(",\"");
+    json.append(StringEscapeUtils.escapeJava("länsnummer"));
+    json.append("\":");
+    if (result.getLänsnummer() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getLänsnummer()));
+      json.append('"');
+    }
+
+    json.append(",\"firmaform\":");
+    if (result.getFirmaform() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getFirmaform()));
+      json.append('"');
+    }
+
+    json.append(",\"firmatyp\":");
+    if (result.getFirmatyp() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getFirmatyp()));
+      json.append('"');
+    }
+
+    json.append(",\"status\":");
+    if (result.getStatus() == null) {
+      json.append("null");
+    } else {
+      json.append('"');
+      json.append(StringEscapeUtils.escapeJavaScript(result.getStatus()));
+      json.append('"');
+    }
+
+    json.append("}");
+
     event.setJsonData(json.toString());
 
     return event;

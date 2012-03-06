@@ -64,7 +64,7 @@ public class StreamingJsonEventLogReader extends StreamingJsonEventReader implem
 
     Datahamstern.getInstance().open();
 
-    for (File file : new File("data/event/outbox_v0").listFiles()) {
+    for (File file : new File("datafactory/first_json").listFiles()) {
       if (file.isFile()) {
 
         JsonEventLogWriter w = new JsonEventLogWriter(new File(EventQueue.getInstance().getOutbox(), file.getName()));
