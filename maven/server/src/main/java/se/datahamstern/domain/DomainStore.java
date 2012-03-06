@@ -6,6 +6,7 @@ import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import se.datahamstern.Datahamstern;
+import se.datahamstern.io.FileUtils;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.io.File;
@@ -68,10 +69,7 @@ public class DomainStore {
     readOnly = Boolean.valueOf(Datahamstern.getInstance().getProperty("domainStore.readOnly", "false"));
 
     if (!path.exists()) {
-//      log.info("Creating directory " + path.getAbsolutePath());
-      if (!path.mkdirs()) {
-        throw new IOException("Could not create directory " + path.getAbsolutePath());
-      }
+      path = FileUtils.mkdirs(path);
 
       EnvironmentConfig envConfig = new EnvironmentConfig();
       envConfig.setAllowCreate(true);

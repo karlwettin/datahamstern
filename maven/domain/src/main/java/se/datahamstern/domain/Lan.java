@@ -7,12 +7,17 @@ import com.sleepycat.persist.model.SecondaryKey;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
+import java.io.Serializable;
+
 /**
  * @author kalle
  * @since 2012-03-02 03:22
  */
 @Entity(version = 1)
-public class Lan extends AbstractSourced implements DomainEntityObject {
+public class Lan extends AbstractSourced implements DomainEntityObject, Serializable {
+
+  private static final long serialVersionUID = 1l;
+
 
   @Override
   public void accept(DomainObjectVisitor visitor) {

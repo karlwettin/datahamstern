@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,7 +16,10 @@ import java.util.Date;
  * @since 2012-03-05 04:47
  */
 @Entity(version = 1)
-public class Arsredovisning extends AbstractSourced implements DomainEntityObject {
+public class Arsredovisning extends AbstractSourced implements DomainEntityObject , Serializable {
+
+  private static final long serialVersionUID = 1l;
+
 
   @Override
   public void accept(DomainObjectVisitor visitor) {

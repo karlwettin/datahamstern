@@ -2,7 +2,7 @@ package se.datahamstern.external.naringslivsregistret;
 
 import se.datahamstern.Datahamstern;
 import se.datahamstern.event.Event;
-import se.datahamstern.event.EventManager;
+import se.datahamstern.event.EventQueue;
 import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
 
@@ -61,7 +61,7 @@ public class IterateOldRawFile {
           result.setStatus(posting.getStatus());
 
           Event event = NaringslivsregistretCommand.eventFactory(result, source);
-          EventManager.getInstance().queue(event);
+          EventQueue.getInstance().queue(event);
           Nop.breakpoint();
 
         }
@@ -69,7 +69,7 @@ public class IterateOldRawFile {
         fis.close();
       }
 
-      EventManager.getInstance().flushQueue();
+      EventQueue.getInstance().flushQueue();
 
     } finally {
       Datahamstern.getInstance().close();

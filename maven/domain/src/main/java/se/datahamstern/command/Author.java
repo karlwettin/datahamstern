@@ -3,12 +3,16 @@ package se.datahamstern.command;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
+import java.io.Serializable;
+
 /**
  * @author kalle
  * @since 2012-03-03 22:17
  */
 @Entity(version =1)
-public class Author {
+public class Author implements Serializable {
+
+  private static final long serialVersionUID = 1l;
 
   @PrimaryKey
   private String identity;

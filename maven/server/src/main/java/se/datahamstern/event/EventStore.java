@@ -6,6 +6,7 @@ import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import se.datahamstern.Datahamstern;
+import se.datahamstern.io.FileUtils;
 
 import java.io.*;
 import java.util.Date;
@@ -14,21 +15,21 @@ import java.util.UUID;
 /**
  * This is where events are stored.
  *
- * In order to add a new event see {@link EventManager#queue(Event)}
+ * In order to add a new event see {@link EventQueue#queue(Event)}
  *
  * @author kalle
  * @since 2012-03-02 03:09
  */
 public class EventStore {
 
-  private static EventStore instance = new EventStore();
-
-  private EventStore() {
-  }
-
-  public static EventStore getInstance() {
-    return instance;
-  }
+//  private static EventStore instance = new EventStore();
+//
+//  private EventStore() {
+//  }
+//
+//  public static EventStore getInstance() {
+//    return instance;
+//  }
 
   private File path;
 
@@ -55,10 +56,8 @@ public class EventStore {
     readOnly = Boolean.valueOf(Datahamstern.getInstance().getProperty("eventStore.readOnly", "false"));
 
     if (!path.exists()) {
-//      log.info("Creating directory " + path.getAbsolutePath());
-      if (!path.mkdirs()) {
-        throw new IOException("Could not create directory " + path.getAbsolutePath());
-      }
+      path = FileUtils.mkdirs(path);
+//      log.info("Created directory " + path.getAbsolutePath());
 
       EnvironmentConfig envConfig = new EnvironmentConfig();
       envConfig.setAllowCreate(true);

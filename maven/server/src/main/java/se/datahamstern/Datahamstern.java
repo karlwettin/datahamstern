@@ -1,10 +1,11 @@
 package se.datahamstern;
 
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.event.EventManager;
-import se.datahamstern.event.EventStore;
+import se.datahamstern.event.EventQueue;
+import se.datahamstern.io.FileUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
@@ -33,19 +34,41 @@ public class Datahamstern {
   private Datahamstern() {
   }
 
-  /** the maven home directory */
+  /**
+   * what version of datahamster is running
+   *
+   * todo imprint this on all outgoing events
+   */
+  private String version;
+
+  /**
+   * unique identifier for this system.
+   *
+   * it would be nice
+   * if everybody used a contactable email address
+   *
+   * google.account.name+datahamstern-1@gmail.com
+   * google.account.name+datahamstern-2@gmail.com
+   *
+   * todo imprint this on all outgoing events
+   */
+  private String systemUUID;
+
+  /**
+   * the maven home directory
+   */
   private File mavenProjectPath;
-  /** where bdb, events, etc is stored  */
+  /**
+   * where bdb, events, etc is stored
+   */
   private File dataPath;
 
   private Properties properties;
 
 
-  private String systemUUID;
-
   public void open() throws Exception {
 
-    systemUUID = getProperty("system.uuid", (String)null);
+    systemUUID = getProperty("system.uuid", (String) null);
     if (systemUUID == null) {
       throw new RuntimeException("property system.uuid not set! How about " + UUID.randomUUID().toString());
     }
@@ -53,45 +76,49 @@ public class Datahamstern {
     if (mavenProjectPath == null) {
       mavenProjectPath = new File("./");
     }
-    mavenProjectPath = new File(mavenProjectPath.getAbsolutePath());
-    while (".".equals(mavenProjectPath.getName())) {
-      mavenProjectPath = mavenProjectPath.getParentFile();
+    mavenProjectPath = FileUtils.getCleanAbsolutePath(mavenProjectPath);
+    if (!mavenProjectPath.exists()) {
+      throw new IOException("maven project path " + mavenProjectPath.getAbsolutePath() + " does not exist!");
+    } else if (!mavenProjectPath.isDirectory()) {
+      throw new IOException("maven project path " + mavenProjectPath.getAbsolutePath() + " is not a directory!");
+    } else {
+      File[] poms = mavenProjectPath.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return "pom.xml".equalsIgnoreCase(name);
+        }
+      });
+      if (poms.length == 0) {
+        throw new IOException("maven project path " + mavenProjectPath.getAbsolutePath() + " does not contain a pom.xml!");
+      }
+      // todo load pom to dom, assert its the right project and set version
+      version = "0.0.0";
     }
 
     System.out.println("Using maven project path " + mavenProjectPath.getAbsolutePath());
 
     if (dataPath == null) {
       dataPath = new File(mavenProjectPath, "data");
-      if (!dataPath.exists()  && !dataPath.mkdirs()) {
-        throw new IOException("Could not mkdirs " + dataPath.getAbsolutePath());
-      }
+      FileUtils.mkdirs(dataPath);
     }
-    dataPath = new File(dataPath.getAbsolutePath());
-    while (".".equals(dataPath.getName())) {
-      dataPath = dataPath.getParentFile();
-    }
+    dataPath = FileUtils.getCleanAbsolutePath(dataPath);
 
 
     System.out.println("Using data path " + dataPath.getAbsolutePath());
 
 
-
-
-    DomainStore.getInstance().setPath(new File(dataPath, "domainStore/bdb"));
+    DomainStore.getInstance().setPath(new File(dataPath, "domain/store/bdb"));
     DomainStore.getInstance().open();
 
-    EventStore.getInstance().setPath(new File(dataPath, "eventStore/bdb"));
-    EventStore.getInstance().open();
 
-    EventManager.getInstance().setDataPath(new File(dataPath, "eventManager"));
-    EventManager.getInstance().open();
+    EventQueue.getInstance().setDataPath(new File(dataPath, "event"));
+    EventQueue.getInstance().open();
 
   }
 
   public void close() throws Exception {
     DomainStore.getInstance().close();
-    EventStore.getInstance().close();
-    EventManager.getInstance().close();
+    EventQueue.getInstance().close();
   }
 
   public String getProperty(String key, String defaultValue) throws Exception {
@@ -151,6 +178,14 @@ public class Datahamstern {
 
   public void setProperties(Properties properties) {
     this.properties = properties;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }
 

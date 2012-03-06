@@ -2,6 +2,7 @@ package se.datahamstern.command;
 
 import com.sleepycat.persist.model.Persistent;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -26,7 +27,9 @@ import java.util.Date;
  * @since 2012-03-03 22:15
  */
 @Persistent(version = 1)
-public class Source {
+public class Source implements Serializable {
+
+  private static final long serialVersionUID = 1l;
 
   /**
    * exempelvis "janne1965@wikipedia/se", en url till ett dokument, etc.

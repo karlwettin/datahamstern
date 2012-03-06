@@ -1,7 +1,7 @@
 package se.datahamstern.external.naringslivsregistret;
 
 import se.datahamstern.event.Event;
-import se.datahamstern.event.EventManager;
+import se.datahamstern.event.EventQueue;
 import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
 
@@ -24,7 +24,7 @@ public class CreateEventsVisitor extends HarvestNaringslivsregistretVisitor {
   public void found(HarvestNaringslivsregistret harvester, NaringslivsregistretResult result) throws Exception {
     source.setTimestamp(new Date());
     Event event = NaringslivsregistretCommand.eventFactory(result, source);
-    EventManager.getInstance().queue(event);
+    EventQueue.getInstance().queue(event);
     Nop.breakpoint();
   }
 

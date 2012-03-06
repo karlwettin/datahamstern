@@ -4,8 +4,7 @@ import junit.framework.TestCase;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Lan;
 import se.datahamstern.domain.Organisation;
-import se.datahamstern.event.EventManager;
-import se.datahamstern.event.EventStore;
+import se.datahamstern.event.EventQueue;
 import se.datahamstern.external.naringslivsregistret.Naringslivsregistret;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretResult;
@@ -38,14 +37,14 @@ public class TestNaringslivsregistret extends TestCase {
 
         List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>(nlr.search("volvo personvagnar").keySet());
         for (NaringslivsregistretResult result : results) {
-          EventManager.getInstance().queue(NaringslivsregistretCommand.eventFactory(result));
+          EventQueue.getInstance().queue(NaringslivsregistretCommand.eventFactory(result));
         }
 
         final Date finished = new Date();
 
-        assertEquals(results.size(), EventStore.getInstance().getEvents().count());
+        assertEquals(results.size(), EventQueue.getInstance().getEventStore().getEvents().count());
 
-        EventManager.getInstance().flushQueue();
+        EventQueue.getInstance().flushQueue();
 
 
         // todo assert timestamps in sources are in between started and finished.

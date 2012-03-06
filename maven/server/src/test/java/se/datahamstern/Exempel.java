@@ -2,7 +2,7 @@ package se.datahamstern;
 
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Organisation;
-import se.datahamstern.event.EventManager;
+import se.datahamstern.event.EventQueue;
 import se.datahamstern.external.naringslivsregistret.CreateEventsVisitor;
 import se.datahamstern.external.naringslivsregistret.HarvestNaringslivsregistret;
 
@@ -20,7 +20,7 @@ public class Exempel {
       new HarvestNaringslivsregistret().harvest(1, "5560743050", "5560743150", new CreateEventsVisitor());
 
       // uppdatera databasen med nya händelser som lagts till.
-      EventManager.getInstance().flushQueue();
+      EventQueue.getInstance().flushQueue();
 
       // hämta volvo personvagnar ab
       Organisation organisation = DomainStore.getInstance().getOrganisationByNummer().get("5560743089");

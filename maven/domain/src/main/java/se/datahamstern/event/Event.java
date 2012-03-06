@@ -6,6 +6,7 @@ import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 import se.datahamstern.command.Source;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,9 @@ import java.util.List;
  * @since 2012-03-03 22:21
  */
 @Entity(version = 1)
-public class Event {
+public class Event implements Serializable {
+
+  private static final long serialVersionUID = 1l;
 
   /**
    * when this event was put to the local bdb event store
@@ -74,6 +77,14 @@ public class Event {
   @PrimaryKey
   private String identity;
 
+
+  /**
+   * Equality on commandName, commandVersion, jsonData and sources,
+   * ie identity nor _local_timestamp and counts.
+   *
+   * @param o
+   * @return
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -81,14 +92,33 @@ public class Event {
 
     Event event = (Event) o;
 
-    if (identity != null ? !identity.equals(event.identity) : event.identity != null) return false;
+    if (commandName != null ? !commandName.equals(event.commandName) : event.commandName != null) return false;
+    if (commandVersion != null ? !commandVersion.equals(event.commandVersion) : event.commandVersion != null) return false;
+
+    // todo normalized json data!
+
+    if (jsonData != null ? !jsonData.equals(event.jsonData) : event.jsonData != null) return false;
+    if (sources != null ? !sources.equals(event.sources) : event.sources != null) return false;
 
     return true;
   }
 
+  /**
+   * Evaluated on commandName, commandVersion, jsonData and sources,
+   * ie identity nor _local_timestamp and counts.
+   *
+   * @return
+   */
   @Override
   public int hashCode() {
-    return identity != null ? identity.hashCode() : 0;
+    int result = commandName != null ? commandName.hashCode() : 0;
+    result = 31 * result + (commandVersion != null ? commandVersion.hashCode() : 0);
+    result = 31 * result + (sources != null ? sources.hashCode() : 0);
+
+    // todo normalized json data!
+
+    result = 31 * result + (jsonData != null ? jsonData.hashCode() : 0);
+    return result;
   }
 
   @Override
