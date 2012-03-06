@@ -23,8 +23,9 @@ public class HarvestNaringslivsregistret {
     Datahamstern.getInstance().open();
     try {
       new HarvestNaringslivsregistret().harvest(
-//        "5568860000",
-          "5564437308",
+//          "5568860000",
+//          "5564437308",
+          "5564362498",
           "5560000000",
           new CreateEventsVisitor());
     } finally {
