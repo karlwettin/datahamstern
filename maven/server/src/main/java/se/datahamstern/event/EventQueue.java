@@ -7,7 +7,6 @@ import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Source;
-import se.datahamstern.event.v0.StreamingJsonEventReader;
 import se.datahamstern.io.FileUtils;
 
 import java.io.*;
@@ -95,7 +94,7 @@ public class EventQueue {
   }
 
   public void pollInbox() throws Exception {
-    for(File file : inbox.listFiles(new FileFilter() {
+    for (File file : inbox.listFiles(new FileFilter() {
       @Override
       public boolean accept(File file) {
         return file.isFile() && file.getName().endsWith(".json");
@@ -104,12 +103,12 @@ public class EventQueue {
       File seen = new File(file.getAbsolutePath() + ".seen");
       if (!seen.exists()) {
         try {
-        new FileOutputStream(seen, false).close();
-        StreamingJsonEventLogReader events = new StreamingJsonEventLogReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-        Event event;
-        while ((event = events.next()) != null) {
-          queue(event);
-        }
+          new FileOutputStream(seen, false).close();
+          StreamingJsonEventLogReader events = new StreamingJsonEventLogReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+          Event event;
+          while ((event = events.next()) != null) {
+            queue(event);
+          }
         } catch (Exception e) {
           // log.error("Exception while importing event log " + file.getAbsolutePath(), e);
           e.printStackTrace();
@@ -121,7 +120,7 @@ public class EventQueue {
   /**
    * Adds an event to the queue.
    * Next time you call upon {@link EventQueue#flushQueue()} it will be flushed to your database.
-   *
+   * <p/>
    * Before queue is flushed it is possible
    * to update events by assigning them with the same identity
    *
