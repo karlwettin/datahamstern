@@ -27,7 +27,8 @@ public class HarvestNaringslivsregistret {
 //          "5564437308",
 //          "5564362498",
 //          "5564242245",
-          "5563773695",
+//          "5563773695",
+          "5563733194",
           "5560000000",
           new CreateEventsVisitor());
     } finally {

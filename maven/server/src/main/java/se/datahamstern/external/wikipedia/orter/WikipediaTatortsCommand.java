@@ -23,7 +23,7 @@ public class WikipediaTatortsCommand extends Command {
    * If this value change (ie only by editing the code and recompile),
    * then version should also be set to 1.
    */
-  public static String COMMAND_NAME = "uppdatera med post från wikipedias tätortslisa";
+  public static String COMMAND_NAME = "uppdatera med post från wikipedias tätortslista";
 
   /**
    * A version that combined with the name uniquely describes this command.
