@@ -23,12 +23,13 @@ public class HarvestNaringslivsregistret {
     Datahamstern.getInstance().open();
     try {
       new HarvestNaringslivsregistret().harvest(
-//          "5568860000",
-//          "5564437308",
-//          "5564362498",
-//          "5564242245",
-//          "5563773695",
-          "5563733194",
+//        "5568860000",
+//        "5564437308",
+//        "5564362498",
+//        "5564242245",
+//        "5563773695",
+//        "5563733194",
+          "5563694461",
           "5560000000",
           new CreateEventsVisitor());
     } finally {

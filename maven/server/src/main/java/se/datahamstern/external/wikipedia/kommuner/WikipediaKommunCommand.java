@@ -74,7 +74,7 @@ public class WikipediaKommunCommand extends Command {
     }
 
     updateSourced(kommun, event);
-    updateSourcedValue(kommun.getNamn(), länsnamn, event);
+    updateSourcedValue(kommun.getNamn(), kommunnamn, event);
     updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
 
     // todo find län by name

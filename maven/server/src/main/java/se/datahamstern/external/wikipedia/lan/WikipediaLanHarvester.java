@@ -180,7 +180,7 @@ public class WikipediaLanHarvester {
             value = stringValue;
 
           } else if ("Yta (km²)".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratmeterLandareal"));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratkilometerLandareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Landareal saknas!");

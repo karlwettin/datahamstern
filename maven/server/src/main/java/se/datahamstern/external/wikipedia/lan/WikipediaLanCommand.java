@@ -8,6 +8,7 @@ import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.Ort;
 import se.datahamstern.event.Event;
 
 /**
@@ -59,7 +60,7 @@ public class WikipediaLanCommand extends Command {
     String länsnamn = (String)jsonObject.remove("länsnamn");
     String alfakod = (String)jsonObject.remove("alfakod");
     String nummerkod = (String)jsonObject.remove("nummerkod");
-    String kvadratmeterLandareal = (String)jsonObject.remove("kvadratmeterLandareal");
+    String kvadratkilometerLandareal = (String)jsonObject.remove("kvadratkilometerLandareal");
     String folkmängd = (String)jsonObject.remove("folkmängd");
     String residensstad = (String)jsonObject.remove("residensstad");
 
@@ -76,6 +77,8 @@ public class WikipediaLanCommand extends Command {
     updateSourcedValue(län.getNamn(), länsnamn, event);
     updateSourcedValue(län.getAlfakod(), alfakod, event);
     updateSourcedValue(län.getNummerkod(), nummerkod, event);
+
+
 
     // todo find and set residensstad
 
