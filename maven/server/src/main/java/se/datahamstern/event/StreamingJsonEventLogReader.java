@@ -60,7 +60,7 @@ public class StreamingJsonEventLogReader extends StreamingJsonEventReader  imple
 
     Event event;
     while ((event = r.next()) != null) {
-      System.out.println(EventQueue.toJSON(event));
+      System.out.println(JsonEventWriter.toJSON(event));
     }
 
     Nop.breakpoint();
