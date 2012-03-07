@@ -45,6 +45,11 @@ public class DomainStore {
   private SecondaryIndex<String, String, Lan> länByNummerkod;
   private SecondaryIndex<String, String, Lan> länByAlfakod;
 
+  private PrimaryIndex<String, Kommun> kommuner;
+  private SecondaryIndex<String, String, Kommun> kommunerByLän;
+
+  private PrimaryIndex<String, Ort> orter;
+  private SecondaryIndex<String, String, Ort> orterByKommun;
 
   private PrimaryIndex<String, Organisation> organisationer;
   private SecondaryIndex<String, String, Organisation> organisationByNummer;
@@ -180,6 +185,24 @@ public class DomainStore {
         län.set_index_nummerkod(län.getNummerkod().get());
       }
       getLän().put(län);
+    }
+
+    @Override
+    public void visit(Kommun kommun) {
+      assignIdentity(kommun);
+      if (kommun.getLänIdentity().get() != null) {
+        kommun.set_index_länIdentity(kommun.getLänIdentity().get());
+      }
+      getKommuner().put(kommun);
+    }
+
+    @Override
+    public void visit(Ort ort) {
+      assignIdentity(ort);
+      if (ort.getKommunIdentity().get() != null) {
+        ort.set_index_kommunIdentity(ort.getKommunIdentity().get());
+      }
+      getOrter().put(ort);
     }
 
     @Override
@@ -359,5 +382,37 @@ public class DomainStore {
 
   public void setDokumentversioner(PrimaryIndex<String, Dokumentversion> dokumentversioner) {
     this.dokumentversioner = dokumentversioner;
+  }
+
+  public PrimaryIndex<String, Kommun> getKommuner() {
+    return kommuner;
+  }
+
+  public void setKommuner(PrimaryIndex<String, Kommun> kommuner) {
+    this.kommuner = kommuner;
+  }
+
+  public SecondaryIndex<String, String, Kommun> getKommunerByLän() {
+    return kommunerByLän;
+  }
+
+  public void setKommunerByLän(SecondaryIndex<String, String, Kommun> kommunerByLän) {
+    this.kommunerByLän = kommunerByLän;
+  }
+
+  public PrimaryIndex<String, Ort> getOrter() {
+    return orter;
+  }
+
+  public void setOrter(PrimaryIndex<String, Ort> orter) {
+    this.orter = orter;
+  }
+
+  public SecondaryIndex<String, String, Ort> getOrterByKommun() {
+    return orterByKommun;
+  }
+
+  public void setOrterByKommun(SecondaryIndex<String, String, Ort> orterByKommun) {
+    this.orterByKommun = orterByKommun;
   }
 }
