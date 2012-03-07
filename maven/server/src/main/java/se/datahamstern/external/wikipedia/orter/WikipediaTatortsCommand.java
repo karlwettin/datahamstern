@@ -1,9 +1,13 @@
 package se.datahamstern.external.wikipedia.orter;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Source;
+import se.datahamstern.domain.DomainStore;
+import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.Ort;
 import se.datahamstern.event.Event;
 
 import java.util.Date;
@@ -49,14 +53,44 @@ public class WikipediaTatortsCommand extends Command {
 
 
 
-  @Override
-  public void execute(Event event, JSONParser jsonParser) throws Exception {
-    // todo implement your command here!
-    throw new UnsupportedOperationException();
-  }
-
   public void register(CommandManager commandManager) {
     commandManager.registerCommandClass(WikipediaTatortsCommand.class, COMMAND_NAME, COMMAND_VERSION);
+  }
+
+  @Override
+  public void execute(Event event, JSONParser jsonParser) throws Exception {
+
+    JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
+
+    String tätortsnamn = (String)jsonObject.remove("tätortsnamn");
+    String tätortskod = (String)jsonObject.remove("tätortskod");
+    String kommunnamn = (String)jsonObject.remove("kommunnamn");
+    String hektarLandareal = (String)jsonObject.remove("hektarLandareal");
+    String folkmängd = (String)jsonObject.remove("folkmängd");
+
+    if (!jsonObject.isEmpty()) {
+      throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
+    }
+
+    Ort ort = DomainStore.getInstance().getOrterByKommun().get(tätortskod);
+    if (ort == null) {
+      ort = new Ort();
+    }
+
+    updateSourced(ort, event);
+    updateSourcedValue(ort.getTätortskod(), tätortskod, event);
+    updateSourcedValue(ort.getNamn(), tätortsnamn, event);
+
+    // todo landareal, folkmängd.
+
+    // todo find kommun by name
+//    updateSourcedValue(ort.getKommunIdentity(), kommunIdentity, event);
+
+    DomainStore.getInstance().put(ort);
+
+
+    // todo implement your command here!
+    throw new UnsupportedOperationException();
   }
 
   @Override

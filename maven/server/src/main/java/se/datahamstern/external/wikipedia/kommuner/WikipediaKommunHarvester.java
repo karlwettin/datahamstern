@@ -8,8 +8,6 @@ import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
 import se.datahamstern.event.EventQueue;
 import se.datahamstern.event.JsonEventLogWriter;
-import se.datahamstern.external.wikipedia.lan.WikipediaLanCommand;
-import se.datahamstern.external.wikipedia.orter.WikipediaTatortsCommand;
 import se.datahamstern.io.SeleniumAccessor;
 import se.datahamstern.xml.DomUtils;
 
@@ -30,7 +28,6 @@ public class WikipediaKommunHarvester {
     try {
 
       Datahamstern.getInstance().open();
-
 
       JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventQueue.getInstance().getOutbox(), "wikipedia_kommuner-" + System.currentTimeMillis() + ".events.json")) {
         @Override
@@ -121,18 +118,6 @@ public class WikipediaKommunHarvester {
 
           Object value;
 
-          /*
-          "Kod",
-          "Kommun",
-          "Län",
-          "Folkmängd",
-          "Area",
-          "Land",
-          "Sjö",
-          "Hav",
-          "Täthet"
-
-           */
           String header = textHeaders.get(columnIndex);
 
           if ("Täthet".equals(header)) {
@@ -186,28 +171,28 @@ public class WikipediaKommunHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Land".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratemeterLandsareal"));
-            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandsareal"));
+            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Landareal saknas!");
             }
-            value = stringValue;
+            value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
+
           } else if ("Sjö".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratemeterSjöareal"));
-            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarSjöareal"));
+            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Sjöareal saknas!");
             }
-            value = stringValue;
+            value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Hav".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratemeterHavsareal"));
-            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarHavsareal"));
+            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Havsareal saknas!");
             }
-            value = stringValue;
-
+            value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else {
 //            log.warn("We are missing out on data in unknown column " + header);
