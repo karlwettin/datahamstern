@@ -1,8 +1,12 @@
 package se.datahamstern.external.wikipedia.kommuner;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
+import se.datahamstern.domain.DomainStore;
+import se.datahamstern.domain.Kommun;
+import se.datahamstern.domain.Lan;
 import se.datahamstern.event.Event;
 
 /**
@@ -48,6 +52,36 @@ public class WikipediaKommunCommand extends Command {
 
   @Override
   public void execute(Event event, JSONParser jsonParser) throws Exception {
+
+    JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
+
+    String kommunnummerkod = (String)jsonObject.remove("kommunnummerkod");
+    String kommunnamn = (String)jsonObject.remove("kommunnamn");
+    String länsnamn = (String)jsonObject.remove("länsnamn");
+    String folkmängd = (String)jsonObject.remove("folkmängd");
+    String hektarAreal = (String)jsonObject.remove("hektarAreal");
+    String hektarLandsareal = (String)jsonObject.remove("hektarLandsareal");
+    String hektarSjöareal = (String)jsonObject.remove("hektarSjöareal");
+    String hektarHavsareal = (String)jsonObject.remove("hektarHavsareal");
+
+    if (!jsonObject.isEmpty()) {
+      throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
+    }
+
+    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
+    if (kommun == null) {
+      kommun = new Kommun();
+    }
+
+    updateSourced(kommun, event);
+    updateSourcedValue(kommun.getNamn(), länsnamn, event);
+    updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
+
+    // todo find län by name
+//    updateSourcedValue(kommun.getLänIdentity(), länIdentity, event);
+
+    DomainStore.getInstance().put(kommun);
+
     // todo implement your command here!
     throw new UnsupportedOperationException();
   }

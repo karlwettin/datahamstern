@@ -1,8 +1,13 @@
 package se.datahamstern.external.wikipedia.lan;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.serialization.JSON;
+import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
+import se.datahamstern.domain.DomainStore;
+import se.datahamstern.domain.Lan;
 import se.datahamstern.event.Event;
 
 /**
@@ -48,6 +53,34 @@ public class WikipediaLanCommand extends Command {
 
   @Override
   public void execute(Event event, JSONParser jsonParser) throws Exception {
+
+    JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
+
+    String länsnamn = (String)jsonObject.remove("länsnamn");
+    String alfakod = (String)jsonObject.remove("alfakod");
+    String nummerkod = (String)jsonObject.remove("nummerkod");
+    String kvadratmeterLandareal = (String)jsonObject.remove("kvadratmeterLandareal");
+    String folkmängd = (String)jsonObject.remove("folkmängd");
+    String residensstad = (String)jsonObject.remove("residensstad");
+
+    if (!jsonObject.isEmpty()) {
+      throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
+    }
+
+    Lan län = DomainStore.getInstance().getLänByAlfakod().get(alfakod);
+    if (län == null) {
+      län = new Lan();
+    }
+
+    updateSourced(län, event);
+    updateSourcedValue(län.getNamn(), länsnamn, event);
+    updateSourcedValue(län.getAlfakod(), alfakod, event);
+    updateSourcedValue(län.getNummerkod(), nummerkod, event);
+
+    // todo find and set residensstad
+
+    DomainStore.getInstance().put(län);
+
     // todo implement your command here!
     throw new UnsupportedOperationException();
   }

@@ -28,10 +28,29 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
 
   private SourcedValue<String> namn = new SourcedValue<String>();
 
+  private SourcedValue<String> nummerkod = new SourcedValue<String>();
+  @SecondaryKey(relate = Relationship.MANY_TO_ONE)
+  private String _index_nummerkod;
+
   private SourcedValue<String> länIdentity = new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Lan.class)
   private String _index_länIdentity;
 
+  public SourcedValue<String> getNummerkod() {
+    return nummerkod;
+  }
+
+  public void setNummerkod(SourcedValue<String> nummerkod) {
+    this.nummerkod = nummerkod;
+  }
+
+  public String get_index_nummerkod() {
+    return _index_nummerkod;
+  }
+
+  public void set_index_nummerkod(String _index_nummerkod) {
+    this._index_nummerkod = _index_nummerkod;
+  }
 
   public SourcedValue<String> getNamn() {
     return namn;

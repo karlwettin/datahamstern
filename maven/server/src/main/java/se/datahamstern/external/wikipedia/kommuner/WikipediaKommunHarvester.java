@@ -146,7 +146,7 @@ public class WikipediaKommunHarvester {
           jsonData.append('"');
 
           if ("Kod".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kommunkod"));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("kommunnummerkod"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Kommunkod saknas!");

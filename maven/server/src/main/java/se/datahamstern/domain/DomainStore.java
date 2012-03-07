@@ -46,6 +46,7 @@ public class DomainStore {
   private SecondaryIndex<String, String, Lan> länByAlfakod;
 
   private PrimaryIndex<String, Kommun> kommuner;
+  private SecondaryIndex<String, String, Kommun> kommunByNummerkod;
   private SecondaryIndex<String, String, Kommun> kommunerByLän;
 
   private PrimaryIndex<String, Ort> orter;
@@ -133,6 +134,13 @@ public class DomainStore {
     län = entityStore.getPrimaryIndex(String.class, Lan.class);
     länByAlfakod = entityStore.getSecondaryIndex(län, String.class, "_index_alfakod");
     länByNummerkod = entityStore.getSecondaryIndex(län, String.class, "_index_nummerkod");
+
+    kommuner = entityStore.getPrimaryIndex(String.class, Kommun.class);
+    kommunByNummerkod = entityStore.getSecondaryIndex(kommuner, String.class, "_index_nummerkod");
+    kommunerByLän = entityStore.getSecondaryIndex(kommuner, String.class, "_index_länIdentity");
+
+    orter = entityStore.getPrimaryIndex(String.class, Ort.class);
+    orterByKommun = entityStore.getSecondaryIndex(orter, String.class, "_index_kommunIdentity");
 
     // todo add indices etc initialize
     årsredovisningar = entityStore.getPrimaryIndex(String.class, Arsredovisning.class);
@@ -414,5 +422,13 @@ public class DomainStore {
 
   public void setOrterByKommun(SecondaryIndex<String, String, Ort> orterByKommun) {
     this.orterByKommun = orterByKommun;
+  }
+
+  public SecondaryIndex<String, String, Kommun> getKommunByNummerkod() {
+    return kommunByNummerkod;
+  }
+
+  public void setKommunByNummerkod(SecondaryIndex<String, String, Kommun> kommunByNummerkod) {
+    this.kommunByNummerkod = kommunByNummerkod;
   }
 }
