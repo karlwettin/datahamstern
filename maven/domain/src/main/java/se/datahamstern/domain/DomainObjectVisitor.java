@@ -8,6 +8,8 @@ public interface DomainObjectVisitor {
 
   public abstract void visit(Organisation organisation);
   public abstract void visit(Lan län);
+  public abstract void visit(Kommun kommun);
+  public abstract void visit(Ort ort);
   public abstract void visit(Arsredovisning årsredovisning);
 
   public abstract void visit(EkonomiskPlan ekonomiskPlan);

@@ -7,7 +7,6 @@ import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Source;
-import se.datahamstern.event.v0.StreamingJsonEventReader;
 import se.datahamstern.io.FileUtils;
 
 import java.io.*;

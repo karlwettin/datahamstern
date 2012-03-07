@@ -2,7 +2,11 @@ package se.datahamstern.xml;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,6 +72,41 @@ public class DomUtils {
     } else {
       throw new RuntimeException("Multiple case insensitive matches!");
     }
+  }
+
+
+  public static String toText(Node node) {
+    StringWriter out = new StringWriter(1024);
+    try {
+      writeText(node, out);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return out.toString();
+  }
+
+
+  public static void writeText(Node node, final Writer out) throws IOException {
+    if (isTextNode(node)) {
+      out.write(normalizeText(node));
+      out.write("\n");
+    } else {
+      NodeList children = node.getChildNodes();
+      if (children != null) {
+        for (int i = 0; i < children.getLength(); i++) {
+          writeText(children.item(i), out);
+        }
+      }
+    }
+
+  }
+
+  public static boolean isTextNode(Node node) {
+    return node.getParentNode() != null
+//        && node.getParentNode().getNodeName().equals("#comment")    // todo why is this commented out?
+        && "#text".equalsIgnoreCase(node.getNodeName())
+        && !"STYLE".equalsIgnoreCase(node.getParentNode().getNodeName())
+        && !"SCRIPT".equalsIgnoreCase(node.getParentNode().getNodeName());
   }
 
 
