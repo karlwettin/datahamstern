@@ -29,8 +29,13 @@ public class HarvestNaringslivsregistret {
 //        "5564242245",
 //        "5563773695",
 //        "5563733194",
-          "5563694461",
-          "5560000000",
+//        "5563694461",
+//        "5561343699",
+//        "5560000000",
+//        "7696000000",
+//        "7696015465",
+          "7696367502",
+          "7696399999",
           new CreateEventsVisitor());
     } finally {
       Datahamstern.getInstance().close();
