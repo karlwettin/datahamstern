@@ -10,7 +10,6 @@ import se.datahamstern.io.FileUtils;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
@@ -62,6 +61,13 @@ public class DomainStore {
 
   private PrimaryIndex<String, Dokument> dokument;
   private PrimaryIndex<String, Dokumentversion> dokumentversioner;
+
+  private PrimaryIndex<String, Gatuadress> gatuadresser;
+  private SecondaryIndex<String, String, Gatuadress> gatuadresserByPostnummer;
+
+  private PrimaryIndex<String, Postnummer> postnummer;
+  private SecondaryIndex<String, String, Postnummer> postnummerByPostnummer;
+
 
   public void open() throws Exception {
 
@@ -149,6 +155,11 @@ public class DomainStore {
     dokument = entityStore.getPrimaryIndex(String.class, Dokument.class);
     dokumentversioner = entityStore.getPrimaryIndex(String.class, Dokumentversion.class);
 
+    gatuadresser = entityStore.getPrimaryIndex(String.class, Gatuadress.class);
+    gatuadresserByPostnummer = entityStore.getSecondaryIndex(gatuadresser, String.class, "_index_postnummerIdentity");
+
+    postnummer = entityStore.getPrimaryIndex(String.class, Postnummer.class);
+    postnummerByPostnummer = entityStore.getSecondaryIndex(postnummer, String.class, "_index_postnummer");
 
 //    log.info("BDB has been opened.");
 
@@ -182,6 +193,10 @@ public class DomainStore {
     }
   }
 
+  /**
+   * Ensures that values for all secondary indices are set
+   * and that instances are added to the correct primary index
+   */
   private DomainObjectVisitor putVisitor = new DomainObjectVisitor() {
     @Override
     public void visit(Lan län) {
@@ -276,6 +291,20 @@ public class DomainStore {
     public void visit(Dokumentversion dokumentversion) {
       assignIdentity(dokumentversion);
       getDokumentversioner().put(dokumentversion);
+    }
+
+    @Override
+    public void visit(Gatuadress gatuaddress) {
+      assignIdentity(gatuaddress);
+      gatuaddress.set_index_postnummerIdentity(gatuaddress.getPostnummerIdentity().get());
+      getGatuadresser().put(gatuaddress);
+    }
+
+    @Override
+    public void visit(Postnummer postnummer) {
+      assignIdentity(postnummer);
+      postnummer.set_index_postnummer(postnummer.getPostnummer().get());
+      getPostnummer().put(postnummer);
     }
   };
 
@@ -430,5 +459,37 @@ public class DomainStore {
 
   public void setKommunByNummerkod(SecondaryIndex<String, String, Kommun> kommunByNummerkod) {
     this.kommunByNummerkod = kommunByNummerkod;
+  }
+
+  public PrimaryIndex<String, Gatuadress> getGatuadresser() {
+    return gatuadresser;
+  }
+
+  public void setGatuadresser(PrimaryIndex<String, Gatuadress> gatuadresser) {
+    this.gatuadresser = gatuadresser;
+  }
+
+  public SecondaryIndex<String, String, Gatuadress> getGatuadresserByPostnummer() {
+    return gatuadresserByPostnummer;
+  }
+
+  public void setGatuadresserByPostnummer(SecondaryIndex<String, String, Gatuadress> gatuadresserByPostnummer) {
+    this.gatuadresserByPostnummer = gatuadresserByPostnummer;
+  }
+
+  public PrimaryIndex<String, Postnummer> getPostnummer() {
+    return postnummer;
+  }
+
+  public void setPostnummer(PrimaryIndex<String, Postnummer> postnummer) {
+    this.postnummer = postnummer;
+  }
+
+  public SecondaryIndex<String, String, Postnummer> getPostnummerByPostnummer() {
+    return postnummerByPostnummer;
+  }
+
+  public void setPostnummerByPostnummer(SecondaryIndex<String, String, Postnummer> postnummerByPostnummer) {
+    this.postnummerByPostnummer = postnummerByPostnummer;
   }
 }

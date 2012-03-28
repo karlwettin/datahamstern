@@ -10,10 +10,14 @@ public interface DomainObjectVisitor {
   public abstract void visit(Lan län);
   public abstract void visit(Kommun kommun);
   public abstract void visit(Ort ort);
-  public abstract void visit(Arsredovisning årsredovisning);
 
+  public abstract void visit(Gatuadress gatuaddress);
+  public abstract void visit(Postnummer postnummer);
+
+  public abstract void visit(Arsredovisning årsredovisning);
   public abstract void visit(EkonomiskPlan ekonomiskPlan);
   public abstract void visit(Stadgar stadgar);
+
   public abstract void visit(Dokument dokument);
   public abstract void visit(Dokumentversion dokumentversion);
 

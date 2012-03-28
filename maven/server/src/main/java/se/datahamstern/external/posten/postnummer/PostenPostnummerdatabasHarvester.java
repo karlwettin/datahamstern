@@ -1,4 +1,4 @@
-package se.datahamstern.external.posten;
+package se.datahamstern.external.posten.postnummer;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Node;
@@ -9,7 +9,6 @@ import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
 import se.datahamstern.event.EventQueue;
 import se.datahamstern.event.JsonEventLogWriter;
-import se.datahamstern.external.posten.postnummer.PostnummerQuery;
 import se.datahamstern.io.SeleniumAccessor;
 import se.datahamstern.xml.DomUtils;
 

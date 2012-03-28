@@ -219,8 +219,8 @@ public class NaringslivsregistretCommand extends Command {
     Organisation organisation = DomainStore.getInstance().getOrganisationByNummer().get(nummer);
     if (organisation == null) {
       organisation = new Organisation();
-      updateSourced(organisation, event);
     }
+    updateSourced(organisation, event);
 
     updateSourcedValue(organisation.getNamn(), namn, event);
 
