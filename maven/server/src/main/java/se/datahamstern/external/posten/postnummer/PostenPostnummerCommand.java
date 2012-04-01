@@ -6,8 +6,9 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Gatuadress;
-import se.datahamstern.domain.Postnummer;
+import se.datahamstern.domain.postnummer.Gatuadress;
+import se.datahamstern.domain.postnummer.Postnummer;
+import se.datahamstern.domain.postnummer.Postort;
 import se.datahamstern.event.Event;
 
 import java.util.HashSet;
@@ -63,11 +64,20 @@ public class PostenPostnummerCommand extends Command {
     String gatunamn = (String) jsonObject.remove("gatunamn");
     String gatunummer = (String) jsonObject.remove("gatunummer");
     String postnummerValue = (String) jsonObject.remove("postnummer");
-    String postort = (String) jsonObject.remove("postort");
+    String postortValue = (String) jsonObject.remove("postort");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
+
+    Postort postort = DomainStore.getInstance().getPostortByNamn().get(postortValue);
+    if (postort == null) {
+      postort = new Postort();
+    }
+    updateSourced(postort, event);
+    updateSourcedValue(postort.getNamn(), postortValue, event);
+    DomainStore.getInstance().put(postort);
+
 
     Postnummer postnummer = DomainStore.getInstance().getPostnummerByPostnummer().get(postnummerValue);
     if (postnummer == null) {
@@ -75,32 +85,37 @@ public class PostenPostnummerCommand extends Command {
     }
     updateSourced(postnummer, event);
     updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
+    updateSourcedValue(postnummer.getPostortIdentity(), postort.getIdentity(), event);
     DomainStore.getInstance().put(postnummer);
+
 
     if (gatunamn != null && !gatunamn.isEmpty()) {
 
-      Set<Gatuadress> matchingGatuadresser = new HashSet<Gatuadress>();
-      EntityCursor<Gatuadress> cursor = DomainStore.getInstance().getGatuadresserByPostnummer().entities(postnummer.getIdentity(), true, postnummer.getIdentity(), true);
-      try {
-        Gatuadress gatuadress;
-        while ((gatuadress = cursor.next()) != null) {
-          if (gatunamn.equalsIgnoreCase(gatuadress.getGatunamn().get())
-              && gatunummer.equalsIgnoreCase(gatuadress.getGatunummer().get())) {
-            matchingGatuadresser.add(gatuadress);
+      // todo if ("BOX".equals(gatunamn)) { }
+
+      if (gatunummer != null && !gatunummer.trim().isEmpty()) {
+        String[] range = gatunummer.split("-");
+        int from = Integer.valueOf(range[0].trim());
+        int to = Integer.valueOf(range[1].trim());
+
+        Gatuadress.UniqueIndex uniqueIndex = new Gatuadress.UniqueIndex();
+        uniqueIndex.setGatunamn(gatunamn);
+        uniqueIndex.setPostnummerIdentity(postnummer.getIdentity());
+
+        // todo assert that ranges ALWAYS are even or odd sequence!!!
+        for (int nummer = from; nummer < to; nummer += 2) {
+          uniqueIndex.setGatunummer(nummer);
+          Gatuadress gatuadress = DomainStore.getInstance().getGatuadressByUniqueIndex().get(uniqueIndex);
+          if (gatuadress == null) {
+            gatuadress = new Gatuadress();
           }
+          updateSourced(gatuadress, event);
+          updateSourcedValue(gatuadress.getGatunamn(), gatunamn, event);
+          updateSourcedValue(gatuadress.getGatunummer(), nummer, event);
+          DomainStore.getInstance().put(gatuadress);
         }
-      } finally {
-        cursor.close();
       }
 
-      Gatuadress gatuadress;
-      if (matchingGatuadresser.isEmpty()) {
-
-      } else if (matchingGatuadresser.size()  > 1) {
-        throw new RuntimeException("Multiple gatuadresser matches!");
-      } else {
-        gatuadress = matchingGatuadresser.iterator().next();
-      }
 
     }
 

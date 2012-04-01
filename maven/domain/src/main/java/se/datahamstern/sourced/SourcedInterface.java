@@ -24,6 +24,6 @@ public interface SourcedInterface {
 
 
 
-  public abstract List<Source> getSources();
-  public abstract void setSources(List<Source> sources);
+  public abstract Sources getSources();
+  public abstract void setSources(Sources sources);
 }

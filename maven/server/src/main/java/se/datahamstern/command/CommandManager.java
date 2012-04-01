@@ -1,6 +1,10 @@
 package se.datahamstern.command;
 
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
+import se.datahamstern.external.posten.postnummer.PostenPostnummerCommand;
+import se.datahamstern.external.wikipedia.kommuner.WikipediaKommunCommand;
+import se.datahamstern.external.wikipedia.lan.WikipediaLanCommand;
+import se.datahamstern.external.wikipedia.orter.WikipediaTatortsCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +19,10 @@ public class CommandManager {
 
   private CommandManager() {
     registerCommandClass(NaringslivsregistretCommand.class, NaringslivsregistretCommand.COMMAND_NAME, NaringslivsregistretCommand.COMMAND_VERSION);
+    registerCommandClass(PostenPostnummerCommand.class, PostenPostnummerCommand.COMMAND_NAME, PostenPostnummerCommand.COMMAND_VERSION);
+    registerCommandClass(WikipediaTatortsCommand.class, WikipediaTatortsCommand.COMMAND_NAME, WikipediaTatortsCommand.COMMAND_VERSION);
+    registerCommandClass(WikipediaKommunCommand.class, WikipediaKommunCommand.COMMAND_NAME, WikipediaKommunCommand.COMMAND_VERSION);
+    registerCommandClass(WikipediaLanCommand.class, WikipediaLanCommand.COMMAND_NAME, WikipediaLanCommand.COMMAND_VERSION);
   }
 
   public static CommandManager getInstance() {

@@ -5,8 +5,8 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Kommun;
-import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.wikipedia.Kommun;
+import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.event.Event;
 
 /**
@@ -70,6 +70,7 @@ public class WikipediaKommunCommand extends Command {
 
     Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
     if (kommun == null) {
+      // todo search by namn
       kommun = new Kommun();
     }
 
@@ -77,13 +78,14 @@ public class WikipediaKommunCommand extends Command {
     updateSourcedValue(kommun.getNamn(), kommunnamn, event);
     updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
 
-    // todo find län by name
-//    updateSourcedValue(kommun.getLänIdentity(), länIdentity, event);
+    Lan län = DomainStore.getInstance().getLänByNamn().get(länsnamn);
+    if (län == null) {
+      throw new RuntimeException("Could not find län with name " +länsnamn);
+    }
+    updateSourcedValue(kommun.getLänIdentity(), län.getIdentity(), event);
 
     DomainStore.getInstance().put(kommun);
 
-    // todo implement your command here!
-    throw new UnsupportedOperationException();
   }
 
   public void register(CommandManager commandManager) {

@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
+import se.datahamstern.event.EventConsumer;
 import se.datahamstern.event.EventQueue;
 import se.datahamstern.event.JsonEventLogWriter;
 import se.datahamstern.io.SeleniumAccessor;
@@ -29,11 +30,11 @@ public class WikipediaKommunHarvester {
 
       Datahamstern.getInstance().open();
 
-      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventQueue.getInstance().getOutbox(), "wikipedia_kommuner-" + System.currentTimeMillis() + ".events.json")) {
+      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventQueue.getInstance().getInbox(), System.currentTimeMillis() + ".wikipedia-kommuner.events.json")) {
         @Override
-        public void write(Event event) throws IOException {
+        public void consume(Event event) throws Exception {
           event.setIdentity(UUID.randomUUID().toString());
-          super.write(event);
+          super.consume(event);
         }
       };
       new WikipediaKommunHarvester().harvest(eventLog);
@@ -49,7 +50,7 @@ public class WikipediaKommunHarvester {
     super();
   }
 
-  public void harvest(JsonEventLogWriter eventLog) throws Exception {
+  public void harvest(EventConsumer eventConsumer) throws Exception {
 
     Source source = new Source();
     source.setTimestamp(new Date());
@@ -222,7 +223,7 @@ public class WikipediaKommunHarvester {
 
         event.setJsonData(jsonData.toString());
 
-        eventLog.write(event);
+        eventConsumer.consume(event);
 
 
       }

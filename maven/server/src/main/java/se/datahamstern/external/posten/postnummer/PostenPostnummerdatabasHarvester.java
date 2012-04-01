@@ -28,9 +28,9 @@ public class PostenPostnummerdatabasHarvester {
     try {
       JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventQueue.getInstance().getOutbox(), "posten-postnummer-" + System.currentTimeMillis() + ".events.json")) {
         @Override
-        public void write(Event event) throws IOException {
+        public void consume(Event event) throws Exception {
           event.setIdentity(UUID.randomUUID().toString());
-          super.write(event);
+          super.consume(event);
         }
       };
       new PostenPostnummerdatabasHarvester().harvest(eventLog);
@@ -203,7 +203,7 @@ public class PostenPostnummerdatabasHarvester {
       event.setJsonData(jsonData.toString());
 
 
-      eventLog.write(event);
+      eventLog.consume(event);
 
 
       Nop.breakpoint();

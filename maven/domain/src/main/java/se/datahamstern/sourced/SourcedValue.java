@@ -29,6 +29,28 @@ public class SourcedValue<T> extends AbstractSourced implements SourcedValueInte
   }
 
   @Override
+  public boolean equals(Object o) {
+
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    SourcedValue that = (SourcedValue) o;
+
+    if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return value != null ? value.hashCode() : 0;
+  }
+
+  @Override
   public String toString() {
     if (value == null) {
       return "null";

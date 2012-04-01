@@ -2,8 +2,8 @@ package se.datahamstern;
 
 import junit.framework.TestCase;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Lan;
-import se.datahamstern.domain.Organisation;
+import se.datahamstern.domain.naringslivsregistret.Organisation;
+import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.event.EventQueue;
 import se.datahamstern.external.naringslivsregistret.Naringslivsregistret;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;

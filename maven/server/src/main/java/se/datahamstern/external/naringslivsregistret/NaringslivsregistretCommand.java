@@ -7,10 +7,10 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
+import se.datahamstern.domain.naringslivsregistret.Organisation;
+import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.event.Event;
 import se.datahamstern.command.Source;
-import se.datahamstern.domain.Lan;
-import se.datahamstern.domain.Organisation;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.util.ArrayList;
@@ -268,12 +268,11 @@ public class NaringslivsregistretCommand extends Command {
       Lan län = DomainStore.getInstance().getLänByNummerkod().get(länsnummer);
       if (län == null) {
         län = new Lan();
-        updateSourced(län, event);
-        updateSourcedValue(län.getNummerkod(), länsnummer, event);
-        DomainStore.getInstance().put(län);
-
-        updateSourcedValue(län.getNummerkod(), län.getIdentity(), event);
       }
+      updateSourced(län, event);
+      updateSourcedValue(län.getNummerkod(), länsnummer, event);
+      DomainStore.getInstance().put(län);
+
       updateSourcedValue(organisation.getLänIdentity(), län.getIdentity(), event);
     }
 

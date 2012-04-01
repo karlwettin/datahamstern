@@ -4,13 +4,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
-import se.datahamstern.command.Source;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Lan;
-import se.datahamstern.domain.Ort;
+import se.datahamstern.domain.wikipedia.Kommun;
+import se.datahamstern.domain.wikipedia.Ort;
 import se.datahamstern.event.Event;
-
-import java.util.Date;
 
 /**
  * @author kalle
@@ -72,7 +69,11 @@ public class WikipediaTatortsCommand extends Command {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Ort ort = DomainStore.getInstance().getOrterByKommun().get(tätortskod);
+    if (tätortskod == null) {
+      throw new RuntimeException("No tätortskod available in event!");
+    }
+
+    Ort ort = DomainStore.getInstance().getOrtByTätortskod().get(tätortskod);
     if (ort == null) {
       ort = new Ort();
     }
@@ -83,8 +84,11 @@ public class WikipediaTatortsCommand extends Command {
 
     // todo landareal, folkmängd.
 
-    // todo find kommun by name
-//    updateSourcedValue(ort.getKommunIdentity(), kommunIdentity, event);
+    Kommun kommun = DomainStore.getInstance().getKommunByNamn().get(kommunnamn);
+    if (kommun == null) {
+      throw new RuntimeException("Could not find kommun with name " + kommunnamn);
+    }
+    updateSourcedValue(ort.getKommunIdentity(), kommun.getIdentity(), event);
 
     DomainStore.getInstance().put(ort);
 

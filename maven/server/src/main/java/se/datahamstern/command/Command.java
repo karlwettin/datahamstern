@@ -1,6 +1,7 @@
 package se.datahamstern.command;
 
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.Nop;
 import se.datahamstern.event.Event;
 import se.datahamstern.sourced.SourcedInterface;
 import se.datahamstern.sourced.SourcedValue;
@@ -22,31 +23,26 @@ public abstract class Command {
 
     // todo select data from event with preferred license or trustworthiness, time axis etc
 
-    boolean addSources = false;
 
-    if (primarySource.getTrustworthiness() != null
-        && sourced.getTrustworthiness() != null
-        && sourced.getTrustworthiness() <= primarySource.getTrustworthiness()) {
+    // we trust this event at least as much as the data in the store
 
-      // we trust this event at least as much as the data in the store
-
-      if (sourced.getLastSeen() == null || sourced.getLastSeen().before(primarySource.getTimestamp())) {
-        sourced.setLastSeen(primarySource.getTimestamp());
-      }
-
-      sourced.setTrustworthiness(primarySource.getTrustworthiness());
-      addSources = true;
+    if (sourced.getLastSeen() == null || sourced.getLastSeen().before(primarySource.getTimestamp())) {
+      sourced.setLastSeen(primarySource.getTimestamp());
     }
 
-    if (addSources) {
-      for (int i = event.getSources().size() - 1; i >= 0; i++) {
-        Source source = event.getSources().get(i);
-        if (!sourced.getSources().contains(source)) {
-          sourced.getSources().add(0, source);
-        }
-      }
+    sourced.setTrustworthiness(primarySource.getTrustworthiness());
+
+    for (Source source : event.getSources()) {
+      sourced.getSources().getAuthors().add(source.getAuthor());
+      sourced.getSources().getLicenses().add(source.getLicense());
     }
 
+    if (sourced.getLastSeen() == null || sourced.getLastSeen().before(primarySource.getTimestamp())) {
+      sourced.setLastSeen(primarySource.getTimestamp());
+    }
+    if (sourced.getFirstSeen() == null || sourced.getFirstSeen().after(primarySource.getTimestamp())) {
+      sourced.setFirstSeen(primarySource.getTimestamp());
+    }
 
   }
 
@@ -59,38 +55,21 @@ public abstract class Command {
 
       if (value.equals(sourcedValue.get())) {
 
-        // we already knew this
+        // we already knew this value
 
         // todo select data from event with preferred license or trustworthiness, time axis etc
 
-        boolean addSources = false;
+        // we trust this event at least as much as the data in the store
 
-        if (primarySource.getTrustworthiness() != null
-            && sourcedValue.getTrustworthiness() != null
-            && sourcedValue.getTrustworthiness() <= primarySource.getTrustworthiness()) {
-
-          // we trust this event at least as much as the data in the store
-
-          if (sourcedValue.getLastSeen() == null || sourcedValue.getLastSeen().before(primarySource.getTimestamp())) {
-            sourcedValue.setLastSeen(primarySource.getTimestamp());
-          }
-
-          sourcedValue.setTrustworthiness(primarySource.getTrustworthiness());
-          addSources = true;
+        if (sourcedValue.getLastSeen() == null || sourcedValue.getLastSeen().before(primarySource.getTimestamp())) {
+          sourcedValue.setLastSeen(primarySource.getTimestamp());
         }
 
-        if (addSources) {
-          for (int i = event.getSources().size() - 1; i >= 0; i--) {
-            Source source = event.getSources().get(i);
-            if (!sourcedValue.getSources().contains(source)) {
-              sourcedValue.getSources().add(0, source);
-            }
-          }
-        }
+        sourcedValue.setTrustworthiness(primarySource.getTrustworthiness());
 
       } else {
 
-        // a new value
+        // this is a new or changed value
 
 
         // todo logic that:
@@ -103,34 +82,34 @@ public abstract class Command {
 
         // let through events that are much more trustworthy even if they are a bit old? really think this one through though, new data might be skipped!!
 
-        if (primarySource.getTrustworthiness() != null
-            && sourcedValue.getTrustworthiness() != null
-            && sourcedValue.getTrustworthiness() > primarySource.getTrustworthiness()) {
-          System.currentTimeMillis();
-          // todo continue; ? why replace with data we don't trust?
-        }
-
 
         // todo above
         // currently let through any event which is newer than the currently known value
 
-        if (sourcedValue.getLastSeen() != null && sourcedValue.getLastSeen().after(primarySource.getTimestamp())) {
-          return;
-        }
-
-        sourcedValue.setTrustworthiness(primarySource.getTrustworthiness());
-
-        sourcedValue.set(value);
-
         if (sourcedValue.getLastSeen() == null || sourcedValue.getLastSeen().before(primarySource.getTimestamp())) {
-          sourcedValue.setLastSeen(primarySource.getTimestamp());
-        }
-        if (sourcedValue.getFirstSeen() == null || sourcedValue.getFirstSeen().after(primarySource.getTimestamp())) {
-          sourcedValue.setFirstSeen(primarySource.getTimestamp());
+          sourcedValue.set(value);
         }
 
-        sourcedValue.setSources(event.getSources());
+
       }
+
+      for (Source source : event.getSources()) {
+        sourcedValue.getSources().getAuthors().add(source.getAuthor());
+        sourcedValue.getSources().getLicenses().add(source.getLicense());
+      }
+
+      if (sourcedValue.getLastSeen() == null || sourcedValue.getLastSeen().before(primarySource.getTimestamp())) {
+        sourcedValue.setLastSeen(primarySource.getTimestamp());
+      }
+
+      if (sourcedValue.getFirstSeen() == null || sourcedValue.getFirstSeen().after(primarySource.getTimestamp())) {
+        sourcedValue.setFirstSeen(primarySource.getTimestamp());
+      }
+
+    } else {
+
+      // value is null. todo does this mean we should null it out?!
+
     }
   }
 

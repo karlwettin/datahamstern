@@ -10,7 +10,13 @@ import se.datahamstern.command.Source;
 import se.datahamstern.io.FileUtils;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is where you add and process incoming events
@@ -93,29 +99,50 @@ public class EventQueue {
     this.currentOutboxEventLog = currentOutboxEventLog;
   }
 
+  private static Pattern eventLogFilenamePattern = Pattern.compile("^([0-9]+).*\\.json$");
+
   public void pollInbox() throws Exception {
-    for (File file : inbox.listFiles(new FileFilter() {
+    File[] files = inbox.listFiles(new FileFilter() {
       @Override
       public boolean accept(File file) {
-        return file.isFile() && file.getName().endsWith(".json");
+        return file.isFile() && eventLogFilenamePattern.matcher(file.getName()).find();
       }
-    })) {
+    });
+    Arrays.sort(files, new Comparator<File>() {
+      @Override
+      public int compare(File file, File file1) {
+        return get(file).compareTo(get(file1));
+      }
+
+      private Long get(File file) {
+        Matcher matcher = eventLogFilenamePattern.matcher(file.getName());
+        matcher.find();
+        return Long.valueOf(matcher.group(1));
+      }
+    });
+
+    for (File file : files) {
       File seen = new File(file.getAbsolutePath() + ".seen");
       if (!seen.exists()) {
         try {
+          System.out.println("Processing " + file.getAbsoluteFile());
           new FileOutputStream(seen, false).close();
           StreamingJsonEventLogReader events = new StreamingJsonEventLogReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
           Event event;
           while ((event = events.next()) != null) {
             queue(event);
           }
+          System.out.println("Done processing " + file.getAbsoluteFile());
         } catch (Exception e) {
           // log.error("Exception while importing event log " + file.getAbsolutePath(), e);
-          e.printStackTrace();
+          e.printStackTrace(System.out);
         }
       }
     }
   }
+
+  private long eventsQueued;
+  private int debugEventsQueued = Integer.MAX_VALUE -1;
 
   /**
    * Adds an event to the queue.
@@ -135,7 +162,7 @@ public class EventQueue {
       event.setIdentity(eventStore.identityFactory());
 
       if (currentOutboxEventLog == null) {
-        currentOutboxEventLog = new OutputStreamWriter(new FileOutputStream(new File(outbox, System.currentTimeMillis() + ".events.json")));
+        currentOutboxEventLog = new OutputStreamWriter(new FileOutputStream(new File(outbox, System.currentTimeMillis() + "." + Datahamstern.getInstance().getSystemUUID() + ".events.json")));
         currentOutboxEventLog.write("{\n  \"system\" : \"");
         currentOutboxEventLog.write(StringEscapeUtils.escapeJavaScript(Datahamstern.getInstance().getSystemUUID()));
         currentOutboxEventLog.write("\",");
@@ -154,7 +181,20 @@ public class EventQueue {
     // ie also old events that have been updated!
     event.set_local_timestamp(new Date());
 
-    return eventStore.getEvents().put(event);
+    Event response = eventStore.getEvents().put(event);
+
+    if (response != null) {
+      // todo count updates
+      Nop.breakpoint();
+    }
+
+    eventsQueued++;
+    if (debugEventsQueued++ == 1431) {
+      debugEventsQueued=0;
+      System.out.println(eventsQueued + " events queued (or updated) since system startup. Last event: " + event.toString());
+    }
+
+    return response;
   }
 
   private void assertWellDescribedEvent(Event event) {
@@ -198,10 +238,11 @@ public class EventQueue {
   // todo persistent
   private Date lastFlushQueueStartedTimestamp = new Date(0);
 
-  public synchronized void flushQueue() {
+  private int debugFlushCounter = Integer.MAX_VALUE -1;
+  private int totalFlushCounter = 0;
+  private int failedFlushedCounter = 0;
 
-    int totalCounter = 0;
-    int failedCounter = 0;
+  public synchronized void flushQueue() {
 
     Date started = new Date();
     Date lastFlushQueueStartedTimestamp = this.lastFlushQueueStartedTimestamp;
@@ -211,7 +252,6 @@ public class EventQueue {
     try {
       Event event;
       while ((event = events.next()) != null) {
-        totalCounter++;
         try {
           execute(event, jsonParser);
           // if this was turned off then we would keep all events in the bdb
@@ -227,9 +267,16 @@ public class EventQueue {
         } catch (Exception e) {
           e.printStackTrace();
           // log.error("Exception while executing event " + event, e);
-          failedCounter++;
+          failedFlushedCounter++;
 
         }
+
+        totalFlushCounter++;
+        if (debugFlushCounter++ == 1431) {
+          debugFlushCounter = 0;
+          System.out.println(totalFlushCounter + " events flushed to command since system startup. Last event: " + event);
+        }
+
       }
     } finally {
       events.close();

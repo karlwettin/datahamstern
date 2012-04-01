@@ -9,7 +9,7 @@ import java.io.*;
  * @author kalle
  * @since 2012-03-06 04:41
  */
-public class JsonEventLogWriter {
+public class JsonEventLogWriter implements EventConsumer {
 
   private boolean hasHeader = false;
   private Writer writer;
@@ -29,7 +29,8 @@ public class JsonEventLogWriter {
     this.file = file;
   }
 
-  public void write(Event event) throws IOException {
+  @Override
+  public void consume(Event event) throws Exception {
     synchronized (this) {
       if (!hasHeader) {
         if (file != null) {

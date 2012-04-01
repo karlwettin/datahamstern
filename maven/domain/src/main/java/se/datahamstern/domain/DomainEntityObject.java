@@ -15,5 +15,4 @@ public interface DomainEntityObject extends Serializable {
   public abstract String getIdentity();
   public abstract void setIdentity(String identity);
 
-
 }

@@ -4,7 +4,6 @@ import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
-import se.datahamstern.event.EventQueue;
 import se.datahamstern.event.JsonEventLogWriter;
 
 import java.io.*;
@@ -71,7 +70,7 @@ public class IterateOldRawFile {
             if (event.getIdentity() == null) {
               event.setIdentity(UUID.randomUUID().toString());
             }
-            w.write(event);
+            w.consume(event);
             Nop.breakpoint();
 
           }

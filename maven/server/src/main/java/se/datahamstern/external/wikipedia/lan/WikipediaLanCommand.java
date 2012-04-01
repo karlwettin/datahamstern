@@ -2,13 +2,10 @@ package se.datahamstern.external.wikipedia.lan;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.serialization.JSON;
-import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Lan;
-import se.datahamstern.domain.Ort;
+import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.event.Event;
 
 /**
@@ -60,17 +57,23 @@ public class WikipediaLanCommand extends Command {
     String länsnamn = (String)jsonObject.remove("länsnamn");
     String alfakod = (String)jsonObject.remove("alfakod");
     String nummerkod = (String)jsonObject.remove("nummerkod");
-    String kvadratkilometerLandareal = (String)jsonObject.remove("kvadratkilometerLandareal");
-    String folkmängd = (String)jsonObject.remove("folkmängd");
+    Number kvadratkilometerLandareal = (Number)jsonObject.remove("kvadratkilometerLandareal");
+    Number folkmängd = (Number)jsonObject.remove("folkmängd");
     String residensstad = (String)jsonObject.remove("residensstad");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Lan län = DomainStore.getInstance().getLänByAlfakod().get(alfakod);
+    Lan län;
+
+    län = DomainStore.getInstance().getLänByNummerkod().get(nummerkod);
     if (län == null) {
-      län = new Lan();
+      län = DomainStore.getInstance().getLänByAlfakod().get(alfakod);
+      if (län == null) {
+        // todo search by namn
+        län = new Lan();
+      }
     }
 
     updateSourced(län, event);
