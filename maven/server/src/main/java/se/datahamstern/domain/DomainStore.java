@@ -226,14 +226,6 @@ public class DomainStore {
   private DomainObjectVisitor putVisitor = new DomainObjectVisitor() {
     @Override
     public void visit(Lan län) {
-
-      if (län.getIdentity() != null) {
-        Lan current = getLän().get(län.getIdentity());
-        if (current.equals(län)) {
-          return;
-        }
-      }
-
       assignIdentity(län);
       län.set_index_alfakod(län.getAlfakod().get());
       län.set_index_nummerkod(län.getNummerkod().get());
