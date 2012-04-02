@@ -8,6 +8,7 @@ import com.sleepycat.persist.StoreConfig;
 import se.datahamstern.Datahamstern;
 import se.datahamstern.domain.hydda.*;
 import se.datahamstern.domain.naringslivsregistret.Organisation;
+import se.datahamstern.domain.postnummer.Gata;
 import se.datahamstern.domain.postnummer.Gatuadress;
 import se.datahamstern.domain.postnummer.Postnummer;
 import se.datahamstern.domain.postnummer.Postort;
@@ -15,11 +16,8 @@ import se.datahamstern.domain.wikipedia.Kommun;
 import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.domain.wikipedia.Ort;
 import se.datahamstern.io.FileUtils;
-import se.datahamstern.sourced.SourcedValue;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.UUID;
 
 /**
@@ -78,7 +76,13 @@ public class DomainStore {
 
   private PrimaryIndex<String, Gatuadress> gatuadresser;
   private SecondaryIndex<String, String, Gatuadress> gatuadresserByPostnummer;
-  private SecondaryIndex<Gatuadress.UniqueIndex, String, Gatuadress> gatuadressByUniqueIndex;
+  private SecondaryIndex<Gatuadress.GataAndGatunummer, String, Gatuadress> gatuadressByGataAndGatunummer;
+  private SecondaryIndex<String, String, Gatuadress> gatuadresserByGata;
+
+  private PrimaryIndex<String, Gata> gator;
+  private SecondaryIndex<String, String, Gata> gatorByPostnummer;
+  private SecondaryIndex<String, String, Gata> gatorByPostort;
+  private SecondaryIndex<Gata.NamnAndPostort, String, Gata> gatorByNamnAndPostort;
 
   private PrimaryIndex<String, Postnummer> postnummer;
   private SecondaryIndex<String, String, Postnummer> postnummerByPostnummer;
@@ -169,7 +173,13 @@ public class DomainStore {
 
     gatuadresser = entityStore.getPrimaryIndex(String.class, Gatuadress.class);
     gatuadresserByPostnummer = entityStore.getSecondaryIndex(gatuadresser, String.class, "_index_postnummerIdentity");
-    gatuadressByUniqueIndex = entityStore.getSecondaryIndex(gatuadresser, Gatuadress.UniqueIndex.class, "_index_unique");
+    gatuadressByGataAndGatunummer = entityStore.getSecondaryIndex(gatuadresser, Gatuadress.GataAndGatunummer.class, "_index_gataAndGatunummer");
+    gatuadresserByGata = entityStore.getSecondaryIndex(gatuadresser, String.class, "_index_gataIdentity");
+
+    gator = entityStore.getPrimaryIndex(String.class, Gata.class);
+    gatorByNamnAndPostort = entityStore.getSecondaryIndex(gator, Gata.NamnAndPostort.class, "_index_namnAndPostort");
+    gatorByPostort = entityStore.getSecondaryIndex(gator, String.class, "_index_postortIdentity");
+    gatorByPostnummer = entityStore.getSecondaryIndex(gator, String.class, "_index_postnummerIdentities");
 
     postnummer = entityStore.getPrimaryIndex(String.class, Postnummer.class);
     postnummerByPostnummer = entityStore.getSecondaryIndex(postnummer, String.class, "_index_postnummer");
@@ -223,119 +233,7 @@ public class DomainStore {
    * Ensures that values for all secondary indices are set
    * and that instances are added to the correct primary index
    */
-  private DomainObjectVisitor putVisitor = new DomainObjectVisitor() {
-    @Override
-    public void visit(Lan län) {
-      assignIdentity(län);
-      län.set_index_alfakod(län.getAlfakod().get());
-      län.set_index_nummerkod(län.getNummerkod().get());
-      län.set_index_namn(län.getNamn().get());
-      getLän().put(län);
-    }
-
-    @Override
-    public void visit(Kommun kommun) {
-      assignIdentity(kommun);
-      kommun.set_index_länIdentity(kommun.getLänIdentity().get());
-      kommun.set_index_namn(kommun.getNamn().get());
-      getKommuner().put(kommun);
-    }
-
-    @Override
-    public void visit(Ort ort) {
-      assignIdentity(ort);
-      ort.set_index_kommunIdentity(ort.getKommunIdentity().get());
-      getOrter().put(ort);
-    }
-
-    @Override
-    public void visit(Organisation organisation) {
-      assignIdentity(organisation);
-      organisation.set_index_nummer(organisation.getNummer().get());
-      organisation.set_index_länIdentity(organisation.getLänIdentity().get());
-      getOrganisationer().put(organisation);
-    }
-
-    @Override
-    public void visit(Arsredovisning årsredovisning) {
-      assignIdentity(årsredovisning);
-      årsredovisning.set_index_organisationIdentity(årsredovisning.getOrganisationIdentity().get());
-      if (årsredovisning.getDatumFrom().get() != null) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(årsredovisning.getDatumFrom().get());
-        årsredovisning.set_index_år(calendar.get(Calendar.YEAR));
-      } else {
-        årsredovisning.set_index_år(null);
-      }
-      getÅrsredovisningar().put(årsredovisning);
-
-    }
-
-    @Override
-    public void visit(EkonomiskPlan ekonomiskPlan) {
-      assignIdentity(ekonomiskPlan);
-      ekonomiskPlan.set_index_organisationIdentity(ekonomiskPlan.getOrganisationIdentity().get());
-      getEkonomiskaPlaner().put(ekonomiskPlan);
-
-    }
-
-    @Override
-    public void visit(Stadgar stadgar) {
-      assignIdentity(stadgar);
-      stadgar.set_index_organisationIdentity(stadgar.getOrganisationIdentity().get());
-      getStadgar().put(stadgar);
-    }
-
-    @Override
-    public void visit(Dokument dokument) {
-      assignIdentity(dokument);
-      if (dokument.getDokumentversionerIdentity() != null && !dokument.getDokumentversionerIdentity().isEmpty()) {
-        dokument.set_index_dokumentversionerIdentity(new ArrayList<String>(dokument.getDokumentversionerIdentity().size()));
-        for (SourcedValue<String> dokumentVersionIdentity : dokument.getDokumentversionerIdentity()) {
-          dokument.get_index_dokumentversionerIdentity().add(dokumentVersionIdentity.get());
-        }
-      }
-      getDokument().put(dokument);
-
-    }
-
-    @Override
-    public void visit(Dokumentversion dokumentversion) {
-      assignIdentity(dokumentversion);
-      getDokumentversioner().put(dokumentversion);
-    }
-
-    @Override
-    public void visit(Gatuadress gatuaddress) {
-      assignIdentity(gatuaddress);
-      gatuaddress.set_index_postnummerIdentity(gatuaddress.getPostnummerIdentity().get());
-
-      Gatuadress.UniqueIndex uniqueIndex = gatuaddress.get_index_unique();
-      if (uniqueIndex == null) {
-        gatuaddress.set_index_unique(uniqueIndex = new Gatuadress.UniqueIndex());
-      }
-      uniqueIndex.setGatunamn(gatuaddress.getGatunamn().get());
-      uniqueIndex.setGatunummer(gatuaddress.getGatunummer().get());
-      uniqueIndex.setPostnummerIdentity(gatuaddress.getPostnummerIdentity().get());
-
-      getGatuadresser().put(gatuaddress);
-    }
-
-    @Override
-    public void visit(Postnummer postnummer) {
-      assignIdentity(postnummer);
-      postnummer.set_index_postnummer(postnummer.getPostnummer().get());
-      postnummer.set_index_postortIdentity(postnummer.getPostortIdentity().get());
-      getPostnummer().put(postnummer);
-    }
-
-    @Override
-    public void visit(Postort postort) {
-      assignIdentity(postort);
-      postort.set_index_namn(postort.getNamn().get());
-      getPostorter().put(postort);
-    }
-  };
+  private DomainEntityObjectVisitor putVisitor = new CountingDomainEntityObjectVisitor(new DomainEntityObjectPutVisitor());
 
 
   public File getPath() {
@@ -412,6 +310,46 @@ public class DomainStore {
 
   public PrimaryIndex<String, Arsredovisning> getÅrsredovisningar() {
     return årsredovisningar;
+  }
+
+  public SecondaryIndex<String, String, Gatuadress> getGatuadresserByGata() {
+    return gatuadresserByGata;
+  }
+
+  public void setGatuadresserByGata(SecondaryIndex<String, String, Gatuadress> gatuadresserByGata) {
+    this.gatuadresserByGata = gatuadresserByGata;
+  }
+
+  public PrimaryIndex<String, Gata> getGator() {
+    return gator;
+  }
+
+  public void setGator(PrimaryIndex<String, Gata> gator) {
+    this.gator = gator;
+  }
+
+  public SecondaryIndex<String, String, Gata> getGatorByPostnummer() {
+    return gatorByPostnummer;
+  }
+
+  public void setGatorByPostnummer(SecondaryIndex<String, String, Gata> gatorByPostnummer) {
+    this.gatorByPostnummer = gatorByPostnummer;
+  }
+
+  public SecondaryIndex<String, String, Gata> getGatorByPostort() {
+    return gatorByPostort;
+  }
+
+  public void setGatorByPostort(SecondaryIndex<String, String, Gata> gatorByPostort) {
+    this.gatorByPostort = gatorByPostort;
+  }
+
+  public SecondaryIndex<Gata.NamnAndPostort, String, Gata> getGatorByNamnAndPostort() {
+    return gatorByNamnAndPostort;
+  }
+
+  public void setGatorByNamnAndPostort(SecondaryIndex<Gata.NamnAndPostort, String, Gata> gatorByNamnAndPostort) {
+    this.gatorByNamnAndPostort = gatorByNamnAndPostort;
   }
 
   public void setÅrsredovisningar(PrimaryIndex<String, Arsredovisning> årsredovisningar) {
@@ -530,12 +468,12 @@ public class DomainStore {
     this.postnummerByPostort = postnummerByPostort;
   }
 
-  public SecondaryIndex<Gatuadress.UniqueIndex, String, Gatuadress> getGatuadressByUniqueIndex() {
-    return gatuadressByUniqueIndex;
+  public SecondaryIndex<Gatuadress.GataAndGatunummer, String, Gatuadress> getGatuadressByGataAndGatunummer() {
+    return gatuadressByGataAndGatunummer;
   }
 
-  public void setGatuadressByUniqueIndex(SecondaryIndex<Gatuadress.UniqueIndex, String, Gatuadress> gatuadressByUniqueIndex) {
-    this.gatuadressByUniqueIndex = gatuadressByUniqueIndex;
+  public void setGatuadressByGataAndGatunummer(SecondaryIndex<Gatuadress.GataAndGatunummer, String, Gatuadress> gatuadressByGataAndGatunummer) {
+    this.gatuadressByGataAndGatunummer = gatuadressByGataAndGatunummer;
   }
 
   public PrimaryIndex<String, Postort> getPostorter() {

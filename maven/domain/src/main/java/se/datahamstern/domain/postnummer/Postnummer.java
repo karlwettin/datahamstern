@@ -5,11 +5,13 @@ import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainObjectVisitor;
+import se.datahamstern.domain.DomainEntityObjectVisitor;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author kalle
@@ -31,32 +33,23 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Postort.class)
   private String _index_postortIdentity;
 
-  private SourcedValue<Boolean> gatunummer = new SourcedValue<Boolean>(false);
-  private SourcedValue<Boolean> boxnummer = new SourcedValue<Boolean>(false);
-  private SourcedValue<Boolean> svarspostsnummer = new SourcedValue<Boolean>(false);
-  private SourcedValue<Boolean> tävlingspostsnummer = new SourcedValue<Boolean>(false);
-  private SourcedValue<Boolean> storkundsnummer = new SourcedValue<Boolean>(false);
+  private List<SourcedValue<String>> stereotyper = new ArrayList<SourcedValue<String>>();
 
   @Override
   public boolean equals(Object o) {
-
     if (!super.equals(o)) {
       return false;
     }
-
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
 
     Postnummer that = (Postnummer) o;
 
-    if (boxnummer != null ? !boxnummer.equals(that.boxnummer) : that.boxnummer != null) return false;
-    if (gatunummer != null ? !gatunummer.equals(that.gatunummer) : that.gatunummer != null) return false;
     if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
     if (postnummer != null ? !postnummer.equals(that.postnummer) : that.postnummer != null) return false;
     if (postortIdentity != null ? !postortIdentity.equals(that.postortIdentity) : that.postortIdentity != null) return false;
-    if (storkundsnummer != null ? !storkundsnummer.equals(that.storkundsnummer) : that.storkundsnummer != null) return false;
-    if (svarspostsnummer != null ? !svarspostsnummer.equals(that.svarspostsnummer) : that.svarspostsnummer != null) return false;
-    if (tävlingspostsnummer != null ? !tävlingspostsnummer.equals(that.tävlingspostsnummer) : that.tävlingspostsnummer != null) return false;
+    if (stereotyper != null ? !stereotyper.equals(that.stereotyper) : that.stereotyper != null) return false;
 
     return true;
   }
@@ -67,16 +60,13 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
     result = 31 * result + (postnummer != null ? postnummer.hashCode() : 0);
     result = 31 * result + (postortIdentity != null ? postortIdentity.hashCode() : 0);
-    result = 31 * result + (gatunummer != null ? gatunummer.hashCode() : 0);
-    result = 31 * result + (boxnummer != null ? boxnummer.hashCode() : 0);
-    result = 31 * result + (svarspostsnummer != null ? svarspostsnummer.hashCode() : 0);
-    result = 31 * result + (tävlingspostsnummer != null ? tävlingspostsnummer.hashCode() : 0);
-    result = 31 * result + (storkundsnummer != null ? storkundsnummer.hashCode() : 0);
+    result = 31 * result + (stereotyper != null ? stereotyper.hashCode() : 0);
     return result;
   }
 
+
   @Override
-  public void accept(DomainObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) {
     visitor.visit(this);
   }
 
@@ -122,43 +112,12 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
     this.postnummer = postnummer;
   }
 
-  public SourcedValue<Boolean> getGatunummer() {
-    return gatunummer;
+  public List<SourcedValue<String>> getStereotyper() {
+    return stereotyper;
   }
 
-  public void setGatunummer(SourcedValue<Boolean> gatunummer) {
-    this.gatunummer = gatunummer;
+  public void setStereotyper(List<SourcedValue<String>> stereotyper) {
+    this.stereotyper = stereotyper;
   }
 
-  public SourcedValue<Boolean> getBoxnummer() {
-    return boxnummer;
-  }
-
-  public void setBoxnummer(SourcedValue<Boolean> boxnummer) {
-    this.boxnummer = boxnummer;
-  }
-
-  public SourcedValue<Boolean> getSvarspostsnummer() {
-    return svarspostsnummer;
-  }
-
-  public void setSvarspostsnummer(SourcedValue<Boolean> svarspostsnummer) {
-    this.svarspostsnummer = svarspostsnummer;
-  }
-
-  public SourcedValue<Boolean> getTävlingspostsnummer() {
-    return tävlingspostsnummer;
-  }
-
-  public void setTävlingspostsnummer(SourcedValue<Boolean> tävlingspostsnummer) {
-    this.tävlingspostsnummer = tävlingspostsnummer;
-  }
-
-  public SourcedValue<Boolean> getStorkundsnummer() {
-    return storkundsnummer;
-  }
-
-  public void setStorkundsnummer(SourcedValue<Boolean> storkundsnummer) {
-    this.storkundsnummer = storkundsnummer;
-  }
 }

@@ -2,6 +2,7 @@ package se.datahamstern.domain;
 
 import se.datahamstern.domain.hydda.*;
 import se.datahamstern.domain.naringslivsregistret.Organisation;
+import se.datahamstern.domain.postnummer.Gata;
 import se.datahamstern.domain.postnummer.Gatuadress;
 import se.datahamstern.domain.postnummer.Postnummer;
 import se.datahamstern.domain.postnummer.Postort;
@@ -13,7 +14,7 @@ import se.datahamstern.domain.wikipedia.Ort;
  * @author kalle
  * @since 2012-03-04 04:58
  */
-public interface DomainObjectVisitor {
+public interface DomainEntityObjectVisitor {
 
   public abstract void visit(Organisation organisation);
   public abstract void visit(Lan län);
@@ -21,6 +22,7 @@ public interface DomainObjectVisitor {
   public abstract void visit(Ort ort);
 
   public abstract void visit(Gatuadress gatuaddress);
+  public abstract void visit(Gata gata);
   public abstract void visit(Postnummer postnummer);
   public abstract void visit(Postort postort);
 

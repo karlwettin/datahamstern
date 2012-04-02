@@ -8,12 +8,14 @@ import se.datahamstern.Nop;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.command.Source;
 import se.datahamstern.io.FileUtils;
+import se.datahamstern.util.EggClockTimer;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,6 +92,8 @@ public class EventExecutor {
   private static Pattern eventLogFilenamePattern = Pattern.compile("^([0-9]+).*\\.json$");
 
   public synchronized void pollInbox() throws Exception {
+
+
     File[] files = inbox.listFiles(new FileFilter() {
       @Override
       public boolean accept(File file) {
@@ -111,7 +115,15 @@ public class EventExecutor {
 
 
     final AtomicInteger totalCounter = new AtomicInteger(0);
-    final AtomicInteger debugCounter = new AtomicInteger(0);
+    final Event[] mostRecentEvent = new Event[1];
+
+    EggClockTimer debugTimer = new EggClockTimer(TimeUnit.SECONDS.toMillis(5)){
+      @Override
+      public void alarm() {
+        System.out.println(totalCounter + " inbox events executed so far during this batch. Previous " + mostRecentEvent[0]);
+
+      }
+    };
 
     JSONParser jsonParser = new JSONParser();
 
@@ -127,10 +139,7 @@ public class EventExecutor {
             try {
               totalCounter.incrementAndGet();
               execute(event, jsonParser);
-              if (debugCounter.incrementAndGet() >= 1431) {
-                debugCounter.set(0);
-                System.out.println(totalCounter.get()  + " events executed so far during this batch. Last event: " + event.toString());
-              }
+              mostRecentEvent[0] = event;
             } catch (Exception e) {
               System.out.println("Failed to execute event " + event.toString());
               e.printStackTrace(System.out);
@@ -143,6 +152,8 @@ public class EventExecutor {
         }
       }
     }
+
+    debugTimer.stop();
   }
 
 

@@ -2,7 +2,7 @@ package se.datahamstern.domain.postnummer;
 
 import com.sleepycat.persist.model.*;
 import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainObjectVisitor;
+import se.datahamstern.domain.DomainEntityObjectVisitor;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
@@ -20,19 +20,18 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
   @PrimaryKey
   private String identity;
 
-  private SourcedValue<String> gatunamn = new SourcedValue<String>();
-  private SourcedValue<Integer> gatunummer = new SourcedValue<Integer>();
+  private SourcedValue<String> gataIdentity = new SourcedValue<String>();
+  @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Gata.class)
+  private String _index_gataIdentity;
 
-  // todo also contains postort so we can find it in case switched postnummer?
-  // todo but first find out if there can be more than one unique gatunamn per postort.
-  // todo for instance i think there are two drottningatan in helsingborg?
+  private SourcedValue<Integer> gatunummer = new SourcedValue<Integer>();
 
   private SourcedValue<String> postnummerIdentity = new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Postnummer.class)
   private String _index_postnummerIdentity;
 
   @SecondaryKey(relate = Relationship.ONE_TO_ONE)
-  private UniqueIndex _index_unique;
+  private GataAndGatunummer _index_gataAndGatunummer;
 
   @Override
   public boolean equals(Object o) {
@@ -46,7 +45,7 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
 
     Gatuadress that = (Gatuadress) o;
 
-    if (gatunamn != null ? !gatunamn.equals(that.gatunamn) : that.gatunamn != null) return false;
+    if (gataIdentity != null ? !gataIdentity.equals(that.gataIdentity) : that.gataIdentity != null) return false;
     if (gatunummer != null ? !gatunummer.equals(that.gatunummer) : that.gatunummer != null) return false;
     if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
     if (postnummerIdentity != null ? !postnummerIdentity.equals(that.postnummerIdentity) : that.postnummerIdentity != null) return false;
@@ -58,27 +57,25 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
   public int hashCode() {
     int result = super.hashCode();
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
-    result = 31 * result + (gatunamn != null ? gatunamn.hashCode() : 0);
+    result = 31 * result + (gataIdentity != null ? gataIdentity.hashCode() : 0);
     result = 31 * result + (gatunummer != null ? gatunummer.hashCode() : 0);
     result = 31 * result + (postnummerIdentity != null ? postnummerIdentity.hashCode() : 0);
     return result;
   }
 
   @Persistent(version = 1)
-  public static class UniqueIndex {
+  public static class GataAndGatunummer {
     @KeyField(1)
-    private String gatunamn;
+    private String gataIdentity;
     @KeyField(2)
     private int gatunummer;
-    @KeyField(3)
-    private String postnummerIdentity;
 
-    public String getGatunamn() {
-      return gatunamn;
+    public String getGataIdentity() {
+      return gataIdentity;
     }
 
-    public void setGatunamn(String gatunamn) {
-      this.gatunamn = gatunamn;
+    public void setGataIdentity(String gataIdentity) {
+      this.gataIdentity = gataIdentity;
     }
 
     public int getGatunummer() {
@@ -89,18 +86,11 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
       this.gatunummer = gatunummer;
     }
 
-    public String getPostnummerIdentity() {
-      return postnummerIdentity;
-    }
-
-    public void setPostnummerIdentity(String postnummerIdentity) {
-      this.postnummerIdentity = postnummerIdentity;
-    }
   }
 
 
   @Override
-  public void accept(DomainObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) {
     visitor.visit(this);
   }
 
@@ -114,12 +104,12 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
     this.identity = identity;
   }
 
-  public UniqueIndex get_index_unique() {
-    return _index_unique;
+  public GataAndGatunummer get_index_gataAndGatunummer() {
+    return _index_gataAndGatunummer;
   }
 
-  public void set_index_unique(UniqueIndex _index_unique) {
-    this._index_unique = _index_unique;
+  public void set_index_gataAndGatunummer(GataAndGatunummer _index_gataAndGatunummer) {
+    this._index_gataAndGatunummer = _index_gataAndGatunummer;
   }
 
   public String get_index_postnummerIdentity() {
@@ -130,12 +120,20 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
     this._index_postnummerIdentity = _index_postnummerIdentity;
   }
 
-  public SourcedValue<String> getGatunamn() {
-    return gatunamn;
+  public String get_index_gataIdentity() {
+    return _index_gataIdentity;
   }
 
-  public void setGatunamn(SourcedValue<String> gatunamn) {
-    this.gatunamn = gatunamn;
+  public void set_index_gataIdentity(String _index_gataIdentity) {
+    this._index_gataIdentity = _index_gataIdentity;
+  }
+
+  public SourcedValue<String> getGataIdentity() {
+    return gataIdentity;
+  }
+
+  public void setGataIdentity(SourcedValue<String> gataIdentity) {
+    this.gataIdentity = gataIdentity;
   }
 
   public SourcedValue<String> getPostnummerIdentity() {

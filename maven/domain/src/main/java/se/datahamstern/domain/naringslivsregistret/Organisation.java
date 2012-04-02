@@ -5,7 +5,7 @@ import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainObjectVisitor;
+import se.datahamstern.domain.DomainEntityObjectVisitor;
 import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
@@ -25,7 +25,7 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
 
 
   @Override
-  public void accept(DomainObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) {
     visitor.visit(this);
   }
 

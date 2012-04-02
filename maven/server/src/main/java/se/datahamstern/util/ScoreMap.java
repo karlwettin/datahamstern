@@ -40,9 +40,13 @@ public class ScoreMap<T> extends HashMap<T, Double> {
   };
 
   public Map.Entry<T, Double>[] getHits() {
-    Map.Entry<T, Double>[] hits = (Map.Entry<T, Double>[])entrySet().toArray(new Map[size()]);
+    Map.Entry<T, Double>[] hits = (Map.Entry<T, Double>[])entrySet().toArray(new Map.Entry[size()]);
     Arrays.sort(hits, comparator);
     return hits;
   }
 
+  @Override
+  public String toString() {
+    return Arrays.toString(getHits());
+  }
 }
