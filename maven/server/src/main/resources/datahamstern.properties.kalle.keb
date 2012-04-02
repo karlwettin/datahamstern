@@ -4,9 +4,7 @@ selenium.port=4444
 selenium.browser=*chrome
 selenium.url=file:///
 
-gs.path=/opt/local/bin/gs
-tesseract.path=/opt/local/bin/tesseract
-
+domainStore.cacheMB=5000
 
 HarvestNaringslivsregistret.threads=1
 

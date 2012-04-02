@@ -2,6 +2,7 @@ package se.datahamstern.event;
 
 import com.sleepycat.persist.EntityCursor;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
@@ -200,7 +201,7 @@ public class EventExecutor {
       if (currentOutboxEventLog == null) {
         currentOutboxEventLog = new OutputStreamWriter(new FileOutputStream(new File(outbox, System.currentTimeMillis() + "." + Datahamstern.getInstance().getSystemUUID() + ".events.json")));
         currentOutboxEventLog.write("{\n  \"system\" : \"");
-        currentOutboxEventLog.write(StringEscapeUtils.escapeJavaScript(Datahamstern.getInstance().getSystemUUID()));
+        currentOutboxEventLog.write(JSONObject.escape(Datahamstern.getInstance().getSystemUUID()));
         currentOutboxEventLog.write("\",");
         currentOutboxEventLog.write("\n  \"created\" : ");
         currentOutboxEventLog.write(String.valueOf(System.currentTimeMillis()));

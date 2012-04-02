@@ -1,6 +1,7 @@
 package se.datahamstern.external.wikipedia.orter;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.Datahamstern;
@@ -130,7 +131,7 @@ public class WikipediaTatortsHarvester {
           jsonData.append('"');
 
           if ("Tätort".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("tätortsnamn"));
+            jsonData.append(JSONObject.escape("tätortsnamn"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Tätortsnamn saknas!");
@@ -138,7 +139,7 @@ public class WikipediaTatortsHarvester {
             value = stringValue;
 
           } else if ("Kommun".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kommunnamn"));
+            jsonData.append(JSONObject.escape("kommunnamn"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Kommunnamn saknas!");
@@ -146,7 +147,7 @@ public class WikipediaTatortsHarvester {
             value = stringValue;
 
           } else if ("Folkmängd".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("folkmängd"));
+            jsonData.append(JSONObject.escape("folkmängd"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Folkmängd saknas!");
@@ -154,7 +155,7 @@ public class WikipediaTatortsHarvester {
             value = Integer.parseInt(stringValue.replaceAll("\\s+", ""));
 
           } else if ("Landareal (hektar)".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandareal"));
+            jsonData.append(JSONObject.escape("hektarLandareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Areal saknas!");
@@ -162,7 +163,7 @@ public class WikipediaTatortsHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Tätortskod".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("tätortskod"));
+            jsonData.append(JSONObject.escape("tätortskod"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Tätortskod saknas!");
@@ -182,7 +183,7 @@ public class WikipediaTatortsHarvester {
             jsonData.append("null");
           } else if (value instanceof String) {
             jsonData.append('"');
-            jsonData.append(StringEscapeUtils.escapeJavaScript(value.toString()));
+            jsonData.append(JSONObject.escape(value.toString()));
             jsonData.append('"');
           } else if (value instanceof Number) {
             jsonData.append(value.toString());

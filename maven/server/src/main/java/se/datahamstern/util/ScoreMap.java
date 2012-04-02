@@ -35,7 +35,7 @@ public class ScoreMap<T> extends HashMap<T, Double> {
   public Comparator<Map.Entry<T, Double>> comparator = new Comparator<Map.Entry<T, Double>>() {
     @Override
     public int compare(Map.Entry<T, Double> o1, Map.Entry<T, Double> o2) {
-      return o2.getValue().compareTo(o2.getValue());
+      return o2.getValue().compareTo(o1.getValue());
     }
   };
 

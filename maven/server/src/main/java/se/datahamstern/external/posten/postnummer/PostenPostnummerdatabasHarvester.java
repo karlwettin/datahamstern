@@ -1,6 +1,7 @@
 package se.datahamstern.external.posten.postnummer;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.Datahamstern;
@@ -160,42 +161,42 @@ public class PostenPostnummerdatabasHarvester {
       jsonData.append("{");
 
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript("gatunamn"));
+      jsonData.append(JSONObject.escape("gatunamn"));
       jsonData.append('"');
       jsonData.append(':');
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript(gatunamn));
+      jsonData.append(JSONObject.escape(gatunamn));
       jsonData.append('"');
       jsonData.append(',');
 
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript("gatunummer"));
+      jsonData.append(JSONObject.escape("gatunummer"));
       jsonData.append('"');
       jsonData.append(':');
       if (gatunummer.isEmpty()) {
         jsonData.append("null");
       } else {
         jsonData.append('"');
-        jsonData.append(StringEscapeUtils.escapeJavaScript(gatunummer));
+        jsonData.append(JSONObject.escape(gatunummer));
         jsonData.append('"');
       }
       jsonData.append(',');
 
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript("postnummer"));
+      jsonData.append(JSONObject.escape("postnummer"));
       jsonData.append('"');
       jsonData.append(':');
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript(postnummer));
+      jsonData.append(JSONObject.escape(postnummer));
       jsonData.append('"');
       jsonData.append(',');
 
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript("postort"));
+      jsonData.append(JSONObject.escape("postort"));
       jsonData.append('"');
       jsonData.append(':');
       jsonData.append('"');
-      jsonData.append(StringEscapeUtils.escapeJavaScript(postort));
+      jsonData.append(JSONObject.escape(postort));
       jsonData.append('"');
 
       jsonData.append("}");

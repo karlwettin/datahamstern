@@ -1,6 +1,7 @@
 package se.datahamstern.event;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import se.datahamstern.command.Source;
 
 import java.io.IOException;
@@ -27,17 +28,17 @@ public class JsonEventWriter {
     json.write("\n  \"identity\" : ");
     if (event.getIdentity()  != null) {
       json.write('"');
-      json.write(StringEscapeUtils.escapeJavaScript(event.getIdentity()));
+      json.write(JSONObject.escape(event.getIdentity()));
       json.write('"');
     } else {
       json.write("null");
     }
     json.write(",\n  \"command\" : { ");
     json.write("\n    \"name\" : \"");
-    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandName()));
+    json.write(JSONObject.escape(event.getCommandName()));
     json.write("\"");
     json.write(",\n    \"version\" : \"");
-    json.write(StringEscapeUtils.escapeJavaScript(event.getCommandVersion()));
+    json.write(JSONObject.escape(event.getCommandVersion()));
     json.write("\"");
     json.write(",\n    \"data\" : ");
     json.write(event.getJsonData());
@@ -58,7 +59,7 @@ public class JsonEventWriter {
           json.write("null");
         } else {
           json.write('"');
-          json.write(StringEscapeUtils.escapeJavaScript(source.getAuthor()));
+          json.write(JSONObject.escape(source.getAuthor()));
           json.write('"');
         }
 
@@ -74,7 +75,7 @@ public class JsonEventWriter {
           json.write("null");
         } else {
           json.write('"');
-          json.write(StringEscapeUtils.escapeJavaScript(source.getDetails()));
+          json.write(JSONObject.escape(source.getDetails()));
           json.write('"');
         }
 
@@ -83,7 +84,7 @@ public class JsonEventWriter {
           json.write("null");
         } else {
           json.write('"');
-          json.write(StringEscapeUtils.escapeJavaScript(source.getLicense()));
+          json.write(JSONObject.escape(source.getLicense()));
           json.write('"');
         }
 

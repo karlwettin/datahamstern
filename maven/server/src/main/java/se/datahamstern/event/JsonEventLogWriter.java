@@ -1,6 +1,7 @@
 package se.datahamstern.event;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import se.datahamstern.Datahamstern;
 
 import java.io.*;
@@ -38,7 +39,7 @@ public class JsonEventLogWriter implements EventConsumer {
         }
         writer.write("{\n  \"version\" : \"1\",");
         writer.write("\n  \"system\" : \"");
-        writer.write(StringEscapeUtils.escapeJavaScript(Datahamstern.getInstance().getSystemUUID()));
+        writer.write(JSONObject.escape(Datahamstern.getInstance().getSystemUUID()));
         writer.write("\",");
         writer.write("\n  \"created\" : ");
         writer.write(String.valueOf(System.currentTimeMillis()));

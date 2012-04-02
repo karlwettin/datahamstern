@@ -1,6 +1,7 @@
 package se.datahamstern.external.wikipedia.lan;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.Datahamstern;
@@ -156,7 +157,7 @@ public class WikipediaLanHarvester {
            */
 
           if ("Län".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("länsnamn"));
+            jsonData.append(JSONObject.escape("länsnamn"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Länsnamn saknas!");
@@ -164,7 +165,7 @@ public class WikipediaLanHarvester {
             value = stringValue;
 
           } else if ("Bokstav".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("alfakod"));
+            jsonData.append(JSONObject.escape("alfakod"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Länsbokstavskod saknas!");
@@ -172,7 +173,7 @@ public class WikipediaLanHarvester {
             value = stringValue;
 
           } else if ("Kod".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("nummerkod"));
+            jsonData.append(JSONObject.escape("nummerkod"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Länsnummerkod saknas!");
@@ -180,7 +181,7 @@ public class WikipediaLanHarvester {
             value = stringValue;
 
           } else if ("Yta (km²)".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kvadratkilometerLandareal"));
+            jsonData.append(JSONObject.escape("kvadratkilometerLandareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Landareal saknas!");
@@ -188,7 +189,7 @@ public class WikipediaLanHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Folkmängd".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("folkmängd"));
+            jsonData.append(JSONObject.escape("folkmängd"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Folkmängd saknas!");
@@ -196,7 +197,7 @@ public class WikipediaLanHarvester {
             value = Integer.parseInt(stringValue.replaceAll("\\s+", ""));
 
           } else if ("Residensstad".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("residensstad"));
+            jsonData.append(JSONObject.escape("residensstad"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Residensstad saknas!");
@@ -204,7 +205,7 @@ public class WikipediaLanHarvester {
             value = stringValue;
 
 //          } else if ("Inrättat".equals(header)) {
-//            jsonData.append(StringEscapeUtils.escapeJavaScript("inrättningsår"));
+//            jsonData.append(JSONObject.escape("inrättningsår"));
 //            String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
 //            if (stringValue.isEmpty()) {
 //              throw new RuntimeException("Inrättningsår saknas!");
@@ -224,7 +225,7 @@ public class WikipediaLanHarvester {
             jsonData.append("null");
           } else if (value instanceof String) {
             jsonData.append('"');
-            jsonData.append(StringEscapeUtils.escapeJavaScript(value.toString()));
+            jsonData.append(JSONObject.escape(value.toString()));
             jsonData.append('"');
           } else if (value instanceof Number) {
             jsonData.append(value.toString());

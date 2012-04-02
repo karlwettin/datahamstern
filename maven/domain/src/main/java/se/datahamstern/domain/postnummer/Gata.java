@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * todo se till att alla gatunamn verkligen är unika per postort
+ * todo och bygg eventlog med undantagsfallen
+ *
  * @author kalle
  * @since 2012-04-02 17:59
  */

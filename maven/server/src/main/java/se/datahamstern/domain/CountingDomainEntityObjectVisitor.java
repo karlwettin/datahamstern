@@ -34,10 +34,7 @@ public class CountingDomainEntityObjectVisitor extends DecoratedDomainEntityObje
     @Override
     public void alarm() {
       if (totalCounterSinceAlarm.get() > 0) {
-
-        System.out.println(totalCounter + " put in total, " + totalCounterSinceAlarm.get() +  " since previous alarm.");
-        System.out.println(counters.toString());
-
+        System.out.println(totalCounter + " domain entity objects put in total, " + totalCounterSinceAlarm.get() +  " since previous alarm. Details: " + counters.toString());
         totalCounterSinceAlarm.set(0);
       }
     }

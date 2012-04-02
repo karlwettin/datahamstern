@@ -116,7 +116,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getNummerprefix()));
+      json.append(JSONObject.escape(result.getNummerprefix()));
       json.append('"');
     }
     json.append(",\"nummer\":");
@@ -124,7 +124,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getNummer()));
+      json.append(JSONObject.escape(result.getNummer()));
       json.append('"');
     }
 
@@ -133,7 +133,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getNummersuffix()));
+      json.append(JSONObject.escape(result.getNummersuffix()));
       json.append('"');
     }
 
@@ -142,7 +142,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getNamn()));
+      json.append(JSONObject.escape(result.getNamn()));
       json.append('"');
     }
 
@@ -153,7 +153,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getLänsnummer()));
+      json.append(JSONObject.escape(result.getLänsnummer()));
       json.append('"');
     }
 
@@ -162,7 +162,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getFirmaform()));
+      json.append(JSONObject.escape(result.getFirmaform()));
       json.append('"');
     }
 
@@ -171,7 +171,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getFirmatyp()));
+      json.append(JSONObject.escape(result.getFirmatyp()));
       json.append('"');
     }
 
@@ -180,7 +180,7 @@ public class NaringslivsregistretCommand extends Command {
       json.append("null");
     } else {
       json.append('"');
-      json.append(StringEscapeUtils.escapeJavaScript(result.getStatus()));
+      json.append(JSONObject.escape(result.getStatus()));
       json.append('"');
     }
 

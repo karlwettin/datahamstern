@@ -1,6 +1,7 @@
 package se.datahamstern.external.wikipedia.kommuner;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.Datahamstern;
@@ -132,7 +133,7 @@ public class WikipediaKommunHarvester {
           jsonData.append('"');
 
           if ("Kod".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kommunnummerkod"));
+            jsonData.append(JSONObject.escape("kommunnummerkod"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Kommunkod saknas!");
@@ -140,7 +141,7 @@ public class WikipediaKommunHarvester {
             value = stringValue;
 
           } else if ("Kommun".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("kommunnamn"));
+            jsonData.append(JSONObject.escape("kommunnamn"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Kommunnamn saknas!");
@@ -148,7 +149,7 @@ public class WikipediaKommunHarvester {
             value = stringValue;
 
           } else if ("Län".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("länsnamn"));
+            jsonData.append(JSONObject.escape("länsnamn"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex)));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Länsnamn saknas!");
@@ -156,7 +157,7 @@ public class WikipediaKommunHarvester {
             value = stringValue;
 
           } else if ("Folkmängd".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("folkmängd"));
+            jsonData.append(JSONObject.escape("folkmängd"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Folkmängd saknas!");
@@ -164,7 +165,7 @@ public class WikipediaKommunHarvester {
             value = Integer.parseInt(stringValue.replaceAll("\\s+", ""));
 
           } else if ("Area".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarAreal"));
+            jsonData.append(JSONObject.escape("hektarAreal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Areal saknas!");
@@ -172,7 +173,7 @@ public class WikipediaKommunHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Land".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandareal"));
+            jsonData.append(JSONObject.escape("hektarLandareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Landareal saknas!");
@@ -180,7 +181,7 @@ public class WikipediaKommunHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Sjö".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarSjöareal"));
+            jsonData.append(JSONObject.escape("hektarSjöareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Sjöareal saknas!");
@@ -188,7 +189,7 @@ public class WikipediaKommunHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Hav".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarHavsareal"));
+            jsonData.append(JSONObject.escape("hektarHavsareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Havsareal saknas!");
@@ -207,7 +208,7 @@ public class WikipediaKommunHarvester {
             jsonData.append("null");
           } else if (value instanceof String) {
             jsonData.append('"');
-            jsonData.append(StringEscapeUtils.escapeJavaScript(value.toString()));
+            jsonData.append(JSONObject.escape(value.toString()));
             jsonData.append('"');
           } else if (value instanceof Number) {
             jsonData.append(value.toString());

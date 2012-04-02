@@ -1,6 +1,7 @@
 package se.datahamstern.external.naringslivsregistret;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.datahamstern.io.SeleniumAccessor;
@@ -42,7 +43,8 @@ public class Naringslivsregistret {
 
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>();
 
-    selenium.getEval("window.document.getElementById('sokstrang').value='" + StringEscapeUtils.escapeJavaScript(query) + "';");
+    selenium.getEval("window.document.getElementById('sokstrang').value='" +
+        JSONObject.escape(query) + "';");
     selenium.select("//SELECT[@id='sokalternativ']", "Företag");
     selenium.clickAndWaitForPageToLoad("//FORM[@name='sokForm']//INPUT[@type='submit']");
 
