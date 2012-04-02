@@ -7,7 +7,7 @@ import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Source;
 import se.datahamstern.event.Event;
 import se.datahamstern.event.EventConsumer;
-import se.datahamstern.event.EventQueue;
+import se.datahamstern.event.EventExecutor;
 import se.datahamstern.event.JsonEventLogWriter;
 import se.datahamstern.io.SeleniumAccessor;
 import se.datahamstern.xml.DomUtils;
@@ -31,7 +31,7 @@ public class WikipediaLanHarvester {
       Datahamstern.getInstance().open();
 
 
-      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventQueue.getInstance().getInbox(), System.currentTimeMillis() + ".wikipedia-lan.events.json")) {
+      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventExecutor.getInstance().getInbox(), System.currentTimeMillis() + ".wikipedia-lan.events.json")) {
         @Override
         public void consume(Event event) throws Exception {
           event.setIdentity(UUID.randomUUID().toString());

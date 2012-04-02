@@ -1,7 +1,7 @@
 package se.datahamstern;
 
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.event.EventQueue;
+import se.datahamstern.event.EventExecutor;
 import se.datahamstern.io.FileUtils;
 
 import java.io.File;
@@ -21,8 +21,7 @@ public class Datahamstern {
     getInstance().open();
     try {
 
-      EventQueue.getInstance().pollInbox();
-      EventQueue.getInstance().flushQueue();
+      EventExecutor.getInstance().pollInbox();
 
       System.currentTimeMillis();
 
@@ -114,14 +113,14 @@ public class Datahamstern {
     DomainStore.getInstance().open();
 
 
-    EventQueue.getInstance().setDataPath(new File(dataPath, "event"));
-    EventQueue.getInstance().open();
+    EventExecutor.getInstance().setDataPath(new File(dataPath, "event"));
+    EventExecutor.getInstance().open();
 
   }
 
   public void close() throws Exception {
     DomainStore.getInstance().close();
-    EventQueue.getInstance().close();
+    EventExecutor.getInstance().close();
   }
 
   public String getProperty(String key, String defaultValue) throws Exception {

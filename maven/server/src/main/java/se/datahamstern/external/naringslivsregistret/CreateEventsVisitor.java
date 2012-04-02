@@ -1,9 +1,10 @@
 package se.datahamstern.external.naringslivsregistret;
 
+import org.json.simple.parser.JSONParser;
 import se.datahamstern.event.Event;
-import se.datahamstern.event.EventQueue;
 import se.datahamstern.Nop;
 import se.datahamstern.command.Source;
+import se.datahamstern.event.EventExecutor;
 
 import java.util.Date;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 public class CreateEventsVisitor extends HarvestNaringslivsregistretVisitor {
 
   private Source source;
+  private JSONParser jsonParser = new JSONParser();
 
   @Override
   public void start(HarvestNaringslivsregistret harvester) throws Exception {
@@ -24,7 +26,7 @@ public class CreateEventsVisitor extends HarvestNaringslivsregistretVisitor {
   public void found(HarvestNaringslivsregistret harvester, NaringslivsregistretResult result) throws Exception {
     source.setTimestamp(new Date());
     Event event = NaringslivsregistretCommand.eventFactory(result, source);
-    EventQueue.getInstance().queue(event);
+    EventExecutor.getInstance().execute(event, jsonParser);
     Nop.breakpoint();
   }
 

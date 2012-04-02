@@ -1,10 +1,11 @@
 package se.datahamstern;
 
 import junit.framework.TestCase;
+import org.json.simple.parser.JSONParser;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.naringslivsregistret.Organisation;
 import se.datahamstern.domain.wikipedia.Lan;
-import se.datahamstern.event.EventQueue;
+import se.datahamstern.event.EventExecutor;
 import se.datahamstern.external.naringslivsregistret.Naringslivsregistret;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretResult;
@@ -35,17 +36,11 @@ public class TestNaringslivsregistret extends TestCase {
       nlr.open();
       try {
 
+        JSONParser jsonParser = new JSONParser();
         List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>(nlr.search("volvo personvagnar").keySet());
         for (NaringslivsregistretResult result : results) {
-          EventQueue.getInstance().queue(NaringslivsregistretCommand.eventFactory(result));
+          EventExecutor.getInstance().execute(NaringslivsregistretCommand.eventFactory(result), jsonParser);
         }
-
-        final Date finished = new Date();
-
-        assertEquals(results.size(), EventQueue.getInstance().getEventStore().getEvents().count());
-
-        EventQueue.getInstance().flushQueue();
-
 
         // todo assert timestamps in sources are in between started and finished.
 
