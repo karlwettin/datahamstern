@@ -267,11 +267,13 @@ public class NaringslivsregistretCommand extends Command {
     if (länsnummer != null) {
       Lan län = DomainStore.getInstance().getLänByNummerkod().get(länsnummer);
       if (län == null) {
+        // we never update knowledge of län from this end
+        // as it would create so many postings to the bdb
         län = new Lan();
+        updateSourced(län, event);
+        updateSourcedValue(län.getNummerkod(), länsnummer, event);
+        DomainStore.getInstance().put(län);
       }
-      updateSourced(län, event);
-      updateSourcedValue(län.getNummerkod(), länsnummer, event);
-      DomainStore.getInstance().put(län);
 
       updateSourcedValue(organisation.getLänIdentity(), län.getIdentity(), event);
     }

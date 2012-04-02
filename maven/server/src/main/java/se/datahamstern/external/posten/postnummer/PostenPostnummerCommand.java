@@ -63,7 +63,7 @@ public class PostenPostnummerCommand extends Command {
 
     String gatunamn = (String) jsonObject.remove("gatunamn");
     String gatunummer = (String) jsonObject.remove("gatunummer");
-    String postnummerValue = (String) jsonObject.remove("postnummer");
+    String postnummerValue = ((String) jsonObject.remove("postnummer")).replaceAll("\\s+", "");
     String postortValue = (String) jsonObject.remove("postort");
 
     if (!jsonObject.isEmpty()) {
@@ -110,6 +110,7 @@ public class PostenPostnummerCommand extends Command {
             gatuadress = new Gatuadress();
           }
           updateSourced(gatuadress, event);
+          updateSourcedValue(gatuadress.getPostnummerIdentity(), postnummer.getIdentity(), event);
           updateSourcedValue(gatuadress.getGatunamn(), gatunamn, event);
           updateSourcedValue(gatuadress.getGatunummer(), nummer, event);
           DomainStore.getInstance().put(gatuadress);

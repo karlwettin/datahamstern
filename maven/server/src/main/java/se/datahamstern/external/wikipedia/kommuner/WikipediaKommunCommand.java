@@ -58,22 +58,24 @@ public class WikipediaKommunCommand extends Command {
     String kommunnummerkod = (String)jsonObject.remove("kommunnummerkod");
     String kommunnamn = (String)jsonObject.remove("kommunnamn");
     String länsnamn = (String)jsonObject.remove("länsnamn");
-    String folkmängd = (String)jsonObject.remove("folkmängd");
-    String hektarAreal = (String)jsonObject.remove("hektarAreal");
-    String hektarLandsareal = (String)jsonObject.remove("hektarLandsareal");
-    String hektarSjöareal = (String)jsonObject.remove("hektarSjöareal");
-    String hektarHavsareal = (String)jsonObject.remove("hektarHavsareal");
+    Number folkmängd = (Number)jsonObject.remove("folkmängd");
+    Number hektarAreal = (Number)jsonObject.remove("hektarAreal");
+    Number hektarLandareal = (Number)jsonObject.remove("hektarLandareal");
+    Number hektarSjöareal = (Number)jsonObject.remove("hektarSjöareal");
+    Number hektarHavsareal = (Number)jsonObject.remove("hektarHavsareal");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
-    if (kommun == null) {
-      // todo search by namn
-      kommun = new Kommun();
+    if(kommunnummerkod == null || kommunnummerkod.trim().isEmpty()) {
+      throw new RuntimeException("Kommunnummerkod is not set!");
     }
 
+    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
+    if (kommun == null) {
+      kommun = new Kommun();
+    }
     updateSourced(kommun, event);
     updateSourcedValue(kommun.getNamn(), kommunnamn, event);
     updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
@@ -82,6 +84,10 @@ public class WikipediaKommunCommand extends Command {
     if (län == null) {
       throw new RuntimeException("Could not find län with name " +länsnamn);
     }
+    // we never update knowledge of län from this end
+    // as it would create so many postings to the bdb
+
+
     updateSourcedValue(kommun.getLänIdentity(), län.getIdentity(), event);
 
     DomainStore.getInstance().put(kommun);

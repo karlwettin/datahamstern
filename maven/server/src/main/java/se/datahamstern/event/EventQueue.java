@@ -189,7 +189,7 @@ public class EventQueue {
     }
 
     eventsQueued++;
-    if (debugEventsQueued++ == 1431) {
+    if (debugEventsQueued++ >= 1431) {
       debugEventsQueued=0;
       System.out.println(eventsQueued + " events queued (or updated) since system startup. Last event: " + event.toString());
     }
@@ -272,7 +272,7 @@ public class EventQueue {
         }
 
         totalFlushCounter++;
-        if (debugFlushCounter++ == 1431) {
+        if (debugFlushCounter++ >= 1431) {
           debugFlushCounter = 0;
           System.out.println(totalFlushCounter + " events flushed to command since system startup. Last event: " + event);
         }

@@ -55,8 +55,8 @@ public class WikipediaLanCommand extends Command {
     JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
 
     String länsnamn = (String)jsonObject.remove("länsnamn");
-    String alfakod = (String)jsonObject.remove("alfakod");
-    String nummerkod = (String)jsonObject.remove("nummerkod");
+    String alfakod = ((String)jsonObject.remove("alfakod")).replaceAll("\\s+", "");
+    String nummerkod = ((String)jsonObject.remove("nummerkod")).replaceAll("\\s+", "");;
     Number kvadratkilometerLandareal = (Number)jsonObject.remove("kvadratkilometerLandareal");
     Number folkmängd = (Number)jsonObject.remove("folkmängd");
     String residensstad = (String)jsonObject.remove("residensstad");
@@ -81,14 +81,10 @@ public class WikipediaLanCommand extends Command {
     updateSourcedValue(län.getAlfakod(), alfakod, event);
     updateSourcedValue(län.getNummerkod(), nummerkod, event);
 
-
-
     // todo find and set residensstad
+    // todo this can not be done until the tätorter has been read!
 
     DomainStore.getInstance().put(län);
-
-    // todo implement your command here!
-    throw new UnsupportedOperationException();
   }
 
   public void register(CommandManager commandManager) {

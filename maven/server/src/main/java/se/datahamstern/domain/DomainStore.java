@@ -229,6 +229,7 @@ public class DomainStore {
       assignIdentity(län);
       län.set_index_alfakod(län.getAlfakod().get());
       län.set_index_nummerkod(län.getNummerkod().get());
+      län.set_index_namn(län.getNamn().get());
       getLän().put(län);
     }
 

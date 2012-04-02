@@ -62,8 +62,8 @@ public class WikipediaTatortsCommand extends Command {
     String tätortsnamn = (String)jsonObject.remove("tätortsnamn");
     String tätortskod = (String)jsonObject.remove("tätortskod");
     String kommunnamn = (String)jsonObject.remove("kommunnamn");
-    String hektarLandareal = (String)jsonObject.remove("hektarLandareal");
-    String folkmängd = (String)jsonObject.remove("folkmängd");
+    Number hektarLandareal = (Number)jsonObject.remove("hektarLandareal");
+    Number folkmängd = (Number)jsonObject.remove("folkmängd");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
@@ -88,13 +88,14 @@ public class WikipediaTatortsCommand extends Command {
     if (kommun == null) {
       throw new RuntimeException("Could not find kommun with name " + kommunnamn);
     }
+    // we never update knowledge of kommun from this end
+    // as it would create so many postings to the bdb
+
+
     updateSourcedValue(ort.getKommunIdentity(), kommun.getIdentity(), event);
 
     DomainStore.getInstance().put(ort);
 
-
-    // todo implement your command here!
-    throw new UnsupportedOperationException();
   }
 
   @Override

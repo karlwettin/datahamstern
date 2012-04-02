@@ -164,7 +164,7 @@ public class WikipediaKommunHarvester {
             value = Integer.parseInt(stringValue.replaceAll("\\s+", ""));
 
           } else if ("Area".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandareal"));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarAreal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Areal saknas!");
@@ -172,7 +172,7 @@ public class WikipediaKommunHarvester {
             value = Double.parseDouble(stringValue.replaceAll("\\s+", "").replaceAll(",", "."));
 
           } else if ("Land".equals(header)) {
-            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandsareal"));
+            jsonData.append(StringEscapeUtils.escapeJavaScript("hektarLandareal"));
             String stringValue = DomUtils.normalizeText(DomUtils.toText(columns.item(columnIndex).getFirstChild().getNextSibling()));
             if (stringValue.isEmpty()) {
               throw new RuntimeException("Landareal saknas!");
