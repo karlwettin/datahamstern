@@ -142,8 +142,8 @@ public class EventExecutor {
               execute(event, jsonParser);
               mostRecentEvent[0] = event;
             } catch (Exception e) {
-              System.out.println("Failed to execute event " + event.toString());
               e.printStackTrace(System.out);
+              System.out.println("Failed to execute event " + event.toString());
             }
           }
           System.out.println("Done processing " + file.getAbsoluteFile());

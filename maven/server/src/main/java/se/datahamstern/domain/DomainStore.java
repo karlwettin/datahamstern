@@ -2,6 +2,7 @@ package se.datahamstern.domain;
 
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
@@ -91,67 +92,10 @@ public class DomainStore {
 
   public void open() throws Exception {
 
-//    log.info("Opening BDB...");
+    InstantiatedDomainStore store = new InstantiatedDomainStore();
+    entityStore = store.new EntityStore();
 
-    cacheMB = Integer.valueOf(Datahamstern.getInstance().getProperty("domainStore.cacheMB", "50"));
-    if (cacheMB < 5) {
-      cacheMB = 5;
-    }
-
-    readOnly = Boolean.valueOf(Datahamstern.getInstance().getProperty("domainStore.readOnly", "false"));
-
-    if (!path.exists()) {
-      path = FileUtils.mkdirs(path);
-
-      EnvironmentConfig envConfig = new EnvironmentConfig();
-      envConfig.setAllowCreate(true);
-      envConfig.setTransactional(false);
-      envConfig.setLocking(true);
-      envConfig.setReadOnly(false);
-
-
-//      log.info("Creating environment " + envConfig.toString());
-
-      environment = new Environment(path, envConfig);
-
-      StoreConfig storeConfig = new StoreConfig();
-      storeConfig.setAllowCreate(true);
-      storeConfig.setTransactional(false);
-      storeConfig.setReadOnly(false);
-
-//      log.info("Creating store '" + storeName + "' " + storeConfig.toString());
-
-      entityStore = new com.sleepycat.persist.EntityStore(environment, storeName, storeConfig);
-
-      entityStore.close();
-      environment.close();
-
-//      log.info("BDB has been created");
-
-    }
-
-    // open
-
-    EnvironmentConfig envConfig = new EnvironmentConfig();
-    envConfig.setAllowCreate(true);
-    envConfig.setTransactional(false);
-    envConfig.setLocking(false);
-    envConfig.setReadOnly(readOnly);
-    envConfig.setCacheSize(cacheMB * 1024 * 1024); //
-
-
-//    log.info("Opening environment " + envConfig.toString());
-
-    environment = new Environment(path, envConfig);
-
-    StoreConfig storeConfig = new StoreConfig();
-    storeConfig.setAllowCreate(true);
-    storeConfig.setTransactional(false);
-    storeConfig.setReadOnly(readOnly);
-
-//    log.info("Opening store '" + storeName + "' " + storeConfig.toString());
-
-    entityStore = new com.sleepycat.persist.EntityStore(environment, storeName, storeConfig);
+//    entityStore = jeEntityStoreFactory();
 
     organisationer = entityStore.getPrimaryIndex(String.class, Organisation.class);
     organisationByNummer = entityStore.getSecondaryIndex(organisationer, String.class, "_index_nummer");
@@ -199,6 +143,70 @@ public class DomainStore {
 
 //    log.info("BDB has been opened.");
 
+  }
+
+  private EntityStore jeEntityStoreFactory() throws Exception {
+    //    log.info("Opening BDB...");
+
+    cacheMB = Integer.valueOf(Datahamstern.getInstance().getProperty("domainStore.cacheMB", "50"));
+    if (cacheMB < 5) {
+      cacheMB = 5;
+    }
+
+    readOnly = Boolean.valueOf(Datahamstern.getInstance().getProperty("domainStore.readOnly", "false"));
+
+    if (!path.exists()) {
+      path = FileUtils.mkdirs(path);
+
+      EnvironmentConfig envConfig = new EnvironmentConfig();
+      envConfig.setAllowCreate(true);
+      envConfig.setTransactional(false);
+      envConfig.setLocking(true);
+      envConfig.setReadOnly(false);
+
+
+//      log.info("Creating environment " + envConfig.toString());
+
+      environment = new Environment(path, envConfig);
+
+      StoreConfig storeConfig = new StoreConfig();
+      storeConfig.setAllowCreate(true);
+      storeConfig.setTransactional(false);
+      storeConfig.setReadOnly(false);
+
+//      log.info("Creating store '" + storeName + "' " + storeConfig.toString());
+
+      entityStore = new EntityStore(environment, storeName, storeConfig);
+
+      entityStore.close();
+      environment.close();
+
+//      log.info("BDB has been created");
+
+    }
+
+    // open
+
+    EnvironmentConfig envConfig = new EnvironmentConfig();
+    envConfig.setAllowCreate(true);
+    envConfig.setTransactional(false);
+    envConfig.setLocking(false);
+    envConfig.setReadOnly(readOnly);
+    envConfig.setCacheSize(cacheMB * 1024 * 1024); //
+
+
+//    log.info("Opening environment " + envConfig.toString());
+
+    environment = new Environment(path, envConfig);
+
+    StoreConfig storeConfig = new StoreConfig();
+    storeConfig.setAllowCreate(true);
+    storeConfig.setTransactional(false);
+    storeConfig.setReadOnly(readOnly);
+
+//    log.info("Opening store '" + storeName + "' " + storeConfig.toString());
+
+    return new EntityStore(environment, storeName, storeConfig);
   }
 
   public void close() throws Exception {
@@ -515,4 +523,5 @@ public class DomainStore {
   public void setOrtByTätortskod(SecondaryIndex<String, String, Ort> ortByTätortskod) {
     this.ortByTätortskod = ortByTätortskod;
   }
+
 }

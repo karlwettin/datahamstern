@@ -34,6 +34,16 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
   private GataAndGatunummer _index_gataAndGatunummer;
 
   @Override
+  public String toString() {
+    return "Gatuadress{" +
+        "gatunummer=" + gatunummer +
+        ", gataIdentity=" + gataIdentity +
+        ", postnummerIdentity=" + postnummerIdentity +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
 
     if (!super.equals(o)) {
@@ -86,6 +96,25 @@ public class Gatuadress extends AbstractSourced implements DomainEntityObject, S
       this.gatunummer = gatunummer;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      GataAndGatunummer that = (GataAndGatunummer) o;
+
+      if (gatunummer != that.gatunummer) return false;
+      if (gataIdentity != null ? !gataIdentity.equals(that.gataIdentity) : that.gataIdentity != null) return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = gataIdentity != null ? gataIdentity.hashCode() : 0;
+      result = 31 * result + gatunummer;
+      return result;
+    }
   }
 
 

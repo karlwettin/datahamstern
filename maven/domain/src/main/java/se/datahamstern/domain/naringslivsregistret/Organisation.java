@@ -84,6 +84,8 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
   private String identity;
 
 
+
+
   @Override
   public boolean equals(Object o) {
 
@@ -207,16 +209,14 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
   @Override
   public String toString() {
     return "Organisation{" +
-        "identity='" + identity + '\'' +
-        ", nummerPrefix=" + nummerprefix +
+        "namn=" + namn +
+        ", nummerprefix=" + nummerprefix +
         ", nummer=" + nummer +
-        ", nummerSuffix=" + nummersuffix +
-        ", namn=" + namn+
+        ", nummersuffix=" + nummersuffix +
         ", firmaform=" + firmaform +
-        ", länIdentity=" + länIdentity +
         ", status=" + status +
-        ", _index_nummer='" + _index_nummer + '\'' +
-        ", _index_länIdentity='" + _index_länIdentity + '\'' +
+        ", länIdentity=" + länIdentity +
+        ", identity='" + identity + '\'' +
         '}';
   }
 }

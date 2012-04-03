@@ -99,22 +99,6 @@ public class PostenPostnummerCommand extends Command {
 
     if (gatunamn != null && !gatunamn.isEmpty() && !"BOX".equals(gatunamn)) {
 
-      Gata gata = DomainStore.getInstance().getGatorByNamnAndPostort().get(new Gata.NamnAndPostort(gatunamn, postort.getIdentity()));
-      if (gata == null) {
-        gata = new Gata();
-        // todo implement new event with knowledge of gata once per postort
-        updateSourced(gata, event);
-        gata.getNamn().set(gatunamn);
-        gata.getPostortIdentity().set(postort.getIdentity());
-        DomainStore.getInstance().put(gata);
-      }
-
-
-      if (!gata.get_index_postnummerIdentities().contains(postnummer.getIdentity())) {
-        gata.getPostnummerIdentities().add(new SourcedValue<String>(postnummer.getIdentity()));
-        DomainStore.getInstance().put(gata);
-      }
-
       if (gatunummer != null && !gatunummer.trim().isEmpty()) {
         String[] range = gatunummer.split("-");
         int from = Integer.valueOf(range[0].trim());
@@ -125,6 +109,26 @@ public class PostenPostnummerCommand extends Command {
           gatunummerHighScore.set(size);
           System.out.println("Gatunummer high score: " + size);
         }
+
+
+        Gata gata = DomainStore.getInstance().getGatorByNamnAndPostort().get(new Gata.NamnAndPostort(gatunamn, postort.getIdentity()));
+        if (gata == null) {
+          gata = new Gata();
+          // todo implement new event with knowledge of gata once per postort
+          updateSourced(gata, event);
+          gata.getNamn().set(gatunamn);
+          gata.getPostortIdentity().set(postort.getIdentity());
+          DomainStore.getInstance().put(gata);
+        } else {
+          System.currentTimeMillis();
+        }
+
+
+        if (!gata.get_index_postnummerIdentities().contains(postnummer.getIdentity())) {
+          gata.getPostnummerIdentities().add(new SourcedValue<String>(postnummer.getIdentity()));
+          DomainStore.getInstance().put(gata);
+        }
+
 
         Gatuadress.GataAndGatunummer gataAndGatunummer = new Gatuadress.GataAndGatunummer();
         gataAndGatunummer.setGataIdentity(gata.getIdentity());

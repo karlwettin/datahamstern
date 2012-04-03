@@ -45,6 +45,18 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
 
 
   @Override
+  public String toString() {
+    return "Ort{" +
+        "namn=" + namn +
+        ", tätortskod=" + tätortskod +
+        ", kvadratmeterLandareal=" + kvadratmeterLandareal +
+        ", befolkningsmängd=" + befolkningsmängd +
+        ", kommunIdentity=" + kommunIdentity +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
 
     if (!super.equals(o)) {

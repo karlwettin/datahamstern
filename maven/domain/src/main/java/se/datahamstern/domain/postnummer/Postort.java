@@ -34,6 +34,14 @@ public class Postort extends AbstractSourced implements DomainEntityObject, Seri
   private String _index_namn;
 
   @Override
+  public String toString() {
+    return "Postort{" +
+        "namn=" + namn +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
 
     if (!super.equals(o)) {

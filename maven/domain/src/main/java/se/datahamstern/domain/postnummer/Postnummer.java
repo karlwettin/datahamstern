@@ -36,6 +36,16 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
   private List<SourcedValue<String>> stereotyper = new ArrayList<SourcedValue<String>>();
 
   @Override
+  public String toString() {
+    return "Postnummer{" +
+        "postnummer=" + postnummer +
+        ", stereotyper=" + stereotyper +
+        ", postortIdentity=" + postortIdentity +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (!super.equals(o)) {
       return false;

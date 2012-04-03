@@ -47,6 +47,16 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
   private String identity;
 
   @Override
+  public String toString() {
+    return "Lan{" +
+        "namn=" + namn +
+        ", alfakod=" + alfakod +
+        ", nummerkod=" + nummerkod +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
 
     if (!super.equals(o)) {

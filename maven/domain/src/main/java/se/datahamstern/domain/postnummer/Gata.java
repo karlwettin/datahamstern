@@ -74,6 +74,26 @@ public class Gata extends AbstractSourced implements DomainEntityObject, Seriali
     public void setPostortIdentity(String postortIdentity) {
       this.postortIdentity = postortIdentity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      NamnAndPostort that = (NamnAndPostort) o;
+
+      if (gatunamn != null ? !gatunamn.equals(that.gatunamn) : that.gatunamn != null) return false;
+      if (postortIdentity != null ? !postortIdentity.equals(that.postortIdentity) : that.postortIdentity != null) return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = gatunamn != null ? gatunamn.hashCode() : 0;
+      result = 31 * result + (postortIdentity != null ? postortIdentity.hashCode() : 0);
+      return result;
+    }
   }
 
   @Override
@@ -105,6 +125,16 @@ public class Gata extends AbstractSourced implements DomainEntityObject, Seriali
     result = 31 * result + (postnummerIdentities != null ? postnummerIdentities.hashCode() : 0);
     result = 31 * result + (postortIdentity != null ? postortIdentity.hashCode() : 0);
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Gata{" +
+        "namn=" + namn +
+        ", identity='" + identity + '\'' +
+        ", postortIdentity=" + postortIdentity +
+        ", postnummerIdentities=" + postnummerIdentities +
+        '}';
   }
 
   @Override

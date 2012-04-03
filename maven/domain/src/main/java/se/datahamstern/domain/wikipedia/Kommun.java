@@ -40,6 +40,15 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Lan.class)
   private String _index_länIdentity;
 
+  @Override
+  public String toString() {
+    return "Kommun{" +
+        "namn=" + namn +
+        ", nummerkod=" + nummerkod +
+        ", länIdentity=" + länIdentity +
+        ", identity='" + identity + '\'' +
+        '}';
+  }
 
   @Override
   public boolean equals(Object o) {
