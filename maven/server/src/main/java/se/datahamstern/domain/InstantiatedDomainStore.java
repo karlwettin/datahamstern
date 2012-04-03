@@ -4,9 +4,11 @@ package se.datahamstern.domain;
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.je.*;
-import com.sleepycat.persist.EntityCursor;
-import com.sleepycat.persist.EntityIndex;
-import com.sleepycat.persist.PrimaryIndex;
+import com.sleepycat.persist.*;
+import com.sleepycat.persist.evolve.EvolveConfig;
+import com.sleepycat.persist.evolve.EvolveStats;
+import com.sleepycat.persist.evolve.Mutations;
+import com.sleepycat.persist.model.EntityModel;
 import se.datahamstern.Nop;
 
 import java.lang.reflect.Field;
@@ -34,6 +36,12 @@ public class InstantiatedDomainStore {
     public EntityStore() {
     }
 
+    private String storeName;
+
+    public EntityStore(String storeName) {
+      this.storeName = storeName;
+    }
+
     @Override
     public <PK, E> com.sleepycat.persist.PrimaryIndex<PK, E> getPrimaryIndex(Class<PK> primaryKeyClass, Class<E> entityClass) throws DatabaseException {
       PrimaryIndex primaryIndex = primaryIndices.get(entityClass);
@@ -53,6 +61,106 @@ public class InstantiatedDomainStore {
         instantiatedPrimaryIndex.secondaryIndices.put(keyName, secondaryIndex);
       }
       return secondaryIndex;
+    }
+
+    @Override
+    public Environment getEnvironment() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public StoreConfig getConfig() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getStoreName() {
+      return storeName;
+    }
+
+    @Override
+    public boolean isReplicaUpgradeMode() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public EntityModel getModel() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Mutations getMutations() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <SK, PK, E1, E2 extends E1> com.sleepycat.persist.SecondaryIndex<SK, PK, E2> getSubclassIndex(com.sleepycat.persist.PrimaryIndex<PK, E1> primaryIndex, Class<E2> entitySubclass, Class<SK> keyClass, String keyName) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public EvolveStats evolve(EvolveConfig config) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void truncateClass(Class entityClass) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void truncateClass(Transaction txn, Class entityClass) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void sync() throws DatabaseException {
+
+    }
+
+    @Override
+    public void closeClass(Class entityClass) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() throws DatabaseException {
+
+    }
+
+    @Override
+    public Sequence getSequence(String name) throws DatabaseException {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SequenceConfig getSequenceConfig(String name) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSequenceConfig(String name, SequenceConfig config) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DatabaseConfig getPrimaryConfig(Class entityClass) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setPrimaryConfig(Class entityClass, DatabaseConfig config) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SecondaryConfig getSecondaryConfig(Class entityClass, String keyName) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSecondaryConfig(Class entityClass, String keyName, SecondaryConfig config) {
+      throw new UnsupportedOperationException();
     }
   }
 
@@ -224,6 +332,16 @@ public class InstantiatedDomainStore {
     }
 
     @Override
+    public Class<PK> getKeyClass() {
+      return primaryKeyClass;
+    }
+
+    @Override
+    public Class<E> getEntityClass() {
+      return entityClass;
+    }
+
+    @Override
     public Database getDatabase() {
       throw new UnsupportedOperationException();
     }
@@ -280,12 +398,12 @@ public class InstantiatedDomainStore {
 
     @Override
     public boolean contains(Transaction txn, PK key, LockMode lockMode) throws DatabaseException {
-      throw new UnsupportedOperationException();
+      return contains(key);
     }
 
     @Override
     public boolean delete(Transaction txn, PK key) throws DatabaseException {
-      throw new UnsupportedOperationException();
+      return delete(key);
     }
 
     @Override
@@ -320,7 +438,7 @@ public class InstantiatedDomainStore {
 
     @Override
     public com.sleepycat.persist.EntityCursor<E> entities(Transaction txn, PK fromKey, boolean fromInclusive, PK toKey, boolean toInclusive, CursorConfig config) throws DatabaseException {
-      throw new UnsupportedOperationException();
+      return entities(fromKey, fromInclusive, toKey, toInclusive);
     }
   }
 
@@ -530,7 +648,7 @@ public class InstantiatedDomainStore {
 
     @Override
     public com.sleepycat.persist.PrimaryIndex<PK, E> getPrimaryIndex() {
-      throw new UnsupportedOperationException();
+      return primaryIndex;
     }
 
     @Override
@@ -550,7 +668,7 @@ public class InstantiatedDomainStore {
 
     @Override
     public E get(Transaction txn, SK key, LockMode lockMode) throws DatabaseException {
-      throw new UnsupportedOperationException();
+      return get(key);
     }
 
     @Override
@@ -575,7 +693,7 @@ public class InstantiatedDomainStore {
 
     @Override
     public boolean contains(Transaction txn, SK key, LockMode lockMode) throws DatabaseException {
-      throw new UnsupportedOperationException();
+      return contains(key);
     }
 
     @Override
