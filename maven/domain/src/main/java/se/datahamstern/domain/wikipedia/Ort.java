@@ -21,7 +21,7 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
   private static final long serialVersionUID = 1l;
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) throws Exception {
     visitor.visit(this);
   }
 

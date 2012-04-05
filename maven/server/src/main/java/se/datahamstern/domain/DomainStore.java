@@ -227,7 +227,7 @@ public class DomainStore {
 
   }
 
-  public void put(DomainEntityObject object) {
+  public void put(DomainEntityObject object)  throws Exception{
     object.accept(putVisitor);
   }
 

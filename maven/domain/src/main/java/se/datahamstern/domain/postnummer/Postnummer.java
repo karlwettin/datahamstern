@@ -76,7 +76,7 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
 
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) throws Exception {
     visitor.visit(this);
   }
 

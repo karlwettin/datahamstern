@@ -24,7 +24,7 @@ public class Stadgar extends AbstractSourced implements DomainEntityObject, Seri
 
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor)  throws Exception{
     visitor.visit(this);
   }
 

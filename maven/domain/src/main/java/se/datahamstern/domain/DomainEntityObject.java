@@ -10,7 +10,7 @@ public interface DomainEntityObject extends Serializable {
 
 //  private static final long serialVersionUID = 1l;
 
-  public abstract void accept(DomainEntityObjectVisitor visitor);
+  public abstract void accept(DomainEntityObjectVisitor visitor) throws Exception;
   public abstract String getIdentity();
   public abstract void setIdentity(String identity);
 

@@ -23,7 +23,7 @@ public class Dokument extends AbstractSourced implements DomainEntityObject, Ser
   private static final long serialVersionUID = 1l;
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor)  throws Exception{
     visitor.visit(this);
   }
 

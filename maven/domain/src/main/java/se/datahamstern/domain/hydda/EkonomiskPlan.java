@@ -24,7 +24,7 @@ public class EkonomiskPlan extends AbstractSourced implements DomainEntityObject
 
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor)  throws Exception{
     visitor.visit(this);
   }
 

@@ -14,87 +14,87 @@ import se.datahamstern.domain.wikipedia.Ort;
  * @author kalle
  * @since 2012-04-02 21:54
  */
-public class DecoratedDomainEntityObjectVisitor implements DomainEntityObjectVisitor {
+public class DecoratedDomainEntityObjectVisitor<E extends Exception> implements DomainEntityObjectVisitor<E> {
 
-  private DomainEntityObjectVisitor decorated;
+  private DomainEntityObjectVisitor<E> decorated;
 
   public DecoratedDomainEntityObjectVisitor() {
   }
 
-  public DecoratedDomainEntityObjectVisitor(DomainEntityObjectVisitor decorated) {
+  public DecoratedDomainEntityObjectVisitor(DomainEntityObjectVisitor<E> decorated) {
     this.decorated = decorated;
   }
 
-  public DomainEntityObjectVisitor getDecorated() {
+  public DomainEntityObjectVisitor<E> getDecorated() {
     return decorated;
   }
 
-  public void setDecorated(DomainEntityObjectVisitor decorated) {
+  public void setDecorated(DomainEntityObjectVisitor<E> decorated) {
     this.decorated = decorated;
   }
 
   @Override
-  public void visit(Organisation organisation) {
+  public void visit(Organisation organisation) throws E {
     getDecorated().visit(organisation);
   }
 
   @Override
-  public void visit(Lan län) {
+  public void visit(Lan län) throws E  {
     getDecorated().visit(län);
   }
 
   @Override
-  public void visit(Kommun kommun) {
+  public void visit(Kommun kommun) throws E  {
     getDecorated().visit(kommun);
   }
 
   @Override
-  public void visit(Ort ort) {
+  public void visit(Ort ort)  throws E {
     getDecorated().visit(ort);
   }
 
   @Override
-  public void visit(Gatuadress gatuaddress) {
+  public void visit(Gatuadress gatuaddress)  throws E {
     getDecorated().visit(gatuaddress);
   }
 
   @Override
-  public void visit(Gata gata) {
+  public void visit(Gata gata)  throws E {
     getDecorated().visit(gata);
   }
 
   @Override
-  public void visit(Postnummer postnummer) {
+  public void visit(Postnummer postnummer)  throws E {
     getDecorated().visit(postnummer);
   }
 
   @Override
-  public void visit(Postort postort) {
+  public void visit(Postort postort)  throws E {
     getDecorated().visit(postort);
   }
 
   @Override
-  public void visit(Arsredovisning årsredovisning) {
+  public void visit(Arsredovisning årsredovisning) throws E  {
     getDecorated().visit(årsredovisning);
   }
 
   @Override
-  public void visit(EkonomiskPlan ekonomiskPlan) {
+  public void visit(EkonomiskPlan ekonomiskPlan) throws E  {
     getDecorated().visit(ekonomiskPlan);
   }
 
   @Override
-  public void visit(Stadgar stadgar) {
+  public void visit(Stadgar stadgar) throws E  {
     getDecorated().visit(stadgar);
   }
 
   @Override
-  public void visit(Dokument dokument) {
+  public void visit(Dokument dokument) throws E  {
     getDecorated().visit(dokument);
   }
 
   @Override
-  public void visit(Dokumentversion dokumentversion) {
+  public void visit(Dokumentversion dokumentversion)  throws E {
     getDecorated().visit(dokumentversion);
   }
 }

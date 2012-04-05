@@ -5,28 +5,18 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
-  <filter>
-   <filter-name>GZipFilter</filter-name>
-   <!--<display-name>Jetty's GZip Filter</display-name>-->
-   <!--<description>Filter that zips all the content on-the-fly</description>-->
-   <filter-class>org.mortbay.servlet.GzipFilter</filter-class>
-   <init-param>
-    <param-name>mimeTypes</param-name>
-    <param-value>*</param-value>
-   </init-param>
-  </filter>
-
-  <filter-mapping>
-   <filter-name>GZipFilter</filter-name>
-   <url-pattern>/advertisement/search</url-pattern>
-  </filter-mapping>
-
-
-
   <session-config>
       <session-timeout>60</session-timeout>
   </session-config>
 
+  <servlet>
+    <servlet-name>DomainStoreJsonServlet</servlet-name>
+    <servlet-class>se.datahamstern.domain.DomainStoreJsonServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DomainStoreJsonServlet</servlet-name>
+    <url-pattern>/api/domain/json</url-pattern>
+  </servlet-mapping>
 
   <listener>
     <listener-class>se.datahamstern.ServiceStarter</listener-class>

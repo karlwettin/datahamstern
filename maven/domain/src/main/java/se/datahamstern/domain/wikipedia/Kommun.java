@@ -21,7 +21,7 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
     private static final long serialVersionUID = 1l;
 
   @Override
-  public void accept(DomainEntityObjectVisitor visitor) {
+  public void accept(DomainEntityObjectVisitor visitor) throws Exception {
     visitor.visit(this);
   }
 
