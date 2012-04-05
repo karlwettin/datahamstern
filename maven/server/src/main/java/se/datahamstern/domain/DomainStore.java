@@ -92,10 +92,10 @@ public class DomainStore {
 
   public void open() throws Exception {
 
-    InstantiatedDomainStore store = new InstantiatedDomainStore();
-    entityStore = store.new EntityStore();
+//    InstantiatedDomainStore store = new InstantiatedDomainStore();
+//    entityStore = store.new EntityStore(storeName);
 
-//    entityStore = jeEntityStoreFactory();
+    entityStore = jeEntityStoreFactory();
 
     organisationer = entityStore.getPrimaryIndex(String.class, Organisation.class);
     organisationByNummer = entityStore.getSecondaryIndex(organisationer, String.class, "_index_nummer");
