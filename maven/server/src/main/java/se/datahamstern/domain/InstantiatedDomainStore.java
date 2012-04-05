@@ -4,18 +4,21 @@ package se.datahamstern.domain;
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.je.*;
-import com.sleepycat.persist.*;
+import com.sleepycat.persist.EntityIndex;
+import com.sleepycat.persist.StoreConfig;
 import com.sleepycat.persist.evolve.EvolveConfig;
 import com.sleepycat.persist.evolve.EvolveStats;
 import com.sleepycat.persist.evolve.Mutations;
 import com.sleepycat.persist.model.EntityModel;
-import se.datahamstern.Nop;
+import se.datahamstern.util.CloneUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
 /**
+ * todo @Entity must currently be serializable!
  * todo @PrimaryKey must currently be private String identity;
  * todo no support for constraints in @SecondaryKey!
  * todo PK nor SK compares well to it self. This should use the same algorithm as in BDB JE!
@@ -53,7 +56,7 @@ public class InstantiatedDomainStore {
     }
 
     @Override
-    public <SK, PK, E> SecondaryIndex<SK, PK, E> getSecondaryIndex(com.sleepycat.persist.PrimaryIndex<PK, E> primaryIndex, Class<SK> keyClass, String keyName) throws DatabaseException {
+    public <SK, PK, E > SecondaryIndex<SK, PK, E> getSecondaryIndex(com.sleepycat.persist.PrimaryIndex<PK, E> primaryIndex, Class<SK> keyClass, String keyName) throws DatabaseException {
       PrimaryIndex instantiatedPrimaryIndex = (PrimaryIndex) primaryIndex;
       SecondaryIndex secondaryIndex = (SecondaryIndex) instantiatedPrimaryIndex.secondaryIndices.get(keyName);
       if (secondaryIndex == null) {
@@ -262,15 +265,27 @@ public class InstantiatedDomainStore {
 
     @Override
     public E put(E entity) throws DatabaseException {
-      E previous = index.put(getPrimaryKey(entity), entity);
+
+
       PK primaryKey = getPrimaryKey(entity);
       if (primaryKey == null) {
         // todo @PrimaryKey must currently be private String identity;
-        setPrimaryKey(entity, (PK) UUID.randomUUID().toString());
+        primaryKey = (PK) UUID.randomUUID().toString();
+        setPrimaryKey(entity, primaryKey);
       }
+
+      E toset;
+      try {
+        // todo @Entity must currently be serializable!
+        toset = (E)CloneUtils.deepClone((Serializable)entity);
+      } catch (Exception e) {
+        throw new InstantiatedDatabaseException("Could not clone entity " + entity, e);
+      }
+      E previous = index.put(primaryKey, toset);
+
       for (SecondaryIndex secondaryIndex : secondaryIndices.values()) {
-        Object secondaryKey = secondaryIndex.getSecondaryKey(entity);
-        secondaryIndex.put(primaryKey, secondaryKey, entity);
+        Object secondaryKey = secondaryIndex.getSecondaryKey(toset);
+        secondaryIndex.put(primaryKey, secondaryKey, toset);
       }
       return previous;
     }
