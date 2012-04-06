@@ -19,6 +19,11 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
+ * marshalls domain ojects to json
+ *
+ * could be implemented with reflection at the cost of cpu.
+ * todo lean back on reflection for non implemented visiting methods?
+ *
  * @author kalle
  * @since 2012-04-05 19:06
  */
@@ -427,25 +432,30 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
   @Override
   public void visit(Dokumentversion dokumentversion) throws IOException {
     throw new UnsupportedOperationException();
+    // todo lean back on reflection for non implemented visiting methods?
   }
 
   @Override
   public void visit(Dokument dokument) throws IOException {
     throw new UnsupportedOperationException();
+    // todo lean back on reflection for non implemented visiting methods?
   }
 
   @Override
   public void visit(Stadgar stadgar) throws IOException {
     throw new UnsupportedOperationException();
+    // todo lean back on reflection for non implemented visiting methods?
   }
 
   @Override
   public void visit(EkonomiskPlan ekonomiskPlan) throws IOException {
     throw new UnsupportedOperationException();
+    // todo lean back on reflection for non implemented visiting methods?
   }
 
   @Override
   public void visit(Arsredovisning årsredovisning) throws IOException {
     throw new UnsupportedOperationException();
+    // todo lean back on reflection for non implemented visiting methods?
   }
 }

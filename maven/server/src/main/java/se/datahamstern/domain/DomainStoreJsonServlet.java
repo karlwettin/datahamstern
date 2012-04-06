@@ -3,6 +3,7 @@ package se.datahamstern.domain;
 import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.PrimaryIndex;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONFormatter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -106,7 +107,7 @@ public class DomainStoreJsonServlet extends HttpServlet {
           StringWriter buffer = new StringWriter(49152);
           entity.accept(new DomainEntityObjectJsonSerializer(buffer, request.getParameterMap().containsKey("includeMetadata")));
           response.getWriter().write("{ \"request\" : { \"success\" : true }, \"response\" : ");
-          response.getWriter().write(buffer.toString());
+          response.getWriter().write(new JSONFormatter().format(buffer.toString()));
           response.getWriter().write(" }");
         }
       } catch (Exception e) {
@@ -154,7 +155,7 @@ public class DomainStoreJsonServlet extends HttpServlet {
               throw new RuntimeException(e);
             }
             response.getWriter().write("{ \"request\" : { \"success\" : true }, \"response\" : ");
-            response.getWriter().write(buffer.toString());
+            response.getWriter().write(new JSONFormatter().format(buffer.toString()));
             response.getWriter().write("}");
           }
         } else {
@@ -205,8 +206,11 @@ public class DomainStoreJsonServlet extends HttpServlet {
     response.getWriter().write("{ \"request\" : { \"success\" : false, \"error\" : \"caught exception\", \"exception\" : ");
     // todo tojson
     response.getWriter().write('"');
+    if (e.getMessage() != null) {
     response.getWriter().write(e.getMessage());
+    }
     response.getWriter().write('"');
     response.getWriter().write(" } }");
+    e.printStackTrace();
   }
 }
