@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--  
+ This is the Solr schema file. This file should be named "schema.xml" and
+ should be in the conf directory under the solr home
+ (i.e. ./solr/conf/schema.xml by default) 
+ or located where the classloader for the Solr webapp can find it.
+
+ This example schema is the recommended starting point for users.
+ It should be kept correct and concise, usable out-of-the-box.
+
+ For more information, on how to customize this file, please see
+ http://wiki.apache.org/solr/SchemaXml
+
+ PERFORMANCE NOTE: this schema includes many optional features and should not
+ be used for benchmarking.  To improve performance one could
+  - set stored="false" for all fields possible (esp large fields) when you
+    only need to search on the field but don't need to return the original
+    value.
+  - set indexed="false" if you don't need to search on the field, but only
+    return the field as a result of searching on other indexed fields.
+  - remove all unneeded copyField statements
+  - for best index size and searching performance, set "index" to false
+    for all general text fields, use copyField to copy them to the
+    catchall "text" field, and use that for searching.
+  - For maximum indexing performance, use the StreamingUpdateSolrServer
+    java client.
+  - Remember to run the JVM in server mode, and use a higher logging level
+    that avoids logging every request
+-->
+
+<schema name="lauritz" version="1.4">
+  <!-- attribute "name" is the name of this schema and is only used for display purposes.
+       Applications should change this to reflect the nature of the search collection.
+       version="1.4" is Solr's version number for the schema syntax and semantics.  It should
+       not normally be changed by applications.
+       1.0: multiValued attribute did not exist, all fields are multiValued by nature
+       1.1: multiValued attribute introduced, false by default 
+       1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
+       1.3: removed optional field compress feature
+       1.4: default auto-phrase (QueryParser feature) to off
+     -->
+
+  <types>
+    <!-- field type definitions. The "name" attribute is
+       just a label to be used by field definitions.  The "class"
+       attribute and any other attributes determine the real
+       behavior of the fieldType.
+         Class names starting with "solr" refer to java classes in the
+       org.apache.solr.analysis package.
+    -->
+
+    <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+
+    <!-- boolean type: "true" or "false" -->
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
+
+    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+    <fieldtype name="binary" class="solr.BinaryField"/>
+
+    <!-- The optional sortMissingLast and sortMissingFirst attributes are
+         currently supported on types that are sorted internally as strings.
+	       This includes "string","boolean","sint","slong","sfloat","sdouble","pdate"
+       - If sortMissingLast="true", then a sort on this field will cause documents
+         without the field to come after documents with the field,
+         regardless of the requested sort order (asc or desc).
+       - If sortMissingFirst="true", then a sort on this field will cause documents
+         without the field to come before documents with the field,
+         regardless of the requested sort order.
+       - If sortMissingLast="false" and sortMissingFirst="false" (the default),
+         then default lucene sorting will be used which places docs without the
+         field first in an ascending sort and last in a descending sort.
+    -->
+
+    <!--
+      Default numeric field types. For faster range queries, consider the tint/tfloat/tlong/tdouble types.
+    -->
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+
+    <!--
+     Numeric field types that index each value at various levels of precision
+     to accelerate range queries when the number of values between the range
+     endpoints is large. See the javadoc for NumericRangeQuery for internal
+     implementation details.
+
+     Smaller precisionStep values (specified in bits) will lead to more tokens
+     indexed per value, slightly larger index size, and faster range queries.
+     A precisionStep of 0 disables indexing at different precision levels.
+    -->
+    <fieldType name="tint" class="solr.TrieIntField" precisionStep="8" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" omitNorms="true" positionIncrementGap="0"/>
+
+    <!-- A Trie based date field for faster date range queries and date faceting. -->
+    <fieldType name="tdate" class="solr.TrieDateField" omitNorms="true" precisionStep="6" positionIncrementGap="0"/>
+
+
+    <fieldType name="text_standard_shingles" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="3" tokenSeparator=" " outputUnigrams="false"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="3" tokenSeparator=" " outputUnigrams="false"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="text_standard" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+
+    <!-- todo consider adding a text_ngram field for multilingual text -->
+
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
+        <filter class="solr.ASCIIFoldingFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ASCIIFoldingFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+
+    <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
+        <filter class="solr.PorterStemFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
+        <filter class="solr.PorterStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+
+    <fieldType name="text_sv" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Swedish"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Swedish"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="text_da" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Danish"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Danish"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="text_no" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Norwegian"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="Norwegian"/>
+      </analyzer>
+    </fieldType>
+
+
+    <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="German"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="German"/>
+      </analyzer>
+    </fieldType>
+
+  </types>
+
+
+  <fields>
+    <!-- Valid attributes for fields:
+      name: mandatory - the name for the field
+      type: mandatory - the name of a previously defined type from the
+        <types> section
+      indexed: true if this field should be indexed (searchable or sortable)
+      stored: true if this field should be retrievable
+      multiValued: true if this field may contain multiple values per document
+      omitNorms: (expert) set to true to omit the norms associated with
+        this field (this disables length normalization and index-time
+        boosting for the field, and saves some memory).  Only full-text
+        fields or fields that need an index-time boost need norms.
+      termVectors: [false] set to true to store the term vector for a
+        given field.
+        When using MoreLikeThis, fields used for similarity should be
+        stored for best performance.
+      termPositions: Store position information with the term vector.
+        This will increase storage costs.
+      termOffsets: Store offset information with the term vector. This
+        will increase storage costs.
+      default: a value that should be used if no value is specified
+        when adding a document.
+    -->
+
+
+    <field name="identity" type="string" indexed="true" multiValued="false" stored="true" required="true" omitNorms="true"/>
+
+    <!-- Serialized (java.io.Serializable) version of the Item instance this document represents. -->
+    <field name="serialized" type="string" indexed="false" multiValued="false" stored="true" required="true"/>
+
+
+    <field name="created" type="tdate" indexed="true" multiValued="false" stored="false" required="false" omitNorms="true"/>
+    <field name="changed" type="tdate" indexed="true" multiValued="false" stored="false" required="false" omitNorms="true"/>
+
+    <field name="starts" type="tdate" indexed="true" multiValued="false" stored="false" required="false" omitNorms="true"/>
+    <field name="ends" type="tdate" indexed="true" multiValued="false" stored="false" required="false" omitNorms="true"/>
+
+
+    <field name="active" type="boolean" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <field name="newItem" type="boolean" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="deluxe" type="boolean" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <field name="numberOfImages" type="tint" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <!-- Actual currency -->
+    <field name="currencyIdentity" type="int" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="estimatedPrice" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="minimumPrice" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <!-- In order to be able to sort and limit no matter what the actual currency is -->
+    <field name="estimatedPrice_DKK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="minimumPrice_DKK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <field name="estimatedPrice_NOK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="minimumPrice_NOK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <field name="estimatedPrice_SEK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="minimumPrice_SEK" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <field name="estimatedPrice_EUR" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+    <field name="minimumPrice_EUR" type="tfloat" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+
+    <!-- leaf group membership -->
+    <field name="groupIdentity" type="int" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+    <!-- all group node and leaf memberships towards and including root.  -->
+    <field name="groupIdentities" type="int" indexed="true" multiValued="true" stored="false" required="true" omitNorms="true"/>
+
+    <field name="locationIdentity" type="int" indexed="true" multiValued="false" stored="false" required="true" omitNorms="true"/>
+
+
+    <field name="locationCity" type="text_general" indexed="true" multiValued="true" stored="false" required="true" omitNorms="true"/>
+    <field name="locationCountry" type="text_general" indexed="true" multiValued="true" stored="false" required="true" omitNorms="true"/>
+
+
+    <!-- used to ensure that a text field is available in the given language,
+         even if no text query is entered. -->
+    <field name="languageIdentities" type="int" indexed="true" multiValued="true" stored="false" required="true" omitNorms="true"/>
+    <field name="machineTranslated_languageIdentities" type="int" indexed="true" multiValued="true" stored="false" required="false" omitNorms="true"/>
+
+
+    <!-- primary text search fields: -->
+
+    <!-- multilingual text fields.
+         contains all text from all languages at the same time, fairly normalized -->
+    <field name="title_allLanguages" type="text_general" indexed="true" multiValued="true" stored="false" required="false" omitNorms="false"/>
+    <field name="description_allLanguages" type="text_general" indexed="true" multiValued="true" stored="false" required="false" omitNorms="false"/>
+
+    <!-- language specific analyzed titles.
+         stemmed etc -->
+
+    <field name="title_da" type="text_da" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_en" type="text_en" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_sv" type="text_sv" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_de" type="text_de" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_no" type="text_no" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!-- language specific analyzed descriptions.
+         stemmed etc. -->
+
+    <field name="description_da" type="text_da" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_en" type="text_en" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_sv" type="text_sv" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_de" type="text_de" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_no" type="text_no" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!-- non language specific analyzed titles.
+         standard analyzer for greater accuracy when matching the non stemmed word. -->
+    <field name="title_standard_da" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_standard_en" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_standard_sv" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_standard_de" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_standard_no" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+    <!-- non language specific analyzed descriptions.
+         standard analyzer for greater accuracy when matching the non stemmed word. -->
+    <field name="description_standard_da" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_standard_en" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_standard_sv" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_standard_de" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_standard_no" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!-- machine translations live in their own field for filtering, boosts, etc-->
+
+    <!-- multilingual text fields. -->
+    <field name="machineTranslated_title_allLanguages" type="text_general" indexed="true" multiValued="true" stored="false" required="false" omitNorms="false"/>
+    <field name="machineTranslated_description_allLanguages" type="text_general" indexed="true" multiValued="true" stored="false" required="false" omitNorms="false"/>
+
+    <!-- language specific analyzed titles -->
+    <field name="machineTranslated_title_da" type="text_da" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_en" type="text_en" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_sv" type="text_sv" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_de" type="text_de" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_no" type="text_no" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+    <!-- language specific analyzed specific descriptions -->
+    <field name="machineTranslated_description_da" type="text_da" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_en" type="text_en" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_sv" type="text_sv" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_de" type="text_de" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_no" type="text_no" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+    <!-- non language specific analyzed titles -->
+    <field name="machineTranslated_title_standard_da" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_standard_en" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_standard_sv" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_standard_de" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_standard_no" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+    <!-- non language specific analyzed descriptions -->
+    <field name="machineTranslated_description_standard_da" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_standard_en" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_standard_sv" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_standard_de" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_standard_no" type="text_standard" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!--
+     analytic fields:
+     these are not really used
+     but allow for extracting common phrases and terms out of the system
+    -->
+
+    <!-- standard title shingles -->
+    <field name="title_shingles_da" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_shingles_en" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_shingles_sv" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_shingles_de" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="title_shingles_no" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!-- standard description shingles -->
+    <field name="description_shingles_da" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_shingles_en" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_shingles_sv" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_shingles_de" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="description_shingles_no" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+    <!-- machineTranslated_ -->
+
+
+    <!-- standard title shingles -->
+    <field name="machineTranslated_title_shingles_da" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_shingles_en" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_shingles_sv" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_shingles_de" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_title_shingles_no" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+    <!-- standard description shingles -->
+    <field name="machineTranslated_description_shingles_da" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_shingles_en" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_shingles_sv" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_shingles_de" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+    <field name="machineTranslated_description_shingles_no" type="text_standard_shingles" indexed="true" multiValued="false" stored="false" required="false" omitNorms="false" termVectors="true"/>
+
+
+  </fields>
+
+  <!-- Field to use to determine and enforce document uniqueness.
+     Unless this field is marked with required="false", it will be a required field
+  -->
+  <uniqueKey>identity</uniqueKey>
+
+  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+  <defaultSearchField>identity</defaultSearchField>
+
+  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+  <solrQueryParser defaultOperator="OR"/>
+
+  <!-- copyField commands copy one field to another at the time a document
+        is added to the index.  It's used either to index the same field differently,
+        or to add multiple fields to the same field for easier/faster searching.  -->
+
+  <!--<copyField source="cat" dest="text"/>-->
+  <!--<copyField source="name" dest="text"/>-->
+  <!--<copyField source="manu" dest="text"/>-->
+  <!--<copyField source="features" dest="text"/>-->
+  <!--<copyField source="includes" dest="text"/>-->
+  <!--<copyField source="manu" dest="manu_exact"/>-->
+
+  <!-- Above, multiple source fields are copied to the [text] field.
+     Another way to map multiple source fields to the same
+     destination field is to use the dynamic field syntax.
+     copyField also supports a maxChars to copy setting.  -->
+
+  <!-- <copyField source="*_t" dest="text" maxChars="3000"/> -->
+
+  <!-- copy name to alphaNameSort, a field designed for sorting by name -->
+  <!-- <copyField source="name" dest="alphaNameSort"/> -->
+
+
+  <!-- Similarity is the scoring routine for each document vs. a query.
+A custom similarity may be specified here, but the default is fine
+for most applications.  -->
+  <!-- <similarity class="org.apache.lucene.search.DefaultSimilarity"/> -->
+  <!-- ... OR ...
+       Specify a SimilarityFactory class name implementation
+       allowing parameters to be used.
+  -->
+  <!--
+  <similarity class="com.example.solr.CustomSimilarityFactory">
+    <str name="paramkey">param value</str>
+  </similarity>
+  -->
+  -->
+
+
+</schema>

@@ -16,12 +16,14 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
+ * ensures that all secondary indices are updated
+ * 
  * @author kalle
  * @since 2012-04-02 21:33
  */
-public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
+public class PutDomainEntityObjectVisitor implements DomainEntityObjectVisitor {
   @Override
-  public void visit(Lan län) {
+  public void visit(Lan län) throws Exception {
     DomainStore.getInstance().assignIdentity(län);
     län.set_index_alfakod(län.getAlfakod().get());
     län.set_index_nummerkod(län.getNummerkod().get());
@@ -30,7 +32,7 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Kommun kommun) {
+  public void visit(Kommun kommun) throws Exception {
     DomainStore.getInstance().assignIdentity(kommun);
     kommun.set_index_länIdentity(kommun.getLänIdentity().get());
     kommun.set_index_namn(kommun.getNamn().get());
@@ -38,22 +40,24 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Ort ort) {
+  public void visit(Ort ort) throws Exception {
     DomainStore.getInstance().assignIdentity(ort);
     ort.set_index_kommunIdentity(ort.getKommunIdentity().get());
     DomainStore.getInstance().getOrter().put(ort);
   }
 
   @Override
-  public void visit(Organisation organisation) {
+  public void visit(Organisation organisation) throws Exception {
     DomainStore.getInstance().assignIdentity(organisation);
     organisation.set_index_nummer(organisation.getNummer().get());
     organisation.set_index_länIdentity(organisation.getLänIdentity().get());
     DomainStore.getInstance().getOrganisationer().put(organisation);
+
+    OrganisationIndex.getInstance().put(organisation);
   }
 
   @Override
-  public void visit(Arsredovisning årsredovisning) {
+  public void visit(Arsredovisning årsredovisning) throws Exception {
     DomainStore.getInstance().assignIdentity(årsredovisning);
     årsredovisning.set_index_organisationIdentity(årsredovisning.getOrganisationIdentity().get());
     if (årsredovisning.getDatumFrom().get() != null) {
@@ -68,7 +72,7 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(EkonomiskPlan ekonomiskPlan) {
+  public void visit(EkonomiskPlan ekonomiskPlan) throws Exception {
     DomainStore.getInstance().assignIdentity(ekonomiskPlan);
     ekonomiskPlan.set_index_organisationIdentity(ekonomiskPlan.getOrganisationIdentity().get());
     DomainStore.getInstance().getEkonomiskaPlaner().put(ekonomiskPlan);
@@ -76,14 +80,14 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Stadgar stadgar) {
+  public void visit(Stadgar stadgar) throws Exception {
     DomainStore.getInstance().assignIdentity(stadgar);
     stadgar.set_index_organisationIdentity(stadgar.getOrganisationIdentity().get());
     DomainStore.getInstance().getStadgar().put(stadgar);
   }
 
   @Override
-  public void visit(Dokument dokument) {
+  public void visit(Dokument dokument) throws Exception {
     DomainStore.getInstance().assignIdentity(dokument);
     if (dokument.getDokumentversionerIdentity() != null && !dokument.getDokumentversionerIdentity().isEmpty()) {
       dokument.set_index_dokumentversionerIdentity(new ArrayList<String>(dokument.getDokumentversionerIdentity().size()));
@@ -96,13 +100,13 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Dokumentversion dokumentversion) {
+  public void visit(Dokumentversion dokumentversion) throws Exception {
     DomainStore.getInstance().assignIdentity(dokumentversion);
     DomainStore.getInstance().getDokumentversioner().put(dokumentversion);
   }
 
   @Override
-  public void visit(Gatuadress gatuaddress) {
+  public void visit(Gatuadress gatuaddress) throws Exception {
     DomainStore.getInstance().assignIdentity(gatuaddress);
     gatuaddress.set_index_postnummerIdentity(gatuaddress.getPostnummerIdentity().get());
     gatuaddress.set_index_gataIdentity(gatuaddress.getGataIdentity().get());
@@ -117,7 +121,7 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Gata gata) {
+  public void visit(Gata gata) throws Exception {
     DomainStore.getInstance().assignIdentity(gata);
     gata.set_index_postortIdentity(gata.getPostortIdentity().get());
     List<String> index = new ArrayList<String>(gata.getPostnummerIdentities().size());
@@ -136,7 +140,7 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Postnummer postnummer) {
+  public void visit(Postnummer postnummer) throws Exception {
     DomainStore.getInstance().assignIdentity(postnummer);
     postnummer.set_index_postnummer(postnummer.getPostnummer().get());
     postnummer.set_index_postortIdentity(postnummer.getPostortIdentity().get());
@@ -144,7 +148,7 @@ public class DomainEntityObjectPutVisitor implements DomainEntityObjectVisitor {
   }
 
   @Override
-  public void visit(Postort postort) {
+  public void visit(Postort postort) throws Exception {
     DomainStore.getInstance().assignIdentity(postort);
     postort.set_index_namn(postort.getNamn().get());
     DomainStore.getInstance().getPostorter().put(postort);

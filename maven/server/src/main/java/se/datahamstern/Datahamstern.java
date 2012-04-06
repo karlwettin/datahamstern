@@ -1,6 +1,8 @@
 package se.datahamstern;
 
+import org.apache.velocity.texen.util.FileUtil;
 import se.datahamstern.domain.DomainStore;
+import se.datahamstern.domain.OrganisationIndex;
 import se.datahamstern.event.EventExecutor;
 import se.datahamstern.io.FileUtils;
 
@@ -38,20 +40,20 @@ public class Datahamstern {
 
   /**
    * what version of datahamster is running
-   *
+   * <p/>
    * todo imprint this on all outgoing events
    */
   private String version;
 
   /**
    * unique identifier for this system.
-   *
+   * <p/>
    * it would be nice
    * if everybody used a contactable email address
-   *
+   * <p/>
    * google.account.name+datahamstern-1@gmail.com
    * google.account.name+datahamstern-2@gmail.com
-   *
+   * <p/>
    * todo imprint this on all outgoing events
    */
   private String systemUUID;
@@ -84,25 +86,35 @@ public class Datahamstern {
     } else if (!mavenProjectPath.isDirectory()) {
       throw new IOException("maven project path " + mavenProjectPath.getAbsolutePath() + " is not a directory!");
     } else {
-      File[] poms = mavenProjectPath.listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          return "pom.xml".equalsIgnoreCase(name);
+      File currentPath = mavenProjectPath;
+
+      while (!currentPath.equals(new File("/"))) {
+        File[] markerFiles = currentPath.listFiles(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            return "datahamstern-parent-root".equalsIgnoreCase(name);
+          }
+        });
+        if (markerFiles.length == 1) {
+          break;
         }
-      });
-      if (poms.length == 0) {
-        throw new IOException("maven project path " + mavenProjectPath.getAbsolutePath() + " does not contain a pom.xml!");
+        currentPath = currentPath.getParentFile();
       }
+
+      if (new File("/").equals(currentPath)) {
+        throw new Exception("Could not find maven project parent path in " + mavenProjectPath);
+      }
+      mavenProjectPath = FileUtils.getCleanAbsolutePath(currentPath);
+
       // todo load pom to dom, assert its the right project and set version
       version = "0.0.0";
+
     }
 
     System.out.println("Using maven project path " + mavenProjectPath.getAbsolutePath());
 
-    if (dataPath == null) {
-      dataPath = new File(mavenProjectPath, "data");
-      FileUtils.mkdirs(dataPath);
-    }
+    dataPath = new File(mavenProjectPath, "data");
+    FileUtils.mkdirs(dataPath);
     dataPath = FileUtils.getCleanAbsolutePath(dataPath);
 
 
@@ -116,11 +128,15 @@ public class Datahamstern {
     EventExecutor.getInstance().setDataPath(new File(dataPath, "event"));
     EventExecutor.getInstance().open();
 
+    OrganisationIndex.getInstance().setPath(new File(dataPath, "index/organisation"));
+    OrganisationIndex.getInstance().open();
+
   }
 
   public void close() throws Exception {
-    DomainStore.getInstance().close();
+    OrganisationIndex.getInstance().close();
     EventExecutor.getInstance().close();
+    DomainStore.getInstance().close();
   }
 
   public String getProperty(String key, String defaultValue) throws Exception {

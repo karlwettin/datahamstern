@@ -241,7 +241,7 @@ public class DomainStore {
    * Ensures that values for all secondary indices are set
    * and that instances are added to the correct primary index
    */
-  private DomainEntityObjectVisitor putVisitor = new CountingDomainEntityObjectVisitor(new DomainEntityObjectPutVisitor());
+  private DomainEntityObjectVisitor putVisitor = new CountingDomainEntityObjectVisitor(new PutDomainEntityObjectVisitor());
 
 
   public File getPath() {

@@ -30,6 +30,13 @@
       <artifactId>je</artifactId>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
@@ -51,7 +58,7 @@
     <dependency>
       <groupId>json-simple</groupId>
       <artifactId>json-simple</artifactId>
-      <version>1.1-kalle-8</version>
+      <version>1.1-kalle-9</version>
     </dependency>
 
     <!--

@@ -28,9 +28,11 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
   }
 
   private Writer writer;
+  private boolean writingMetadata;
 
-  public DomainEntityObjectJsonSerializer(Writer writer) {
+  public DomainEntityObjectJsonSerializer(Writer writer, boolean writingMetadata) {
     this.writer = writer;
+    this.writingMetadata = writingMetadata;
   }
 
   public Writer getWriter() {
@@ -41,8 +43,13 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     this.writer = writer;
   }
 
+  public boolean isWritingMetadata() {
+    return writingMetadata;
+  }
 
-  private boolean writeMetadata = false;
+  public void setWritingMetadata(boolean writingMetadata) {
+    this.writingMetadata = writingMetadata;
+  }
 
   private void writeSourcedKeyValueString(boolean commaPrefix, String key, SourcedValue<String> value) throws IOException {
     if (commaPrefix) {
@@ -52,7 +59,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     if (value.get() == null) {
       writer.write("null");
     } else {
-      if (!writeMetadata) {
+      if (!writingMetadata) {
         writeValue(value.get());
       } else {
         writer.write("{");
@@ -76,7 +83,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     if (value.get() == null) {
       writer.write("null");
     } else {
-      if (!writeMetadata) {
+      if (!writingMetadata) {
         writeValue(value.get());
       } else {
         writer.write("{");
@@ -149,7 +156,20 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     if (commaPrefix) {
       writer.write(',');
     }
-    writeValue(value.get());
+    if (value.get() == null) {
+      writer.write("null");
+    } else {
+      if (writingMetadata) {
+        writer.write("{");
+        writeKey("value");
+        writeValue(value.get());
+        writer.write(',');
+        writeSourced(value);
+        writer.write("}");
+      } else {
+        writeValue(value.get());
+      }
+    }
   }
 
   private void writeIdentity(DomainEntityObject object) throws IOException {
@@ -244,7 +264,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
       writer.write(']');
     }
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(organisation);
     }
@@ -263,7 +283,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "alfakod", län.getAlfakod());
     writeSourcedKeyValueString(true, "nummerkod", län.getNummerkod());
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(län);
     }
@@ -280,7 +300,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "nummerkod", kommun.getNummerkod());
     writeSourcedKeyValueString(true, "lanIdentity", kommun.getLänIdentity());
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(kommun);
     }
@@ -297,7 +317,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "tatortskod", ort.getTätortskod());
     writeSourcedKeyValueString(true, "kommunIdentity", ort.getKommunIdentity());
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(ort);
     }
@@ -312,7 +332,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
 
     writeSourcedKeyValueString(true, "namn", postort.getNamn());
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(postort);
     }
@@ -345,7 +365,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     }
 
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(postnummer);
     }
@@ -377,7 +397,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
       writer.write(']');
     }
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(gata);
     }
@@ -395,7 +415,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "gataIdentity", gatuadress.getGataIdentity());
     writeSourcedKeyValueString(true, "postnummerIdentity", gatuadress.getPostnummerIdentity());
 
-    if (writeMetadata) {
+    if (writingMetadata) {
       writer.write(',');
       writeSourced(gatuadress);
     }
