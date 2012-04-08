@@ -1,2 +1,2 @@
 mvn install:install-file -Dfile=je-5.0.34-kalle.jar -DgroupId=com.sleepycat -DartifactId=je -Dversion=5.0.34-kalle -Dpackaging=jar
-mvn install:install-file -Dfile=json-simple-kalle.jar -DgroupId=json-simple -DartifactId=json-simple -Dversion=1.1-kalle-9 -Dpackaging=jar
+mvn install:install-file -Dfile=json-simple-1.1-kalle.jar -DgroupId=json-simple -DartifactId=json-simple -Dversion=1.1-kalle-9 -Dpackaging=jar
