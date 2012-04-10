@@ -38,9 +38,17 @@
 <%=results.getResults().getNumFound()%> träffar totalt.
 <table>
 <%
-    for (int i=0; i<results.getResults().size(); i++) {
-      Organisation organisation = DomainStore.getInstance().getOrganisationer().get((String)results.getResults().get(i).getFirstValue("identity"));
-      float score = (Float)results.getResults().get(i).getFirstValue("score");
+    if (results.getResults().size() > 0) {
+      boolean thresholdHit = false;
+      float topScore = (Float)results.getResults().get(0).getFirstValue("score");
+      float threshold = topScore *  0.25f;
+      for (int i=0; i<results.getResults().size(); i++) {
+        Organisation organisation = DomainStore.getInstance().getOrganisationer().get((String)results.getResults().get(i).getFirstValue("identity"));
+        float score = (Float)results.getResults().get(i).getFirstValue("score");
+        if (score < threshold && !thresholdHit) {
+          thresholdHit = true;
+          %><tr><td colspan="6"><hr/></td></tr><%
+        }
 %>
   <tr>
     <td><%=i%></td>
@@ -51,6 +59,7 @@
     <td><%=DomainStore.getInstance().getLän().get(organisation.getLänIdentity().get()).getNamn()%></td>
   </tr>
 <%
+      }
     }
   }
 %>

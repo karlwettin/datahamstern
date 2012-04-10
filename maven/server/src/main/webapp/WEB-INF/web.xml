@@ -22,4 +22,8 @@
     <listener-class>se.datahamstern.ServiceStarter</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>se.datahamstern.domain.DomainStoreSessionListener</listener-class>
+  </listener>
+
 </web-app>

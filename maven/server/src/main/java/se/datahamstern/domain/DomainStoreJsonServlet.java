@@ -7,9 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONFormatter;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -24,6 +22,7 @@ import java.util.UUID;
  * @since 2012-04-05 18:50
  */
 public class DomainStoreJsonServlet extends HttpServlet {
+
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -81,7 +80,7 @@ public class DomainStoreJsonServlet extends HttpServlet {
     functions.put(function.getFunctionName(), function);
   }
 
-  public static <SK, PK, E> SK getSecondaryKey(SecondaryIndex<SK, PK, E> secondaryIndex, HttpServletRequest request, String parameterName)  throws Exception {
+  public static <SK, PK, E> SK getSecondaryKey(SecondaryIndex<SK, PK, E> secondaryIndex, HttpServletRequest request, String parameterName) throws Exception {
     SK secondaryKey;
     String secondaryKeyString = request.getParameter(parameterName);
     if (secondaryIndex.getKeyClass() == String.class) {
@@ -138,17 +137,17 @@ public class DomainStoreJsonServlet extends HttpServlet {
       secondaryKey = secondaryIndex.getKeyClass().newInstance();
 
 
-      for (String parameter : (Set<String>)request.getParameterMap().keySet()) {
+      for (String parameter : (Set<String>) request.getParameterMap().keySet()) {
         if (parameter.startsWith(parameterName + ".")) {
           String fieldName = parameter.substring(parameter.indexOf("."));
           String stringValue = request.getParameter(parameter);
 
           Field field = secondaryIndex.getKeyClass().getDeclaredField(fieldName);
 
-          StringBuilder setterNameFactory = new StringBuilder(field.getName().length()  +3);
+          StringBuilder setterNameFactory = new StringBuilder(field.getName().length() + 3);
           setterNameFactory.append("set");
           setterNameFactory.append(field.getName().substring(0, 1).toUpperCase());
-          if (field.getName().length()  > 1) {
+          if (field.getName().length() > 1) {
             setterNameFactory.append(field.getName().substring(1));
           }
           String setterName = setterNameFactory.toString();
@@ -212,7 +211,6 @@ public class DomainStoreJsonServlet extends HttpServlet {
             throw new RuntimeException("Unsupported field type: " + field.getType());
           }
 
-          // todo setter.execute(secondaryKey, );
 
         }
       }
@@ -267,7 +265,7 @@ public class DomainStoreJsonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       try {
-        E entity = getPrimaryIndex().get((PK) request.getParameter("identity"));
+        E entity = getPrimaryIndex().get((PK) request.getParameter("primaryKey"));
         if (entity == null) {
           response.getWriter().write("{ \"request\" : { \"success\" : true }, \"response\" : null }");
         } else {
@@ -339,7 +337,9 @@ public class DomainStoreJsonServlet extends HttpServlet {
 
         } else if (request.getParameterMap().containsKey("close")) {
           cursor.close();
+          request.getSession().removeAttribute("cursor." + cursorIdentity);
           response.getWriter().write("{ \"request\" : { \"success\" : true } }");
+
         } else if (request.getParameterMap().containsKey("next")) {
           DomainEntityObject next = cursor.next();
           if (next == null) {
