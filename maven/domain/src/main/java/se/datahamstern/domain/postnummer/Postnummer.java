@@ -17,7 +17,7 @@ import java.util.List;
  * @author kalle
  * @since 2012-03-26 01:57
  */
-@Entity(version = 1)
+@Entity(version = 2)
 public class Postnummer extends AbstractSourced implements DomainEntityObject, Serializable {
 
   private static final long serialVersionUID = 1l;
@@ -33,12 +33,15 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Postort.class)
   private String _index_postortIdentity;
 
+  private SourcedValue<Boolean> active = new SourcedValue<Boolean>(null);
+
   private List<SourcedValue<String>> stereotyper = new ArrayList<SourcedValue<String>>();
 
   @Override
   public String toString() {
     return "Postnummer{" +
         "postnummer=" + postnummer +
+        ", active=" + active+
         ", stereotyper=" + stereotyper +
         ", postortIdentity=" + postortIdentity +
         ", identity='" + identity + '\'' +
@@ -59,6 +62,7 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
     if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
     if (postnummer != null ? !postnummer.equals(that.postnummer) : that.postnummer != null) return false;
     if (postortIdentity != null ? !postortIdentity.equals(that.postortIdentity) : that.postortIdentity != null) return false;
+    if (active != null ? !active.equals(that.active) : that.active!= null) return false;
     if (stereotyper != null ? !stereotyper.equals(that.stereotyper) : that.stereotyper != null) return false;
 
     return true;
@@ -70,6 +74,7 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
     result = 31 * result + (postnummer != null ? postnummer.hashCode() : 0);
     result = 31 * result + (postortIdentity != null ? postortIdentity.hashCode() : 0);
+    result = 31 * result + (active!= null ? active.hashCode() : 0);
     result = 31 * result + (stereotyper != null ? stereotyper.hashCode() : 0);
     return result;
   }
@@ -130,4 +135,11 @@ public class Postnummer extends AbstractSourced implements DomainEntityObject, S
     this.stereotyper = stereotyper;
   }
 
+  public SourcedValue<Boolean> getActive() {
+    return active;
+  }
+
+  public void setActive(SourcedValue<Boolean> active) {
+    this.active = active;
+  }
 }

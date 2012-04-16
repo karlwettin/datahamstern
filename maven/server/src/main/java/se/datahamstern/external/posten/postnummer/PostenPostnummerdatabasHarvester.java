@@ -88,7 +88,9 @@ public class PostenPostnummerdatabasHarvester {
 
   final char[] streetNameCharset = new char[]{
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'å', 'ä', 'ö',
-      'ü', // todo detect chars in use while harvesting? or analyze afterwords?
+      'ü',
+      // todo detect chars in use while harvesting? or analyze results afterwords and manually add the characters?
+      // todo whitespace is a valid (and sometimes needed!) character!
   };
 
   public void harvestStreetNames(String streetNamePrefix, JsonEventLogWriter eventLog, Source source, SeleniumAccessor selenium, String postort) throws Exception {
@@ -126,10 +128,52 @@ public class PostenPostnummerdatabasHarvester {
     System.out.println("Sending query " + queryUrlBuilder.toString());
     selenium.openAndWaitForPageToLoad(queryUrlBuilder.toString());
 
-    Node table = (Node) selenium.xpath.compile("//TABLE[@summary='Tabellen visar resultatet av din postnummersökning.']").evaluate(selenium.getDOM(), XPathConstants.NODE);
+    Node table = (Node) selenium.xpath.compile("//TABLE[@summary='Tabellen visar resultatet av din postnummersökning']").evaluate(selenium.getDOM(), XPathConstants.NODE);
     if (table == null) {
-      // todo save this as an event where the postnummer is non existing! it might have been removed or changed or something!
-      // log.info("No data for query " + postnummerIndex);
+
+      if (selenium.xpath.compile("//DIV[@class='errorMessage']/SPAN[contains(text(), 'Din sökning gav inga träffar')]").evaluate(selenium.getDOM(), XPathConstants.NODE) == null) {
+
+        if (query.getGatunamn() == null && query.getPostort() == null && query.getPostnummer() != null) {
+
+          // add non existing postnummer event
+
+          Event event = new Event();
+          event.setCommandName(PostenIckeExisterandePostnummerCommand.COMMAND_NAME);
+          event.setCommandVersion(PostenIckeExisterandePostnummerCommand.COMMAND_VERSION);
+
+          event.setSources(new ArrayList<Source>());
+          event.getSources().add(source);
+
+          StringBuilder jsonData = new StringBuilder();
+
+          jsonData.append("{");
+
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape("postnummer"));
+          jsonData.append('"');
+          jsonData.append(':');
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(query.getPostnummer()));
+          jsonData.append('"');
+
+          jsonData.append("}");
+
+          event.setJsonData(jsonData.toString());
+
+          eventLog.consume(event);
+
+        } else {
+
+          // this is NOT a postnummer only query.
+
+        }
+
+        Nop.breakpoint();
+
+      } else {
+        // todo unknown reason for not picking up postnummer, log error!
+      }
+
       return true;
     }
 

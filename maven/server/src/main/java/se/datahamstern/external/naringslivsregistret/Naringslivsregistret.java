@@ -31,6 +31,7 @@ public class Naringslivsregistret {
     selenium.start();
     selenium.openAndWaitForPageToLoad("http://www.bolagsverket.se/");
     selenium.clickAndWaitForPageToLoad("//A[text()='Näringslivsregistret']");
+    selenium.setTimeout("90000"); // it can take a very long time to get response from nlr!
   }
 
   public void close() {

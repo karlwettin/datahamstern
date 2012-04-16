@@ -27,33 +27,35 @@ public class PostenPostnummerCommand extends Command {
   /**
    * A name that combined with the version uniquely describes this command.
    *
+   * <p/>
+   * If this value change (ie only by editing the code and recompile),
+   * then version should also be set to 1.
+   *
    * @see #COMMAND_VERSION
-   *      <p/>
-   *      If this value change (ie only by editing the code and recompile),
-   *      then version should also be set to 1.
    */
   public static String COMMAND_NAME = "uppdatera med post från postens postnummerdatabas";
 
   /**
    * A version that combined with the name uniquely describes this command.
    *
+   * <p/>
+   * If updating this class so it accepts other incoming data
+   * then stop now!
+   * <p/>
+   * Instead, create a clone and increase this value.
+   * <p/>
+   * If only changing the logic in this class
+   * make sure that all code that use this constant are synchronized
+   * or create a clone and increase this value.
+   * <p/>
+   * If you are not sure about what to change it to, then here are some ideas:
+   * from 1 to 1-myUniqueNameHack,
+   * from 1.0.1 to 1.0.1-myUniqueNameHack
+   * <p/>
+   * If you are the official author of the original command
+   * you should probably change it from 1 to 1.0.1.
+   *
    * @see #COMMAND_NAME
-   *      <p/>
-   *      If updating this class so it accepts other incoming data
-   *      then stop now!
-   *      <p/>
-   *      Instead, create a clone and increase this value.
-   *      <p/>
-   *      If only changing the logic in this class
-   *      make sure that all code that use this constant are synchronized
-   *      or create a clone and increase this value.
-   *      <p/>
-   *      If you are not sure about what to change it to, then here are some ideas:
-   *      from 1 to 1-myUniqueNameHack,
-   *      from 1.0.1 to 1.0.1-myUniqueNameHack
-   *      <p/>
-   *      If you are the official author of the original command
-   *      you should probably change it from 1 to 1.0.1.
    */
   public static String COMMAND_VERSION = "1";
 
@@ -89,10 +91,10 @@ public class PostenPostnummerCommand extends Command {
       postnummer = new Postnummer();
       // we never update knowledge of postnummer from this end
       // as it would create so many postings to the bdb
-      // todo implement new events for knowledge of postnummer and event for knowledge on non existing postnummer
       updateSourced(postnummer, event);
       updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
       updateSourcedValue(postnummer.getPostortIdentity(), postort.getIdentity(), event);
+      updateSourcedValue(postnummer.getActive(), true, event);
       DomainStore.getInstance().put(postnummer);
     }
 
