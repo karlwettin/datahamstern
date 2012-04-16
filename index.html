@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Datahamstern : Strukturerad information om Sverige" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Datahamstern</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/karlwettin/datahamstern">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Datahamstern</h1>
+          <h2 id="project_tagline">Strukturerad information om Sverige</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/karlwettin/datahamstern/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/karlwettin/datahamstern/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>Vad är detta?</h2>
+
+<p>En öppen databas, för närvarande innehållande alla svenska organisationer, myndigheter, län, kommuner, orter, postnummer, gator och husnummer. Målet är att tillhandahålla "all tänkbar" samhällsnyttig information om Sverige.</p>
+
+<h2>Varför?</h2>
+
+<h3>Samhällsnyttig information om Sverige är svindyrt</h3>
+
+<p>Lantmäteriet och bolagsverket är två exempel på myndigheter som samlar information de tar väldigt mycket betalt för. Exempelvis kostar ett utdrag med polygoner över Sveriges kommuners gränser <strong>nnnn kronor</strong>, ett utdrag med Sveriges 30 000 bostadsrättsföreningars registreringsdatum kostar <strong>18 000 kronor</strong> och vill man dessutom ha information om bostadsrättsföreningarnas fastigheter blir priset <strong>flera hundra tusen kronor</strong>. </p>
+
+<p>Priserna är exklusive moms och med <strong>avtalad begränsning hur den får användas och publiceras</strong>.</p>
+
+<h3>Små aktörer stängs ute</h3>
+
+<p>Kostnaden för datautdrag är försvinnande liten om man är ett företag med tjock plånbok. De som saknar kapital, exempelvis de flesta småföretagare och privatpersoner, ges väldigt få möjligheter.</p>
+
+<h3>En lokal databas, inte bara ett API</h3>
+
+<p>Mycket av den information som tillhandahålls i databasen finns redan tillgängligt via öppna API:er. Det är dock inte alltid ett API är nog, exempelvis vid stora operationer kan det löna sig väldigt mycket att utan fördröjning ha informationen tillgänglig. Många gånger vill man dessutom strukturera om information i olika dimensioner för att kunna nå det man är ute efter. Ett API som hämtar en post via HTTP är då inte nog.</p>
+
+<h2>Data</h2>
+
+<h3>Komplexitet</h3>
+
+<p>Funktioner som för närvarande anses vara väsentliga nog för slutanvändare är:</p>
+
+<ol>
+<li>Historik: vilket värde hade en post vid ett givet datum? När noterades det nuvarande värdet första eller senaste gången?</li>
+<li>Fullständiga källhänvisningar: i vilka källor har informationen hittats?</li>
+<li>Licenshantering: vem äger rättigheterna till informationen?</li>
+<li>Variabel tillförlitlighet: hur mycket kan man lita på att informationen stämmer?</li>
+</ol><p>Denna information finns tillgängligt för alla värden och poster i databasen. Exempelvis kan man ta reda på när ett företag sågs till första gången, när företagets namn senast ändrades och vilka källor som används för att nå fram till i vilket län företaget är registrerat.</p>
+
+<h3>API</h3>
+
+<p>Databasen finns tillgänglig via Java eller som JSON via HTTP. För de som inte vill eller inte kan installera och administrera en lokal databas så finns en publik webtjänst att tillgå.</p>
+
+<h3>Källor</h3>
+
+<p>Den lokala databasen är ett resultat från att ha konsoliderat information från flera källor, för närvarande:</p>
+
+<ol>
+<li>Wikipedia: län, kommuner, tätorter och småorter.</li>
+<li>Näringslivsregistret: registrerade organisationsnummer, firmanamn, firmaform, status och hemlän.</li>
+<li>Posten: postorter, postnummer, gator och husnummer.</li>
+<li>Fastighetsmäklarnämnden: detaljer om organisationer med koppling till fastighetsmäkleri.</li>
+<li>hydda.se: detaljer om bostadsrättsföreningar och relaterade dokument som ekonomiska planer, årsredovisningar och stadgar.</li>
+<li>Open street map: geografiska koordinater till gatuadresser, läns- och kommungränser, etc.</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Datahamstern maintained by <a href="https://github.com/karlwettin">karlwettin</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
