@@ -191,7 +191,8 @@ public class EventExecutor {
     }
   }
 
-  public void execute(Event event, JSONParser jsonParser) throws Exception {
+  // todo only synchronize use of currentOutboxEventLog
+  public synchronized void execute(Event event, JSONParser jsonParser) throws Exception {
 
     assertWellDescribedEvent(event);
 

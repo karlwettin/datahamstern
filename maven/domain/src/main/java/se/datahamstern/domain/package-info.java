@@ -1,5 +1,5 @@
 /**
- * Domänklasser ligger i subpaket namngedda sinna källor.
+ * Domänklasser ligger i subpaket namngedda sina källor.
  *
  * Så är det för att jag har en kuslig känsla för att spå i framtiden
  * då man med all säkerhet kommer stöta på trupp vid försök att konsolidera data mellan olika källor
@@ -10,8 +10,8 @@
  * Jag har bara valt att dela upp det i paket på där här viset så jag inte glömmer bort
  * anledningen till det.
  *
- * Därför är det nu lite kladdigt med exempelvis
- * att det finns hårda associationer mellan klasser som beskriver data från posten
+ * Därför är det nu lite kladdigt att exempelvis
+ * det finns hårda associationer mellan klasser som beskriver data från posten
  * och klasser som beskriver data från wikipedia.
  *
  */

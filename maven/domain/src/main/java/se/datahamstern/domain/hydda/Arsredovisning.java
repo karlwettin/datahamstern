@@ -37,7 +37,7 @@ public class Arsredovisning extends AbstractSourced implements DomainEntityObjec
   private Integer _index_år;
 
   /** när årsrapporten registrerades hos bolagsverket */
-  private SourcedValue<Date> registrerinsdatum = new SourcedValue<Date>();
+  private SourcedValue<Date> registreringsdatum = new SourcedValue<Date>();
 
 
   /** från och med vilken datum värdena i årsrapporten behandlar */
@@ -67,7 +67,7 @@ public class Arsredovisning extends AbstractSourced implements DomainEntityObjec
     if (datumTo != null ? !datumTo.equals(that.datumTo) : that.datumTo != null) return false;
     if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
     if (organisationIdentity != null ? !organisationIdentity.equals(that.organisationIdentity) : that.organisationIdentity != null) return false;
-    if (registrerinsdatum != null ? !registrerinsdatum.equals(that.registrerinsdatum) : that.registrerinsdatum != null) return false;
+    if (registreringsdatum != null ? !registreringsdatum.equals(that.registreringsdatum) : that.registreringsdatum != null) return false;
 
     return true;
   }
@@ -76,7 +76,7 @@ public class Arsredovisning extends AbstractSourced implements DomainEntityObjec
   public int hashCode() {
     int result = super.hashCode();
     result = 31 * result + (organisationIdentity != null ? organisationIdentity.hashCode() : 0);
-    result = 31 * result + (registrerinsdatum != null ? registrerinsdatum.hashCode() : 0);
+    result = 31 * result + (registreringsdatum != null ? registreringsdatum.hashCode() : 0);
     result = 31 * result + (datumFrom != null ? datumFrom.hashCode() : 0);
     result = 31 * result + (datumTo != null ? datumTo.hashCode() : 0);
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
@@ -88,7 +88,7 @@ public class Arsredovisning extends AbstractSourced implements DomainEntityObjec
     return "Arsredovisning{" +
         "datumFrom=" + datumFrom +
         ", datumTo=" + datumTo +
-        ", registrerinsdatum=" + registrerinsdatum +
+        ", registreringsdatum=" + registreringsdatum +
         ", organisationIdentity=" + organisationIdentity +
         ", identity='" + identity + '\'' +
         ", _index_år=" + _index_år +

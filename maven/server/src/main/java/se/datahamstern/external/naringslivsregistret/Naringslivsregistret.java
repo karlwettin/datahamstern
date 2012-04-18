@@ -45,7 +45,7 @@ public class Naringslivsregistret {
     List<NaringslivsregistretResult> results = new ArrayList<NaringslivsregistretResult>();
 
     selenium.getEval("window.document.getElementById('sokstrang').value='" +
-        JSONObject.escape(query) + "';");
+        StringEscapeUtils.escapeJavaScript(query) + "';");
     selenium.select("//SELECT[@id='sokalternativ']", "Företag");
     selenium.clickAndWaitForPageToLoad("//FORM[@name='sokForm']//INPUT[@type='submit']");
 

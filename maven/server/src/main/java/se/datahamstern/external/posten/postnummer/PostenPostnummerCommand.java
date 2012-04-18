@@ -121,10 +121,7 @@ public class PostenPostnummerCommand extends Command {
           gata.getNamn().set(gatunamn);
           gata.getPostortIdentity().set(postort.getIdentity());
           DomainStore.getInstance().put(gata);
-        } else {
-          System.currentTimeMillis();
         }
-
 
         if (!gata.get_index_postnummerIdentities().contains(postnummer.getIdentity())) {
           gata.getPostnummerIdentities().add(new SourcedValue<String>(postnummer.getIdentity()));

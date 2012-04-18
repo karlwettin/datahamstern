@@ -17,7 +17,9 @@ public class HarvestNaringslivsregistret {
 
 //  private static final Logger log = LoggerFactory.getLogger(HarvestNaringslivsregistret.class);
   // todo 76960-76963++
-  // todo 9166-9167
+  // done 9166-9167
+  // todo 9162-9164
+  // todo 9167-9170
 
   public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
@@ -36,8 +38,10 @@ public class HarvestNaringslivsregistret {
 //        "7696015465",
 //          "7696367502",
 //          "7696399999",
-          "9166306721",
-          "9167000000",
+//          "9166306721",
+//          "9164000000",
+          "9164293921",
+          "9166000000",
           new CreateEventsVisitor());
     } finally {
       Datahamstern.getInstance().close();
