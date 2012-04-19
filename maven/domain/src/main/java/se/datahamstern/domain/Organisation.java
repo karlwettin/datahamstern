@@ -1,12 +1,9 @@
-package se.datahamstern.domain.naringslivsregistret;
+package se.datahamstern.domain;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
-import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainEntityObjectVisitor;
-import se.datahamstern.domain.wikipedia.Lan;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
@@ -15,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Organisationer (företag, föreningar, myndigheter, etc) med ett organisationsnummer.
+ *
  * @author kalle
  * @since 2012-03-02 03:04
  */
@@ -31,11 +30,8 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
 
   private SourcedValue<String> namn = new SourcedValue<String>();
 
-  /**
-   * EK, BF, BRF, HB, KB, AB, etc
-   * todo enumeration? aggregated classes?
-   */
-  private SourcedValue<String> firmaform = new SourcedValue<String>();
+  /** @see Organisationstyp */
+  private SourcedValue<String> typ = new SourcedValue<String>();
 
 
 
@@ -98,7 +94,7 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
 
     Organisation that = (Organisation) o;
 
-    if (firmaform != null ? !firmaform.equals(that.firmaform) : that.firmaform != null) return false;
+    if (typ != null ? !typ.equals(that.typ) : that.typ != null) return false;
     if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
     if (länIdentity != null ? !länIdentity.equals(that.länIdentity) : that.länIdentity != null) return false;
     if (namn != null ? !namn.equals(that.namn) : that.namn != null) return false;
@@ -114,7 +110,7 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
   public int hashCode() {
     int result = super.hashCode();
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
-    result = 31 * result + (firmaform != null ? firmaform.hashCode() : 0);
+    result = 31 * result + (typ != null ? typ.hashCode() : 0);
     result = 31 * result + (nummerprefix != null ? nummerprefix.hashCode() : 0);
     result = 31 * result + (nummer != null ? nummer.hashCode() : 0);
     result = 31 * result + (nummersuffix != null ? nummersuffix.hashCode() : 0);
@@ -158,12 +154,12 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
     this.nummersuffix = nummersuffix;
   }
 
-  public SourcedValue<String> getFirmaform() {
-    return firmaform;
+  public SourcedValue<String> getTyp() {
+    return typ;
   }
 
-  public void setFirmaform(SourcedValue<String> firmaform) {
-    this.firmaform = firmaform;
+  public void setTyp(SourcedValue<String> typ) {
+    this.typ = typ;
   }
 
   public List<SourcedValue<String>> getStatus() {
@@ -213,7 +209,7 @@ public class Organisation extends AbstractSourced implements DomainEntityObject,
         ", nummerprefix=" + nummerprefix +
         ", nummer=" + nummer +
         ", nummersuffix=" + nummersuffix +
-        ", firmaform=" + firmaform +
+        ", firmaform=" + typ +
         ", status=" + status +
         ", länIdentity=" + länIdentity +
         ", identity='" + identity + '\'' +

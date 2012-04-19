@@ -2,14 +2,6 @@ package se.datahamstern.domain;
 
 import org.json.simple.JSONObject;
 import se.datahamstern.domain.hydda.*;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.postnummer.Gata;
-import se.datahamstern.domain.postnummer.Gatuadress;
-import se.datahamstern.domain.postnummer.Postnummer;
-import se.datahamstern.domain.postnummer.Postort;
-import se.datahamstern.domain.wikipedia.Kommun;
-import se.datahamstern.domain.wikipedia.Lan;
-import se.datahamstern.domain.wikipedia.Ort;
 import se.datahamstern.sourced.SourcedInterface;
 import se.datahamstern.sourced.SourcedValue;
 
@@ -250,7 +242,7 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "nummerPrefix", organisation.getNummerprefix());
     writeSourcedKeyValueString(true, "nummer", organisation.getNummer());
     writeSourcedKeyValueString(true, "nummerSuffix", organisation.getNummersuffix());
-    writeSourcedKeyValueString(true, "firmaform", organisation.getFirmaform());
+    writeSourcedKeyValueString(true, "typ", organisation.getTyp());
     writeSourcedKeyValueString(true, "lanIdentity", organisation.getLänIdentity());
 
     writer.write(',');

@@ -1,20 +1,9 @@
 package se.datahamstern.domain;
 
 import se.datahamstern.domain.hydda.*;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.postnummer.Gata;
-import se.datahamstern.domain.postnummer.Gatuadress;
-import se.datahamstern.domain.postnummer.Postnummer;
-import se.datahamstern.domain.postnummer.Postort;
-import se.datahamstern.domain.wikipedia.Kommun;
-import se.datahamstern.domain.wikipedia.Lan;
-import se.datahamstern.domain.wikipedia.Ort;
-import se.datahamstern.event.Event;
 import se.datahamstern.util.EggClockTimer;
 import se.datahamstern.util.ScoreMap;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 

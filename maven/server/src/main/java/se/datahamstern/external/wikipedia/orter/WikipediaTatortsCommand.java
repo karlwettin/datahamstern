@@ -5,8 +5,8 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.wikipedia.Kommun;
-import se.datahamstern.domain.wikipedia.Ort;
+import se.datahamstern.domain.Kommun;
+import se.datahamstern.domain.Ort;
 import se.datahamstern.event.Event;
 
 /**

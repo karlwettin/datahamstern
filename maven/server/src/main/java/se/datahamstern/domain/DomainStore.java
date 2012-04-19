@@ -8,14 +8,6 @@ import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import se.datahamstern.Datahamstern;
 import se.datahamstern.domain.hydda.*;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.postnummer.Gata;
-import se.datahamstern.domain.postnummer.Gatuadress;
-import se.datahamstern.domain.postnummer.Postnummer;
-import se.datahamstern.domain.postnummer.Postort;
-import se.datahamstern.domain.wikipedia.Kommun;
-import se.datahamstern.domain.wikipedia.Lan;
-import se.datahamstern.domain.wikipedia.Ort;
 import se.datahamstern.io.FileUtils;
 
 import java.io.File;

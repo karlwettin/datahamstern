@@ -1,6 +1,6 @@
 <%@ page import="org.apache.solr.client.solrj.response.QueryResponse" %>
 <%@ page import="se.datahamstern.domain.OrganisationIndex" %>
-<%@ page import="se.datahamstern.domain.naringslivsregistret.Organisation" %>
+<%@ page import="se.datahamstern.domain.Organisation" %>
 <%@ page import="se.datahamstern.domain.DomainStore" %>
 <%--
   User: kalle
@@ -53,7 +53,7 @@
   <tr>
     <td><%=i%></td>
     <td><%=score%></td>
-    <td><%=organisation.getFirmaform()%></td>
+    <td><%=organisation.getTyp()%></td>
     <td><%=organisation.getNummer()%></td>
     <td><%=organisation.getNamn()%></td>
     <td><%=DomainStore.getInstance().getLän().get(organisation.getLänIdentity().get()).getNamn()%></td>

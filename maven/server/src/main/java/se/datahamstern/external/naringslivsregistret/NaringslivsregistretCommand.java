@@ -7,8 +7,8 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.wikipedia.Lan;
+import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.Organisation;
 import se.datahamstern.event.Event;
 import se.datahamstern.command.Source;
 import se.datahamstern.sourced.SourcedValue;
@@ -244,7 +244,7 @@ public class NaringslivsregistretCommand extends Command {
      */
 //    updateSourcedValue(organisation.getFirmatyp(), namn, event);
 
-    updateSourcedValue(organisation.getFirmaform(), firmaform, event);
+    updateSourcedValue(organisation.getTyp(), firmaform, event);
 
     if (status != null) {
       boolean statusFound = false;

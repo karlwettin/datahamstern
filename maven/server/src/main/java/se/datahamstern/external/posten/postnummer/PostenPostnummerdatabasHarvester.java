@@ -27,7 +27,7 @@ public class PostenPostnummerdatabasHarvester {
   public static void main(String[] args) throws Exception {
     Datahamstern.getInstance().open();
     try {
-      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventExecutor.getInstance().getInbox(), "posten-postnummer-" + System.currentTimeMillis() + ".events.json")) {
+      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventExecutor.getInstance().getOutbox(), System.currentTimeMillis() + ".posten-postnummer.events.json")) {
         @Override
         public void consume(Event event) throws Exception {
           event.setIdentity(UUID.randomUUID().toString());

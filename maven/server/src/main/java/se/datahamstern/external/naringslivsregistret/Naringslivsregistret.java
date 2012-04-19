@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * @since 2012-01-13 18:11
  */
 public class Naringslivsregistret {
-
+  // todo max 7 sökord, ie save data from orgno query if no results on secondary text query
 //  private static final Logger log = LoggerFactory.getLogger(Naringslivsregistret.class);
 
   private SeleniumAccessor selenium;
@@ -94,7 +94,7 @@ public class Naringslivsregistret {
 
     // if query is organization number then we don't get the county code
     // so place a secondary query using the name and then find the result in the list using the organization number
-
+    // todo max 7 search terms allowed!!
     ScoreMap<NaringslivsregistretResult> allResults = new ScoreMap<NaringslivsregistretResult>();
 
     if (!Mod10.isValidSwedishOrganizationNumber(query.replaceAll("\\p{Punct}", ""))) {

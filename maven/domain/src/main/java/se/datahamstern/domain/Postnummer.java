@@ -1,4 +1,4 @@
-package se.datahamstern.domain.postnummer;
+package se.datahamstern.domain;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;

@@ -1,14 +1,20 @@
 package se.datahamstern.external.scb;
 
-import org.w3c.dom.Node;
+import org.json.simple.JSONObject;
 import org.w3c.dom.NodeList;
+import se.datahamstern.Datahamstern;
 import se.datahamstern.Nop;
+import se.datahamstern.command.Source;
+import se.datahamstern.event.Event;
+import se.datahamstern.event.EventExecutor;
+import se.datahamstern.event.JsonEventLogWriter;
+import se.datahamstern.external.posten.postnummer.PostenIckeExisterandePostnummerCommand;
 import se.datahamstern.io.SeleniumAccessor;
 import se.datahamstern.io.SourceChangedException;
 
 import javax.xml.xpath.XPathConstants;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.File;
+import java.util.*;
 
 /**
  * @author kalle
@@ -17,10 +23,32 @@ import java.util.Set;
 public class MyndighetsregistretHarvester {
 
   public static void main(String[] args) throws Exception {
-    new MyndighetsregistretHarvester().harvest();
+    Datahamstern.getInstance().open();
+    try {
+      JsonEventLogWriter eventLog = new JsonEventLogWriter(new File(EventExecutor.getInstance().getOutbox(), System.currentTimeMillis() + ".scb-myndighetsregistret.events.json")) {
+        @Override
+        public void consume(Event event) throws Exception {
+          event.setIdentity(UUID.randomUUID().toString());
+          super.consume(event);
+        }
+      };
+      new MyndighetsregistretHarvester().harvest(eventLog);
+      eventLog.close();
+
+    } finally {
+      Datahamstern.getInstance().close();
+    }
   }
 
-  public void harvest() throws Exception {
+  public void harvest(JsonEventLogWriter eventLog) throws Exception {
+
+    Source source = new Source();
+    source.setTimestamp(new Date());
+    source.setLicense("public domain");
+    source.setDetails("http://www.myndighetsregistret.scb.se/Myndighet.aspx");
+    source.setAuthor("myndighetsregistret.scb.se");
+    source.setTrustworthiness(1f);
+
 
     SeleniumAccessor selenium = new SeleniumAccessor();
     selenium.start();
@@ -54,12 +82,14 @@ public class MyndighetsregistretHarvester {
 
         String namn = selenium.xpath.compile("id('txtNamn')/@value").evaluate(selenium.getDOM()).trim();
         if (namn.isEmpty()) {
-          throw new SourceChangedException("Myndighetsnamn must not be empty!");
+          throw new SourceChangedException("Myndighetsnamn must not be empty! If this is an error at scb, contact them and let them know so they can fix it!");
         }
 
         String orgno = selenium.xpath.compile("id('txtPeOrgNr')/@value").evaluate(selenium.getDOM()).trim();
         if (orgno.isEmpty()) {
-          throw new SourceChangedException("Organisationsnummer must not be empty!");
+          System.out.println("Skipping " + link + " due to missing organisationnummer. Usually true for embassies.");
+          continue;
+          //throw new SourceChangedException("Organisationsnummer must not be empty!");
         }
 
         String postadress = selenium.xpath.compile("id('txtPostAdr')/@value").evaluate(selenium.getDOM()).trim();
@@ -81,13 +111,13 @@ public class MyndighetsregistretHarvester {
         if (besöksadress.isEmpty()) {
           besöksadress = null;
         }
-        String besöksPostnummer = selenium.xpath.compile("id('txtBPostNr')/@value").evaluate(selenium.getDOM()).trim();
-        if (besöksPostnummer.isEmpty()) {
-          besöksPostnummer = null;
+        String besöksadressPostnummer = selenium.xpath.compile("id('txtBPostNr')/@value").evaluate(selenium.getDOM()).trim();
+        if (besöksadressPostnummer.isEmpty()) {
+          besöksadressPostnummer = null;
         }
-        String besöksPostort = selenium.xpath.compile("id('txtBPostOrt')/@value").evaluate(selenium.getDOM()).trim();
-        if (besöksPostort.isEmpty()) {
-          besöksPostort = null;
+        String besöksadressPostort = selenium.xpath.compile("id('txtBPostOrt')/@value").evaluate(selenium.getDOM()).trim();
+        if (besöksadressPostort.isEmpty()) {
+          besöksadressPostort = null;
         }
 
         String epost = selenium.xpath.compile("id('lnkEpost')/@href").evaluate(selenium.getDOM()).replaceFirst("(mailto:)(.+)", "$2").trim();
@@ -106,6 +136,191 @@ public class MyndighetsregistretHarvester {
         if (fax.isEmpty()) {
           fax = null;
         }
+
+
+        Event event = new Event();
+        event.setCommandName(MyndighetsregistretCommand.COMMAND_NAME);
+        event.setCommandVersion(MyndighetsregistretCommand.COMMAND_VERSION);
+
+        event.setSources(new ArrayList<Source>());
+        event.getSources().add(source);
+
+        StringBuilder jsonData = new StringBuilder();
+
+        jsonData.append("{");
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("organisationsnummer"));
+        jsonData.append('"');
+        jsonData.append(':');
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape(orgno));
+        jsonData.append('"');
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("namn"));
+        jsonData.append('"');
+        jsonData.append(':');
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape(namn));
+        jsonData.append('"');
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("postadress"));
+        jsonData.append('"');
+        jsonData.append(':');
+        jsonData.append('{');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("adress"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (postadress == null) {
+          jsonData.append("null");
+        } else {
+
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(postadress));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("postnummer"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (postadressPostnummer == null) {
+          jsonData.append("null");
+        } else {
+
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(postadressPostnummer));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("postort"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (postadressPostort == null) {
+          jsonData.append("null");
+        } else {
+
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(postadressPostort));
+          jsonData.append('"');
+        }
+
+        jsonData.append('}');
+        jsonData.append(',');
+
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("besöksadress"));
+        jsonData.append('"');
+        jsonData.append(':');
+        jsonData.append('{');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("adress"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (besöksadress == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(besöksadress));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("postnummer"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (besöksadressPostnummer == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(besöksadressPostnummer));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("postort"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (besöksadressPostort == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(besöksadressPostort));
+          jsonData.append('"');
+        }
+        jsonData.append('}');
+        jsonData.append(',');
+
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("epost"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (epost == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(epost));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("hemsida"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (hemsida == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(hemsida));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("telefon"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (telefon == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(telefon));
+          jsonData.append('"');
+        }
+        jsonData.append(',');
+
+        jsonData.append('"');
+        jsonData.append(JSONObject.escape("fax"));
+        jsonData.append('"');
+        jsonData.append(':');
+        if (fax == null) {
+          jsonData.append("null");
+        } else {
+          jsonData.append('"');
+          jsonData.append(JSONObject.escape(fax));
+          jsonData.append('"');
+        }
+
+        jsonData.append("}");
+
+        event.setJsonData(jsonData.toString());
+
+        eventLog.consume(event);
 
 
         Nop.breakpoint();

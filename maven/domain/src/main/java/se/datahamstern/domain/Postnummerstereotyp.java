@@ -1,4 +1,4 @@
-package se.datahamstern.domain.postnummer;
+package se.datahamstern.domain;
 
 /**
  * @author kalle

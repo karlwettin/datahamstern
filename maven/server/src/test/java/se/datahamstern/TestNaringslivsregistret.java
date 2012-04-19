@@ -3,8 +3,8 @@ package se.datahamstern;
 import junit.framework.TestCase;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.wikipedia.Lan;
+import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.Organisation;
 import se.datahamstern.event.EventExecutor;
 import se.datahamstern.external.naringslivsregistret.Naringslivsregistret;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
@@ -69,13 +69,13 @@ public class TestNaringslivsregistret extends TestCase {
             assertEquals(null, organisation.getNummerprefix().get());
             assertEquals("5560743089", organisation.getNummer().get());
             assertEquals(null, organisation.getNummersuffix().get());
-            assertEquals("AB", organisation.getFirmaform().get());
+            assertEquals("AB", organisation.getTyp().get());
             assertTrue(organisation.getStatus() == null || organisation.getStatus().isEmpty());
           }
 
           assertNotNull(organisation);
           assertNotNull(organisation.getLänIdentity().get());
-          assertNotNull(organisation.getFirmaform().get());
+          assertNotNull(organisation.getTyp().get());
 
           /**
            * todo finns tillgängligt från näringslivsregistret!

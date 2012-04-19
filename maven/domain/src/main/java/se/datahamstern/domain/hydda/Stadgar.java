@@ -6,7 +6,7 @@ import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
 import se.datahamstern.domain.DomainEntityObject;
 import se.datahamstern.domain.DomainEntityObjectVisitor;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
+import se.datahamstern.domain.Organisation;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 

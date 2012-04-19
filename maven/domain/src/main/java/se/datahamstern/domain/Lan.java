@@ -1,11 +1,9 @@
-package se.datahamstern.domain.wikipedia;
+package se.datahamstern.domain;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.sleepycat.persist.model.Relationship;
 import com.sleepycat.persist.model.SecondaryKey;
-import se.datahamstern.domain.DomainEntityObject;
-import se.datahamstern.domain.DomainEntityObjectVisitor;
 import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 

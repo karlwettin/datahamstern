@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2012-03-02 01:42
  */
 public class HarvestNaringslivsregistret {
-
+  // todo max 7 sökord, ie save data from orgno query if no results on secondary text query
 //  private static final Logger log = LoggerFactory.getLogger(HarvestNaringslivsregistret.class);
   // todo 76960-76963++
   // done 9166-9167
@@ -41,8 +41,9 @@ public class HarvestNaringslivsregistret {
 //          "9166306721",
 //          "9164000000",
 //          "9164293921",
-          "9164980741",
-          "9166000000",
+//          "9164980741",
+          "9162000000",
+          "9164000000",
           new CreateEventsVisitor());
     } finally {
       Datahamstern.getInstance().close();

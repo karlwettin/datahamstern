@@ -1,22 +1,6 @@
 package se.datahamstern.domain;
 
-import org.json.simple.serialization.collections.ArrayCodec;
-import org.json.simple.serialization.collections.CollectionCodec;
-import org.json.simple.serialization.collections.MapCodec;
 import se.datahamstern.domain.hydda.*;
-import se.datahamstern.domain.naringslivsregistret.Organisation;
-import se.datahamstern.domain.postnummer.Gata;
-import se.datahamstern.domain.postnummer.Gatuadress;
-import se.datahamstern.domain.postnummer.Postnummer;
-import se.datahamstern.domain.postnummer.Postort;
-import se.datahamstern.domain.wikipedia.Kommun;
-import se.datahamstern.domain.wikipedia.Lan;
-import se.datahamstern.domain.wikipedia.Ort;
-import se.datahamstern.util.ListMap;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 /**
  * @author kalle

@@ -4,11 +4,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
-import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.postnummer.Gata;
-import se.datahamstern.domain.postnummer.Gatuadress;
-import se.datahamstern.domain.postnummer.Postnummer;
-import se.datahamstern.domain.postnummer.Postort;
+import se.datahamstern.domain.*;
 import se.datahamstern.event.Event;
 import se.datahamstern.sourced.SourcedValue;
 
