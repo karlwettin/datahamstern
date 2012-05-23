@@ -8,15 +8,17 @@ import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author kalle
  * @since 2012-03-03 22:53
  */
-@Entity(version =1)
+@Entity(version = 1)
 public class Kommun extends AbstractSourced implements DomainEntityObject, Serializable {
 
-    private static final long serialVersionUID = 1l;
+  private static final long serialVersionUID = 1l;
 
   @Override
   public void accept(DomainEntityObjectVisitor visitor) throws Exception {
@@ -38,28 +40,28 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Lan.class)
   private String _index_länIdentity;
 
+  private Map<Integer, Demografi> demografiByÅr = new HashMap<Integer, Demografi>();
+
   @Override
   public String toString() {
     return "Kommun{" +
         "namn=" + namn +
         ", nummerkod=" + nummerkod +
         ", länIdentity=" + länIdentity +
+        ", demografiByÅr=" + demografiByÅr +
         ", identity='" + identity + '\'' +
         '}';
   }
 
   @Override
   public boolean equals(Object o) {
-
-    if (!super.equals(o)) {
-      return false;
-    }
-
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
 
     Kommun kommun = (Kommun) o;
 
+    if (demografiByÅr != null ? !demografiByÅr.equals(kommun.demografiByÅr) : kommun.demografiByÅr != null) return false;
     if (identity != null ? !identity.equals(kommun.identity) : kommun.identity != null) return false;
     if (länIdentity != null ? !länIdentity.equals(kommun.länIdentity) : kommun.länIdentity != null) return false;
     if (namn != null ? !namn.equals(kommun.namn) : kommun.namn != null) return false;
@@ -75,7 +77,16 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
     result = 31 * result + (nummerkod != null ? nummerkod.hashCode() : 0);
     result = 31 * result + (länIdentity != null ? länIdentity.hashCode() : 0);
+    result = 31 * result + (demografiByÅr != null ? demografiByÅr.hashCode() : 0);
     return result;
+  }
+
+  public Map<Integer, Demografi> getDemografiByÅr() {
+    return demografiByÅr;
+  }
+
+  public void setDemografiByÅr(Map<Integer, Demografi> demografiByÅr) {
+    this.demografiByÅr = demografiByÅr;
   }
 
   @Override

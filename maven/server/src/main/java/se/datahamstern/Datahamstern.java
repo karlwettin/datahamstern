@@ -159,6 +159,29 @@ public class Datahamstern {
     }
   }
 
+  public Boolean getProperty(String key, Boolean defaultValue) throws Exception {
+    String value = getProperty(key, defaultPropertyNullValue);
+    if (value == defaultPropertyNullValue || value == null) {
+      return defaultValue;
+    } else {
+      return Boolean.valueOf(value);
+    }
+  }
+
+  /**
+   * Fully sourced means that all knowledge of something from all sources is stored,
+   * eg that Kommun X has been seen in all events that contains the Kommun.
+   *
+   * Generally all sources are always stored, but in cases where this would slow down
+   * the rendering of the database it is optional to only store the first source
+   * as this otherwise can slow down the rendering process with a factor of magnitudes.
+   *
+   * @return true iff commands is to include full sourced values.
+   * @throws Exception
+   */
+  public boolean isRenderFullySourced() throws Exception {
+    return getProperty("renderFullySourced", false);
+  }
 
   public static Datahamstern getInstance() {
     return instance;

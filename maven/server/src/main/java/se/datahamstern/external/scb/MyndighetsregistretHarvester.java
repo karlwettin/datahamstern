@@ -15,6 +15,7 @@ import se.datahamstern.io.SourceChangedException;
 import javax.xml.xpath.XPathConstants;
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author kalle
@@ -85,11 +86,14 @@ public class MyndighetsregistretHarvester {
           throw new SourceChangedException("Myndighetsnamn must not be empty! If this is an error at scb, contact them and let them know so they can fix it!");
         }
 
-        String orgno = selenium.xpath.compile("id('txtPeOrgNr')/@value").evaluate(selenium.getDOM()).trim();
+        String orgno = selenium.xpath.compile("id('txtPeOrgNr')/@value").evaluate(selenium.getDOM()).replaceAll("\\D", "").trim();
         if (orgno.isEmpty()) {
           System.out.println("Skipping " + link + " due to missing organisationnummer. Usually true for embassies.");
           continue;
           //throw new SourceChangedException("Organisationsnummer must not be empty!");
+        }
+        if (!orgno.matches("^\\d{10}$")) {
+          throw new SourceChangedException("Organisationsnummer is supposed to be 10 digits");
         }
 
         String postadress = selenium.xpath.compile("id('txtPostAdr')/@value").evaluate(selenium.getDOM()).trim();

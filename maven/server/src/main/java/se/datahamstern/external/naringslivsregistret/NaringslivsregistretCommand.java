@@ -4,6 +4,7 @@ package se.datahamstern.external.naringslivsregistret;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.Datahamstern;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
@@ -270,6 +271,10 @@ public class NaringslivsregistretCommand extends Command {
         // we never update knowledge of län from this end
         // as it would create so many postings to the bdb
         län = new Lan();
+        updateSourced(län, event);
+        updateSourcedValue(län.getNummerkod(), länsnummer, event);
+        DomainStore.getInstance().put(län);
+      } else if (Datahamstern.getInstance().isRenderFullySourced()) {
         updateSourced(län, event);
         updateSourcedValue(län.getNummerkod(), länsnummer, event);
         DomainStore.getInstance().put(län);

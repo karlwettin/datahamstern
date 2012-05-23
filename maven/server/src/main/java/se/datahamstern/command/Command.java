@@ -6,6 +6,8 @@ import se.datahamstern.event.Event;
 import se.datahamstern.sourced.SourcedInterface;
 import se.datahamstern.sourced.SourcedValue;
 
+import javax.annotation.Nullable;
+
 /**
  * @author kalle
  * @since 2012-03-03 23:26
@@ -47,7 +49,7 @@ public abstract class Command {
   }
 
 
-  public void updateSourcedValue(SourcedValue sourcedValue, Object value, Event event) {
+  public void updateSourcedValue(SourcedValue sourcedValue, @Nullable Object value, Event event) {
 
     Source primarySource = event.getSources().get(0);
 

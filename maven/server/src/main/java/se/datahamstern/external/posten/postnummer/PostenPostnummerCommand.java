@@ -2,6 +2,7 @@ package se.datahamstern.external.posten.postnummer;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Command;
 import se.datahamstern.command.CommandManager;
 import se.datahamstern.domain.*;
@@ -79,6 +80,10 @@ public class PostenPostnummerCommand extends Command {
       updateSourced(postort, event);
       updateSourcedValue(postort.getNamn(), postortValue, event);
       DomainStore.getInstance().put(postort);
+    } else if (Datahamstern.getInstance().isRenderFullySourced()) {
+      updateSourced(postort, event);
+      updateSourcedValue(postort.getNamn(), postortValue, event);
+      DomainStore.getInstance().put(postort);
     }
 
 
@@ -87,6 +92,12 @@ public class PostenPostnummerCommand extends Command {
       postnummer = new Postnummer();
       // we never update knowledge of postnummer from this end
       // as it would create so many postings to the bdb
+      updateSourced(postnummer, event);
+      updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
+      updateSourcedValue(postnummer.getPostortIdentity(), postort.getIdentity(), event);
+      updateSourcedValue(postnummer.getActive(), true, event);
+      DomainStore.getInstance().put(postnummer);
+    } else if (Datahamstern.getInstance().isRenderFullySourced()) {
       updateSourced(postnummer, event);
       updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
       updateSourcedValue(postnummer.getPostortIdentity(), postort.getIdentity(), event);
@@ -113,6 +124,11 @@ public class PostenPostnummerCommand extends Command {
         if (gata == null) {
           gata = new Gata();
           // todo implement new event with knowledge of gata once per postort
+          updateSourced(gata, event);
+          gata.getNamn().set(gatunamn);
+          gata.getPostortIdentity().set(postort.getIdentity());
+          DomainStore.getInstance().put(gata);
+        } else if (Datahamstern.getInstance().isRenderFullySourced()) {
           updateSourced(gata, event);
           gata.getNamn().set(gatunamn);
           gata.getPostortIdentity().set(postort.getIdentity());

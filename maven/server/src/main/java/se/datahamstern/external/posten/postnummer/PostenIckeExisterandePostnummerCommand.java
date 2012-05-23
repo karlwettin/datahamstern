@@ -3,6 +3,7 @@ package se.datahamstern.external.posten.postnummer;
 import com.sleepycat.persist.EntityCursor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Command;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Gata;
@@ -79,6 +80,11 @@ public class PostenIckeExisterandePostnummerCommand extends Command {
       updateSourced(postnummer, event);
       updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
     } else {
+
+      if (Datahamstern.getInstance().isRenderFullySourced()) {
+        updateSourced(postnummer, event);
+        updateSourcedValue(postnummer.getPostnummer(), postnummerValue, event);
+      }
 
       // todo implement test cases!
 

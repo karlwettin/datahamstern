@@ -2,6 +2,7 @@ package se.datahamstern.command;
 
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
 import se.datahamstern.external.posten.postnummer.PostenPostnummerCommand;
+import se.datahamstern.external.scb.MyndighetsregistretCommand;
 import se.datahamstern.external.wikipedia.kommuner.WikipediaKommunCommand;
 import se.datahamstern.external.wikipedia.lan.WikipediaLanCommand;
 import se.datahamstern.external.wikipedia.orter.WikipediaTatortsCommand;
@@ -23,6 +24,7 @@ public class CommandManager {
     registerCommandClass(WikipediaTatortsCommand.class, WikipediaTatortsCommand.COMMAND_NAME, WikipediaTatortsCommand.COMMAND_VERSION);
     registerCommandClass(WikipediaKommunCommand.class, WikipediaKommunCommand.COMMAND_NAME, WikipediaKommunCommand.COMMAND_VERSION);
     registerCommandClass(WikipediaLanCommand.class, WikipediaLanCommand.COMMAND_NAME, WikipediaLanCommand.COMMAND_VERSION);
+    registerCommandClass(MyndighetsregistretCommand.class, MyndighetsregistretCommand.COMMAND_NAME, MyndighetsregistretCommand.COMMAND_VERSION);
   }
 
   public static CommandManager getInstance() {

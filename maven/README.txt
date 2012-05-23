@@ -70,3 +70,6 @@ Så här skulle en extremt utförlig transaktion kunna se ut från en robot som 
 
 
 			kalle
+			
+			
+			

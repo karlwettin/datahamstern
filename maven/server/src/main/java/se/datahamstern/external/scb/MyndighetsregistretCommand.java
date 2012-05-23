@@ -1,7 +1,10 @@
 package se.datahamstern.external.scb;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import se.datahamstern.command.Command;
+import se.datahamstern.domain.DomainStore;
+import se.datahamstern.domain.Organisation;
 import se.datahamstern.event.Event;
 
 /**
@@ -58,7 +61,43 @@ public class MyndighetsregistretCommand extends Command {
 
   @Override
   public void execute(Event event, JSONParser jsonParser) throws Exception {
-    // todo implement your command here!
-    throw new UnsupportedOperationException();
+
+    JSONObject jsonObject = (JSONObject) jsonParser.parse(event.getJsonData());
+
+    String nummer = (String) jsonObject.remove("organisationsnummer");
+    String namn = (String) jsonObject.remove("namn");
+
+    // todo make use of the contact information!
+
+    JSONObject postadress = (JSONObject) jsonObject.remove("postadress");
+    JSONObject besöksadress = (JSONObject) jsonObject.remove("besöksadress");
+    String epost = (String) jsonObject.remove("epost");
+    String hemsida = (String) jsonObject.remove("hemsida");
+    String telefon = (String) jsonObject.remove("telefon");
+    String fax = (String) jsonObject.remove("fax");
+
+    if (!jsonObject.isEmpty()) {
+      throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
+    }
+
+
+    Organisation organisation = DomainStore.getInstance().getOrganisationByNummer().get(nummer);
+    if (organisation == null) {
+      organisation = new Organisation();
+    }
+    updateSourced(organisation, event);
+
+    updateSourcedValue(organisation.getNamn(), namn, event);
+
+    updateSourcedValue(organisation.getNummer(), nummer, event);
+//    updateSourcedValue(organisation.getNummerprefix(), nummerPrefix, event);
+//    updateSourcedValue(organisation.getNummersuffix(), nummerSuffix, event);
+
+    // todo this information is not stored in the event, it is generalized from data source.
+    // todo really should implemet an a priori event that means just that.
+    updateSourcedValue(organisation.getTyp(), "M", event);
+
+    DomainStore.getInstance().put(organisation);
+
   }
 }
