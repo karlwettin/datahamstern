@@ -14,7 +14,7 @@ import se.datahamstern.sourced.SourcedValue;
  * @author kalle
  * @since 2012-03-04 20:48
  */
-public class KoladaCommand extends Command {
+public class KoladaBefolkningsandelsPerAlderCommand extends Command {
 
   // private static Logger log = LoggerFactory.getLogger(MyCommand.class);
 
