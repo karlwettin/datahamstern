@@ -56,7 +56,7 @@ public class Datahamstern {
    * <p/>
    * todo imprint this on all outgoing events
    */
-  private String systemUUID;
+  private String systemUUID = "null";
 
   /**
    * the maven home directory
@@ -107,7 +107,7 @@ public class Datahamstern {
       mavenProjectPath = FileUtils.getCleanAbsolutePath(currentPath);
 
       // todo load pom to dom, assert its the right project and set version
-      version = "0.0.0";
+      version = "0.0.1";
 
     }
 

@@ -28,6 +28,7 @@ public class PutDomainEntityObjectVisitor implements DomainEntityObjectVisitor {
     DomainStore.getInstance().assignIdentity(kommun);
     kommun.set_index_länIdentity(kommun.getLänIdentity().get());
     kommun.set_index_namn(kommun.getNamn().get());
+    kommun.set_index_nummerkod(kommun.getNummerkod().get());
     DomainStore.getInstance().getKommuner().put(kommun);
   }
 

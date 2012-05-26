@@ -9,10 +9,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * marshalls domain ojects to json
- *
+ * <p/>
  * could be implemented with reflection at the cost of cpu.
  * todo lean back on reflection for non implemented visiting methods?
  *
@@ -296,6 +297,44 @@ public class DomainEntityObjectJsonSerializer implements DomainEntityObjectVisit
     writeSourcedKeyValueString(true, "namn", kommun.getNamn());
     writeSourcedKeyValueString(true, "nummerkod", kommun.getNummerkod());
     writeSourcedKeyValueString(true, "lanIdentity", kommun.getLänIdentity());
+
+    if (!kommun.getDemografiByÅr().isEmpty()) {
+      writer.write(',');
+      writeKey("demografiByÅr");
+      writer.write('[');
+      for (Map.Entry<Integer, Demografi> årAndDemografi : kommun.getDemografiByÅr().entrySet()) {
+        writer.write('{');
+        writeKey("år");
+        writeValue(årAndDemografi.getKey());
+        writer.write(',');
+        writeKey("demografi");
+        writer.write('{');
+
+        writeSourcedKeyValueInteger(false, "invånare", årAndDemografi.getValue().getInvånare());
+        writeSourcedKeyValueInteger(false, "födda", årAndDemografi.getValue().getFödda());
+        writeSourcedKeyValueInteger(false, "döda", årAndDemografi.getValue().getDöda());
+        writeSourcedKeyValueInteger(false, "immigrationsnetto", årAndDemografi.getValue().getImmigrationsnetto());
+        writeSourcedKeyValueInteger(false, "immigrerade", årAndDemografi.getValue().getImmigrerade());
+        writeSourcedKeyValueInteger(false, "inflyttade", årAndDemografi.getValue().getInflyttade());
+        writeSourcedKeyValueInteger(false, "inrikesNettoinflyttning", årAndDemografi.getValue().getInrikesNettoinflyttning());
+        writeSourcedKeyValueInteger(false, "emigrerade", årAndDemografi.getValue().getEmigrerade());
+        writeSourcedKeyValueInteger(false, "utflyttade", årAndDemografi.getValue().getUtflyttade());
+
+        writer.write(',');
+        writeKey("befolkningsandelarByÅlder");
+        writer.write('[');
+        for (Map.Entry<Integer, SourcedValue<Integer>> ålderAndBefolkningsandel : årAndDemografi.getValue().getBefolkningsandelarByÅlder().entrySet()) {
+          writeKey("ålder");
+          writeValue(ålderAndBefolkningsandel.getKey());
+          writeSourcedKeyValueInteger(true, "befolkningsandel", ålderAndBefolkningsandel.getValue());
+        }
+        writer.write(']');
+
+        writer.write('}');
+        writer.write('}');
+      }
+      writer.write(']');
+    }
 
     if (writingMetadata) {
       writer.write(',');

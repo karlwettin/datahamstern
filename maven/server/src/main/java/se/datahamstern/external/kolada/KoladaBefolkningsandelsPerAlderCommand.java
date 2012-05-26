@@ -10,6 +10,8 @@ import se.datahamstern.domain.Kommun;
 import se.datahamstern.event.Event;
 import se.datahamstern.sourced.SourcedValue;
 
+import java.io.File;
+
 /**
  * @author kalle
  * @since 2012-03-04 20:48
@@ -67,10 +69,10 @@ public class KoladaBefolkningsandelsPerAlderCommand extends Command {
 
     JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
 
-    int år = (Integer)jsonObject.remove("år");
-    String kommunNummerkod = (String)jsonObject.remove("kommunNummerkod");
-    Integer ålder = (Integer)jsonObject.remove("ålder");
-    Integer antal = (Integer)jsonObject.remove("antal");
+    int år = ((Number)jsonObject.remove("år")).intValue();
+    String kommunnummerkod = (String)jsonObject.remove("kommunnummerkod");
+    int ålder = ((Number)jsonObject.remove("ålder")).intValue();
+    int antal = ((Number)jsonObject.remove("antal")).intValue();
 
     // todo implement genus in domain
     Boolean genus = (Boolean)jsonObject.remove("genus");
@@ -79,19 +81,20 @@ public class KoladaBefolkningsandelsPerAlderCommand extends Command {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunNummerkod);
+    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
     if (kommun == null) {
       kommun = new Kommun();
       updateSourced(kommun, event);
-      updateSourcedValue(kommun.getNummerkod(), kommunNummerkod, event);
+      updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
     } else if (Datahamstern.getInstance().isRenderFullySourced()) {
       updateSourced(kommun, event);
-      updateSourcedValue(kommun.getNummerkod(), kommunNummerkod, event);
+      updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
     }
 
     Demografi demografi = kommun.getDemografiByÅr().get(år);
     if (demografi == null) {
       demografi = new Demografi();
+      demografi.setÅr(år);
       kommun.getDemografiByÅr().put(år, demografi);
     }
 

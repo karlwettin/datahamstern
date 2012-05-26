@@ -1,0 +1,19 @@
+kommungräns:
+
+<osm-script>
+
+  <query into="_" type="relation">
+    <bbox-query into="_" s="55" n="70" w="10" e="25"/>
+
+    <has-kv k="admin_level" modv="" v="7"/>
+    <has-kv k="boundary" modv="" v="administrative"/>
+  </query>
+
+  <recurse type="relation-way"/>
+  <recurse type="way-node"/>
+
+  <print/>
+
+</osm-script>
+
+
