@@ -8,6 +8,7 @@ import se.datahamstern.command.Command;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Kommun;
 import se.datahamstern.domain.Koordinat;
+import se.datahamstern.domain.Lan;
 import se.datahamstern.event.Event;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author kalle
  * @since 2012-05-26 15:38
  */
-public class KommungranspolygonCommand extends Command {
+public class LansgranspolygonCommand extends Command {
 
   // private static Logger log = LoggerFactory.getLogger(MyCommand.class);
 
@@ -29,7 +30,7 @@ public class KommungranspolygonCommand extends Command {
    *
    * @see #COMMAND_VERSION
    */
-  public static String COMMAND_NAME = "uppdatera med kommungräns från openstreetmap";
+  public static String COMMAND_NAME = "uppdatera med länsgräns från openstreetmap";
 
   /**
    * A version that combined with the name uniquely describes this command.
@@ -70,21 +71,21 @@ public class KommungranspolygonCommand extends Command {
 
     JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
 
-    String kommunnummerkod = (String)jsonObject.remove("kommunnummerkod");
+    String länsnummerkod = (String)jsonObject.remove("länsnummerkod");
     JSONArray jsonPolygon = (JSONArray)jsonObject.remove("polygon");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Kommun kommun = DomainStore.getInstance().getKommunByNummerkod().get(kommunnummerkod);
-    if (kommun == null) {
-      kommun = new Kommun();
-      updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
-      updateSourced(kommun, event);
+    Lan län = DomainStore.getInstance().getLänByNummerkod().get(länsnummerkod);
+    if (län == null) {
+      län = new Lan();
+      updateSourcedValue(län.getNummerkod(), länsnummerkod, event);
+      updateSourced(län, event);
     } else if (Datahamstern.getInstance().isRenderFullySourced()) {
-      updateSourcedValue(kommun.getNummerkod(), kommunnummerkod, event);
-      updateSourced(kommun, event);
+      updateSourcedValue(län.getNummerkod(), länsnummerkod, event);
+      updateSourced(län, event);
     }
 
     List<Koordinat> polygon = new ArrayList<Koordinat>(jsonPolygon.size());
@@ -100,9 +101,9 @@ public class KommungranspolygonCommand extends Command {
       polygon.add(new Koordinat(latitude, longitude));
     }
 
-    updateSourcedValue(kommun.getKoordinater().getPolygon(), polygon, event);
+    updateSourcedValue(län.getKoordinater().getPolygon(), polygon, event);
 
-    DomainStore.getInstance().put(kommun);
+    DomainStore.getInstance().put(län);
 
   }
 }

@@ -40,6 +40,8 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
   @SecondaryKey(relate = Relationship.ONE_TO_ONE)
   private String _index_nummerkod;
 
+  private Koordinater koordinater = new Koordinater();
+
   /** uuid, local bdb identity. */
   @PrimaryKey
   private String identity;
@@ -50,6 +52,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
         "namn=" + namn +
         ", alfakod=" + alfakod +
         ", nummerkod=" + nummerkod +
+        ", koordinater=" + koordinater+
         ", identity='" + identity + '\'' +
         '}';
   }
@@ -66,6 +69,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
 
     Lan lan = (Lan) o;
 
+    if (koordinater != null ? !koordinater.equals(lan.koordinater) : lan.koordinater != null) return false;
     if (alfakod != null ? !alfakod.equals(lan.alfakod) : lan.alfakod != null) return false;
     if (identity != null ? !identity.equals(lan.identity) : lan.identity != null) return false;
     if (namn != null ? !namn.equals(lan.namn) : lan.namn != null) return false;
@@ -77,11 +81,20 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
   @Override
   public int hashCode() {
     int result = super.hashCode();
+    result = 31 * result + (koordinater != null ? koordinater.hashCode() : 0);
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
     result = 31 * result + (alfakod != null ? alfakod.hashCode() : 0);
     result = 31 * result + (nummerkod != null ? nummerkod.hashCode() : 0);
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
     return result;
+  }
+
+  public Koordinater getKoordinater() {
+    return koordinater;
+  }
+
+  public void setKoordinater(Koordinater koordinater) {
+    this.koordinater = koordinater;
   }
 
   @Override

@@ -2,6 +2,8 @@ package se.datahamstern.command;
 
 import se.datahamstern.external.kolada.KoladaBefolkningsandelsPerAlderCommand;
 import se.datahamstern.external.naringslivsregistret.NaringslivsregistretCommand;
+import se.datahamstern.external.osm.KommungranspolygonCommand;
+import se.datahamstern.external.osm.LansgranspolygonCommand;
 import se.datahamstern.external.posten.postnummer.PostenPostnummerCommand;
 import se.datahamstern.external.scb.MyndighetsregistretCommand;
 import se.datahamstern.external.wikipedia.kommuner.WikipediaKommunCommand;
@@ -27,6 +29,8 @@ public class CommandManager {
     registerCommandClass(WikipediaLanCommand.class, WikipediaLanCommand.COMMAND_NAME, WikipediaLanCommand.COMMAND_VERSION);
     registerCommandClass(MyndighetsregistretCommand.class, MyndighetsregistretCommand.COMMAND_NAME, MyndighetsregistretCommand.COMMAND_VERSION);
     registerCommandClass(KoladaBefolkningsandelsPerAlderCommand.class, KoladaBefolkningsandelsPerAlderCommand.COMMAND_NAME, KoladaBefolkningsandelsPerAlderCommand.COMMAND_VERSION);
+    registerCommandClass(KommungranspolygonCommand.class, KommungranspolygonCommand.COMMAND_NAME, KommungranspolygonCommand.COMMAND_VERSION);
+    registerCommandClass(LansgranspolygonCommand.class, LansgranspolygonCommand.COMMAND_NAME, LansgranspolygonCommand.COMMAND_VERSION);
   }
 
   public static CommandManager getInstance() {
