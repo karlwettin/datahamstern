@@ -1,19 +1,21 @@
-kommungräns:
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="Overpass API">
+<note>The data included in this document is from www.openstreetmap.org. It has there been collected by a large group of contributors. For individual attribution of each item please refer to http://www.openstreetmap.org/api/0.6/[node|way|relation]/#id/history </note>
+<meta osm_base="2012-05-30T14:09:02Z"/>
 
-<osm-script>
+  <node id="337475824" lat="59.2392232" lon="18.5105912">
+    <tag k="created_by" v="Potlatch 0.10f"/>
+    <tag k="is_in" v="Värmdö kommun, Uppland, Stockholms län, Sweden"/>
+    <tag k="name" v="Långvik"/>
+    <tag k="place" v="village"/>
+  </node>
+  <node id="441921324" lat="59.4415777" lon="18.9183804">
+    <tag k="name" v="Långvik"/>
+    <tag k="place" v="hamlet"/>
+  </node>
+  <node id="467047082" lat="59.2970775" lon="18.7742569">
+    <tag k="name" v="Långvik"/>
+    <tag k="place" v="hamlet"/>
+  </node>
 
-  <query into="_" type="relation">
-    <bbox-query into="_" s="55" n="70" w="10" e="25"/>
-
-    <has-kv k="admin_level" modv="" v="7"/>
-    <has-kv k="boundary" modv="" v="administrative"/>
-  </query>
-
-  <recurse type="relation-way"/>
-  <recurse type="way-node"/>
-
-  <print/>
-
-</osm-script>
-
-
+</osm>

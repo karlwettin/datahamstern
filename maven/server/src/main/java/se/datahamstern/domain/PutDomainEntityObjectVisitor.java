@@ -36,6 +36,7 @@ public class PutDomainEntityObjectVisitor implements DomainEntityObjectVisitor {
   public void visit(Ort ort) throws Exception {
     DomainStore.getInstance().assignIdentity(ort);
     ort.set_index_kommunIdentity(ort.getKommunIdentity().get());
+    ort.set_index_tätortskod(ort.getTätortskod().get());
     DomainStore.getInstance().getOrter().put(ort);
   }
 

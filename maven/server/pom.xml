@@ -42,6 +42,13 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>se.kodapan.geography</groupId>
+      <artifactId>core</artifactId>
+      <version>0.2.6-SNAPSHOT</version>
+    </dependency>
+
+
     <!--
       1.1-kalle is a branch that also feature a stream reader API.
       It is used when loading large amounts of events from JSON,
