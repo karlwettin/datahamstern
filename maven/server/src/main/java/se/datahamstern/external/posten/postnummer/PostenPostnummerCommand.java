@@ -23,7 +23,7 @@ public class PostenPostnummerCommand extends Command {
 
   /**
    * A name that combined with the version uniquely describes this command.
-   *
+   * <p/>
    * <p/>
    * If this value change (ie only by editing the code and recompile),
    * then version should also be set to 1.
@@ -34,7 +34,7 @@ public class PostenPostnummerCommand extends Command {
 
   /**
    * A version that combined with the name uniquely describes this command.
-   *
+   * <p/>
    * <p/>
    * If updating this class so it accepts other incoming data
    * then stop now!
@@ -106,65 +106,78 @@ public class PostenPostnummerCommand extends Command {
     }
 
 
-    if (gatunamn != null && !gatunamn.isEmpty() && !"BOX".equals(gatunamn)) {
+    if (gatunamn != null && !gatunamn.isEmpty()
+        // gator med namn tävlingspost, frisvar eller svarspost är inte gator
+        && !gatunamn.toUpperCase().contains("TÄVLINGSPOST")
+        && !gatunamn.toUpperCase().contains("FRISVAR")
+        && !gatunamn.toUpperCase().contains("SVARSPOST")
+        // gator med namn box är just boxar
+        && !"BOX".equalsIgnoreCase(gatunamn)
+        // gator utan gatunummer är boxadresser, frisvar, etc
+        && gatunummer != null && !gatunummer.trim().isEmpty()) {
 
-      if (gatunummer != null && !gatunummer.trim().isEmpty()) {
-        String[] range = gatunummer.split("-");
-        int from = Integer.valueOf(range[0].trim());
-        int to = Integer.valueOf(range[1].trim());
+      String[] range = gatunummer.split("-");
+      int from = Integer.valueOf(range[0].trim());
+      int to = Integer.valueOf(range[1].trim());
 
-        int size = (to - from) / 2;
-        if (size > gatunummerHighScore.get()) {
-          gatunummerHighScore.set(size);
-          System.out.println("Gatunummer high score: " + size);
-        }
-
-
-        Gata gata = DomainStore.getInstance().getGatorByNamnAndPostort().get(new Gata.NamnAndPostort(gatunamn, postort.getIdentity()));
-        if (gata == null) {
-          gata = new Gata();
-          // todo implement new event with knowledge of gata once per postort
-          updateSourced(gata, event);
-          gata.getNamn().set(gatunamn);
-          gata.getPostortIdentity().set(postort.getIdentity());
-          DomainStore.getInstance().put(gata);
-        } else if (Datahamstern.getInstance().isRenderFullySourced()) {
-          updateSourced(gata, event);
-          gata.getNamn().set(gatunamn);
-          gata.getPostortIdentity().set(postort.getIdentity());
-          DomainStore.getInstance().put(gata);
-        }
-
-        if (!gata.get_index_postnummerIdentities().contains(postnummer.getIdentity())) {
-          gata.getPostnummerIdentities().add(new SourcedValue<String>(postnummer.getIdentity()));
-          DomainStore.getInstance().put(gata);
-        }
-
-
-        Gatuadress.GataAndGatunummer gataAndGatunummer = new Gatuadress.GataAndGatunummer();
-        gataAndGatunummer.setGataIdentity(gata.getIdentity());
-
-
-        // todo assert that ranges ALWAYS are even or odd sequence!!!
-        int nummerIncrease = 2;
-
-
-        for (int nummer = from; nummer < to; nummer += nummerIncrease) {
-          gataAndGatunummer.setGatunummer(nummer);
-          Gatuadress gatuadress = DomainStore.getInstance().getGatuadressByGataAndGatunummer().get(gataAndGatunummer);
-          if (gatuadress == null) {
-            gatuadress = new Gatuadress();
-          }
-
-          updateSourced(gatuadress, event);
-          updateSourcedValue(gatuadress.getPostnummerIdentity(), postnummer.getIdentity(), event);
-          updateSourcedValue(gatuadress.getGataIdentity(), gata.getIdentity(), event);
-          updateSourcedValue(gatuadress.getGatunummer(), nummer, event);
-          DomainStore.getInstance().put(gatuadress);
-        }
+      int size = (to - from) / 2;
+      if (size > gatunummerHighScore.get()) {
+        gatunummerHighScore.set(size);
+        System.out.println("Gatunummer high score: " + size);
       }
 
 
+      Gata gata = DomainStore.getInstance().getGatorByNamnAndPostort().get(new Gata.NamnAndPostort(gatunamn, postort.getIdentity()));
+      if (gata == null) {
+        gata = new Gata();
+        // todo implement new event with knowledge of gata once per postort
+        updateSourced(gata, event);
+        gata.getNamn().set(gatunamn);
+        gata.getPostortIdentity().set(postort.getIdentity());
+        DomainStore.getInstance().put(gata);
+      } else if (Datahamstern.getInstance().isRenderFullySourced()) {
+        updateSourced(gata, event);
+        gata.getNamn().set(gatunamn);
+        gata.getPostortIdentity().set(postort.getIdentity());
+        DomainStore.getInstance().put(gata);
+      }
+
+      if (!gata.get_index_postnummerIdentities().contains(postnummer.getIdentity())) {
+        gata.getPostnummerIdentities().add(new SourcedValue<String>(postnummer.getIdentity()));
+        DomainStore.getInstance().put(gata);
+      }
+
+
+      Gatuadress.GataAndGatunummer gataAndGatunummer = new Gatuadress.GataAndGatunummer();
+      gataAndGatunummer.setGataIdentity(gata.getIdentity());
+
+
+      // todo assert that ranges ALWAYS are even or odd sequence!!!
+      // ie:
+      // if gatunummer starts with odd number it should end with odd number, eg 3 - 7
+      // if gatunummer starts with even number it should end with even number, eg 4 - 8
+      // gatunummer may also be a single number, eg 4 - 4
+
+      int nummerIncrease = 2;
+
+
+      for (int nummer = from; nummer < to; nummer += nummerIncrease) {
+        gataAndGatunummer.setGatunummer(nummer);
+        Gatuadress gatuadress = DomainStore.getInstance().getGatuadressByGataAndGatunummer().get(gataAndGatunummer);
+        if (gatuadress == null) {
+          gatuadress = new Gatuadress();
+        }
+
+        updateSourced(gatuadress, event);
+        updateSourcedValue(gatuadress.getPostnummerIdentity(), postnummer.getIdentity(), event);
+        updateSourcedValue(gatuadress.getGataIdentity(), gata.getIdentity(), event);
+        updateSourcedValue(gatuadress.getGatunummer(), nummer, event);
+        DomainStore.getInstance().put(gatuadress);
+      }
+
+
+    } else {
+      // todo handle BOX etc
     }
 
 

@@ -36,13 +36,17 @@ import java.util.*;
  * @author kalle
  * @since 2012-05-24 16:10
  */
-public class TatortscetroidHarvester {
+public class TatortsWikiFactory {
 
   public static void main(String[] args) throws Exception {
 
+    FileOutputStream fos = new FileOutputStream(System.currentTimeMillis() + "-tatorter.wiki.txt");
+    OutputStreamWriter osw = new OutputStreamWriter(fos);
+    PrintWriter pw = new PrintWriter(osw);
+
     Datahamstern.getInstance().open();
 
-    TatortscetroidHarvester extractor = new TatortscetroidHarvester();
+    TatortsWikiFactory extractor = new TatortsWikiFactory();
 
 
     JsonEventLogWriter logWriter = new JsonEventLogWriter(new File("/tmp/" + System.currentTimeMillis() + ".osm-tatortscentroid.log.json"));
@@ -60,14 +64,23 @@ public class TatortscetroidHarvester {
       try {
         Ort ort;
 
+//        while ((ort = cursor.next()) != null) {
+//          if (ort.getTätortskod().get().equals("0232")) {
+//            break;
+//          }
+//        }
+
         while ((ort = cursor.next()) != null) {
-          Koordinat centroid = extractor.extract(ort);
+          if (ort.getTätortskod().get() == null) {
+            continue;
+          }
+          Koordinat centroid = extractor.extract(pw, ort);
           if (centroid == null) {
             Nop.breakpoint();
           } else {
 
             StringBuilder jsonData = new StringBuilder(4096);
-            jsonData.append("{\"tätortskod\":\"").append(ort.getTätortskod().get()).append("\"");
+            jsonData.append("{\"tätortskod\":\"").append(ort.getTätortskod().get()).append("\"\n");
             jsonData.append(",\"latitud\":").append(String.valueOf(centroid.getLatitude()));
             jsonData.append(",\"longitud\":").append(String.valueOf(centroid.getLongitude())).append("}");
 
@@ -84,12 +97,17 @@ public class TatortscetroidHarvester {
 
             Nop.breakpoint();
           }
+          pw.flush();
         }
       } finally {
         cursor.close();
       }
 
       logWriter.close();
+
+      pw.close();
+      osw.close();
+      fos.close();
 
     } finally {
       Datahamstern.getInstance().close();
@@ -104,22 +122,56 @@ public class TatortscetroidHarvester {
   private XPathExpression latitudeExpression = xpath.compile("@lat");
   private XPathExpression longitudeExpression = xpath.compile("@lon");
 
-  private HttpClient httpClient = new DefaultHttpClient();
 
-  public TatortscetroidHarvester() throws Exception {
+  public TatortsWikiFactory() throws Exception {
   }
 
-  public Koordinat extract(Ort ort) throws Exception {
+  public Koordinat extract(PrintWriter out, Ort ort) throws Exception {
+
+    Kommun kommun = DomainStore.getInstance().getKommuner().get(ort.getKommunIdentity().get());
+
+    Double south = null;
+    Double west = null;
+    Double north = null;
+    Double east = null;
+
+    for (Koordinat koordinat : kommun.getKoordinater().getPolygon().get()) {
+
+      if (south == null) {
+
+        south = koordinat.getLatitude();
+        west = koordinat.getLongitude();
+        north = koordinat.getLatitude();
+        east = koordinat.getLongitude();
+
+      } else {
+
+        if (koordinat.getLatitude() > north) {
+          north = koordinat.getLatitude();
+        } else if (koordinat.getLatitude() < south) {
+          south = koordinat.getLatitude();
+        }
+
+        if (east < koordinat.getLongitude()) {
+          east = koordinat.getLongitude();
+        } else if (west > koordinat.getLongitude()) {
+          west = koordinat.getLongitude();
+        }
+      }
+    }
 
     StringBuilder overpassQuery = new StringBuilder();
 
     overpassQuery.append("<osm-script timeout=\"900\">\n");
     overpassQuery.append("  <query into=\"_\" type=\"node\">\n");
-    overpassQuery.append("    <has-kv k=\"ref:se:scb\" modv=\"\" v=\"").append(ort.getTätortskod().get()).append("\"/>\n");
+    overpassQuery.append("    <bbox-query into=\"_\" s=\"").append(south).append("\" n=\"").append(north).append("\" w=\"").append(west).append("\" e=\"").append(east).append("\"/>\n");
+    overpassQuery.append("    <has-kv k=\"name\" modv=\"\" v=\"").append(StringEscapeUtils.escapeXml(ort.getNamn().get())).append("\"/>\n");
+    overpassQuery.append("    <has-kv k=\"place\" modv=\"\" regv=\"city|town|village|hamlet|suburb|neighbourhood\"/>\n");
     overpassQuery.append("  </query>\n");
     overpassQuery.append("  <print/>\n");
     overpassQuery.append("</osm-script>\n");
 
+    HttpClient httpClient = new DefaultHttpClient();
 
     HttpPost post = new HttpPost("http://www.overpass-api.de/api/interpreter");
     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
@@ -133,9 +185,13 @@ public class TatortscetroidHarvester {
 
     p.parse(new InputSource(new StringReader(buffer.toString())));
 
+
     NodeList nodes = (NodeList) nodeExpression.evaluate(p.getDocument(), XPathConstants.NODESET);
 
     if (nodes.getLength() == 0) {
+      out.println("| " + ort.getNamn().get() + " || " + kommun.getNamn().get() + " || " + ort.getTätortskod().get() + " || || Saknas i OSM?");
+      out.println("|-");
+
       return null;
     } else if (nodes.getLength() > 1) {
 
@@ -143,7 +199,7 @@ public class TatortscetroidHarvester {
 
       List<String> nodeIds = new ArrayList<String>();
 
-      for (int i = 0; i < nodes.getLength(); i++) {
+      for (int i=0; i<nodes.getLength(); i++) {
         org.w3c.dom.Node node = nodes.item(i);
         CoordinateImpl coordinate = new CoordinateImpl();
         coordinate.setLatitude(Double.valueOf(latitudeExpression.evaluate(node)));
@@ -153,18 +209,33 @@ public class TatortscetroidHarvester {
       }
       double maximumCoordinateDistancesKilometers = envelope.getNortheast().arcDistance(envelope.getSouthwest());
 
-      int maximumDistanceMeters = (int) (maximumCoordinateDistancesKilometers * 1000);
+      int maximumDistanceMeters = (int)(maximumCoordinateDistancesKilometers * 1000);
 
-      // todo use centroid, set low trustworthiness based on distance
+      out.print("| "+ort.getNamn().get()+" || "+kommun.getNamn().get()+" || "+ort.getTätortskod().get()+" || || Flera möjliga noder inom "+maximumDistanceMeters+" meter:<br/>");
+      for (Iterator<String> it = nodeIds.iterator(); it.hasNext();) {
+        String nodeId = it.next();
+        out.print("{{Node|"+nodeId+"}}");
+        if (it.hasNext()) {
+          out.print("<br/>");
+        }
+      }
+      out.println();
+      out.println("|-");
+
       return null;
-    } else {
-      org.w3c.dom.Node node = nodes.item(0);
-      Koordinat koordinat = new Koordinat();
-      koordinat.setLatitude(Double.valueOf(latitudeExpression.evaluate(node)));
-      koordinat.setLongitude(Double.valueOf(longitudeExpression.evaluate(node)));
-
-      return koordinat;
     }
+    org.w3c.dom.Node node = nodes.item(0);
+    Koordinat koordinat = new Koordinat();
+    koordinat.setLatitude(Double.valueOf(latitudeExpression.evaluate(node)));
+    koordinat.setLongitude(Double.valueOf(longitudeExpression.evaluate(node)));
+
+
+    String nodeId = idExpression.evaluate(node);
+
+    out.println("| "+ort.getNamn().get()+" || "+kommun.getNamn().get()+" || "+ort.getTätortskod().get()+" || {{Node|"+nodeId+"}} ||");
+    out.println("|-");
+
+    return koordinat;
   }
 
 }

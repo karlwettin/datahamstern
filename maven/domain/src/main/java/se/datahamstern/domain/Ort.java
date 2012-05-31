@@ -8,6 +8,8 @@ import se.datahamstern.sourced.AbstractSourced;
 import se.datahamstern.sourced.SourcedValue;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author kalle
@@ -29,10 +31,6 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
   /** not unique! 12xLund? 23xBerg? */
   private SourcedValue<String> namn = new SourcedValue<String>();
 
-  private SourcedValue<Integer> befolkningsmängd = new SourcedValue<Integer>();
-
-  private SourcedValue<Long> kvadratmeterLandareal = new SourcedValue<Long>();
-
   private SourcedValue<String> tätortskod = new SourcedValue<String>();
   @SecondaryKey(relate = Relationship.ONE_TO_ONE)
   private String _index_tätortskod;
@@ -41,15 +39,16 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
   @SecondaryKey(relate = Relationship.MANY_TO_ONE, relatedEntity = Kommun.class)
   private String _index_kommunIdentity;
 
+  private Map<Integer, Demografi> demografiByÅr = new HashMap<Integer, Demografi>();
+
 
   @Override
   public String toString() {
     return "Ort{" +
         "namn=" + namn +
         ", tätortskod=" + tätortskod +
-        ", kvadratmeterLandareal=" + kvadratmeterLandareal +
-        ", befolkningsmängd=" + befolkningsmängd +
         ", kommunIdentity=" + kommunIdentity +
+        ", demografiByÅr=" + demografiByÅr +
         ", identity='" + identity + '\'' +
         '}';
   }
@@ -66,11 +65,10 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
 
     Ort ort = (Ort) o;
 
-    if (befolkningsmängd != null ? !befolkningsmängd.equals(ort.befolkningsmängd) : ort.befolkningsmängd != null) return false;
     if (identity != null ? !identity.equals(ort.identity) : ort.identity != null) return false;
     if (kommunIdentity != null ? !kommunIdentity.equals(ort.kommunIdentity) : ort.kommunIdentity != null) return false;
-    if (kvadratmeterLandareal != null ? !kvadratmeterLandareal.equals(ort.kvadratmeterLandareal) : ort.kvadratmeterLandareal != null) return false;
     if (namn != null ? !namn.equals(ort.namn) : ort.namn != null) return false;
+    if (demografiByÅr != null ? !demografiByÅr.equals(ort.demografiByÅr) : ort.demografiByÅr!= null) return false;
     if (tätortskod != null ? !tätortskod.equals(ort.tätortskod) : ort.tätortskod != null) return false;
 
     return true;
@@ -81,27 +79,18 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
     int result = super.hashCode();
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
-    result = 31 * result + (befolkningsmängd != null ? befolkningsmängd.hashCode() : 0);
-    result = 31 * result + (kvadratmeterLandareal != null ? kvadratmeterLandareal.hashCode() : 0);
+    result = 31 * result + (demografiByÅr != null ? demografiByÅr.hashCode() : 0);
     result = 31 * result + (tätortskod != null ? tätortskod.hashCode() : 0);
     result = 31 * result + (kommunIdentity != null ? kommunIdentity.hashCode() : 0);
     return result;
   }
 
-  public SourcedValue<Integer> getBefolkningsmängd() {
-    return befolkningsmängd;
+  public Map<Integer, Demografi> getDemografiByÅr() {
+    return demografiByÅr;
   }
 
-  public void setBefolkningsmängd(SourcedValue<Integer> befolkningsmängd) {
-    this.befolkningsmängd = befolkningsmängd;
-  }
-
-  public SourcedValue<Long> getKvadratmeterLandareal() {
-    return kvadratmeterLandareal;
-  }
-
-  public void setKvadratmeterLandareal(SourcedValue<Long> kvadratmeterLandareal) {
-    this.kvadratmeterLandareal = kvadratmeterLandareal;
+  public void setDemografiByÅr(Map<Integer, Demografi> demografiByÅr) {
+    this.demografiByÅr = demografiByÅr;
   }
 
   public SourcedValue<String> getNamn() {

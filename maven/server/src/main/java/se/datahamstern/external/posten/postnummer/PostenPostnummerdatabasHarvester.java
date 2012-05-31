@@ -76,9 +76,7 @@ public class PostenPostnummerdatabasHarvester {
             }
           }
         }
-
       }
-
 
     } finally {
       selenium.stop();
@@ -128,10 +126,10 @@ public class PostenPostnummerdatabasHarvester {
     System.out.println("Sending query " + queryUrlBuilder.toString());
     selenium.openAndWaitForPageToLoad(queryUrlBuilder.toString());
 
-    Node table = (Node) selenium.xpath.compile("//TABLE[@summary='Tabellen visar resultatet av din postnummersökning']").evaluate(selenium.getDOM(), XPathConstants.NODE);
+    Node table = (Node) selenium.xpath.compile("//TABLE[contains(@summary, 'result')]").evaluate(selenium.getDOM(), XPathConstants.NODE);
     if (table == null) {
 
-      if (selenium.xpath.compile("//DIV[@class='errorMessage']/SPAN[contains(text(), 'Din sökning gav inga träffar')]").evaluate(selenium.getDOM(), XPathConstants.NODE) == null) {
+      if (selenium.xpath.compile("//DIV[@class='errorMessage']/SPAN[contains(text(), 'inga träffar')]").evaluate(selenium.getDOM(), XPathConstants.NODE) == null) {
 
         if (query.getGatunamn() == null && query.getPostort() == null && query.getPostnummer() != null) {
 
@@ -172,6 +170,7 @@ public class PostenPostnummerdatabasHarvester {
 
       } else {
         // todo unknown reason for not picking up postnummer, log error!
+        throw new RuntimeException("Unknown reason for not picking up postnummer!");
       }
 
       return true;
@@ -254,7 +253,7 @@ public class PostenPostnummerdatabasHarvester {
       Nop.breakpoint();
     }
 
-    return selenium.xpath.compile("//DIV[@class='errorMessage' and contains(text(),'stort antal')]").evaluate(selenium.getDOM(), XPathConstants.NODE) == null;
+    return selenium.xpath.compile("//DIV[@class='errorMessage' ]/descendant-or-self::*[contains(text(),'stort antal')]").evaluate(selenium.getDOM(), XPathConstants.NODE) == null;
 
   }
 

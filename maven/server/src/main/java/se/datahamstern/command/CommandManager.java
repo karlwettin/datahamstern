@@ -6,6 +6,7 @@ import se.datahamstern.external.osm.KommungranspolygonCommand;
 import se.datahamstern.external.osm.LansgranspolygonCommand;
 import se.datahamstern.external.posten.postnummer.PostenPostnummerCommand;
 import se.datahamstern.external.scb.MyndighetsregistretCommand;
+import se.datahamstern.external.scb.TatortsArealBefolkningCommand;
 import se.datahamstern.external.wikipedia.kommuner.WikipediaKommunCommand;
 import se.datahamstern.external.wikipedia.lan.WikipediaLanCommand;
 import se.datahamstern.external.wikipedia.orter.WikipediaTatortsCommand;
@@ -31,6 +32,7 @@ public class CommandManager {
     registerCommandClass(KoladaBefolkningsandelsPerAlderCommand.class, KoladaBefolkningsandelsPerAlderCommand.COMMAND_NAME, KoladaBefolkningsandelsPerAlderCommand.COMMAND_VERSION);
     registerCommandClass(KommungranspolygonCommand.class, KommungranspolygonCommand.COMMAND_NAME, KommungranspolygonCommand.COMMAND_VERSION);
     registerCommandClass(LansgranspolygonCommand.class, LansgranspolygonCommand.COMMAND_NAME, LansgranspolygonCommand.COMMAND_VERSION);
+    registerCommandClass(TatortsArealBefolkningCommand.class, TatortsArealBefolkningCommand.COMMAND_NAME, TatortsArealBefolkningCommand.COMMAND_VERSION);
   }
 
   public static CommandManager getInstance() {
