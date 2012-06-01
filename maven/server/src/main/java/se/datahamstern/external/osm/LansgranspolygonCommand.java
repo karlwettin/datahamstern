@@ -6,7 +6,6 @@ import org.json.simple.parser.JSONParser;
 import se.datahamstern.Datahamstern;
 import se.datahamstern.command.Command;
 import se.datahamstern.domain.DomainStore;
-import se.datahamstern.domain.Kommun;
 import se.datahamstern.domain.Koordinat;
 import se.datahamstern.domain.Lan;
 import se.datahamstern.event.Event;
@@ -101,7 +100,7 @@ public class LansgranspolygonCommand extends Command {
       polygon.add(new Koordinat(latitude, longitude));
     }
 
-    updateSourcedValue(län.getKoordinater().getPolygon(), polygon, event);
+    updateSourcedValue(län.getGeografi().getPolygon(), polygon, event);
 
     DomainStore.getInstance().put(län);
 

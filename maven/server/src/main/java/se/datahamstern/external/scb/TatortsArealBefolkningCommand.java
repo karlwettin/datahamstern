@@ -70,7 +70,7 @@ public class TatortsArealBefolkningCommand extends Command {
     String tätortskod = (String) jsonObject.remove("tätortskod");
     int år = (Integer) jsonObject.remove("år");
     int befolkning = (Integer) jsonObject.remove("befolkning");
-    int hektarLandareal = (Integer) jsonObject.remove("hektarLandareal");
+    double hektarLandareal = ((Number) jsonObject.remove("hektarLandareal")).doubleValue();
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
@@ -91,11 +91,10 @@ public class TatortsArealBefolkningCommand extends Command {
       demografi.setÅr(år);
       ort.getDemografiByÅr().put(år, demografi);
     }
-
     updateSourcedValue(demografi.getInvånare(), befolkning, event);
 
 
-    // todo hektar landareal
+    updateSourcedValue(ort.getGeografi().getKvadratkilometerLandareal(), hektarLandareal / 100d, event);
 
     DomainStore.getInstance().put(ort);
 

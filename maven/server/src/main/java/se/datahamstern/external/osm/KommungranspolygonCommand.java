@@ -100,7 +100,7 @@ public class KommungranspolygonCommand extends Command {
       polygon.add(new Koordinat(latitude, longitude));
     }
 
-    updateSourcedValue(kommun.getKoordinater().getPolygon(), polygon, event);
+    updateSourcedValue(kommun.getGeografi().getPolygon(), polygon, event);
 
     DomainStore.getInstance().put(kommun);
 

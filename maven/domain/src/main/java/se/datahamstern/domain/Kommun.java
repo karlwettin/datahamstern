@@ -9,7 +9,6 @@ import se.datahamstern.sourced.SourcedValue;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,7 +42,7 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
 
   private Map<Integer, Demografi> demografiByÅr = new HashMap<Integer, Demografi>();
 
-  private Koordinater koordinater = new Koordinater();
+  private Geografi geografi = new Geografi();
 
   @Override
   public String toString() {
@@ -52,7 +51,7 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
         ", nummerkod=" + nummerkod +
         ", länIdentity=" + länIdentity +
         ", demografiByÅr=" + demografiByÅr +
-        ", koordinater=" + koordinater+
+        ", geografi=" + geografi +
         ", identity='" + identity + '\'' +
         '}';
   }
@@ -66,7 +65,7 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
     Kommun kommun = (Kommun) o;
 
     if (demografiByÅr != null ? !demografiByÅr.equals(kommun.demografiByÅr) : kommun.demografiByÅr != null) return false;
-    if (koordinater != null ? !koordinater.equals(kommun.koordinater) : kommun.koordinater!= null) return false;
+    if (geografi != null ? !geografi.equals(kommun.geografi) : kommun.geografi != null) return false;
     if (identity != null ? !identity.equals(kommun.identity) : kommun.identity != null) return false;
     if (länIdentity != null ? !länIdentity.equals(kommun.länIdentity) : kommun.länIdentity != null) return false;
     if (namn != null ? !namn.equals(kommun.namn) : kommun.namn != null) return false;
@@ -79,7 +78,7 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
   public int hashCode() {
     int result = super.hashCode();
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
-    result = 31 * result + (koordinater != null ? koordinater.hashCode() : 0);
+    result = 31 * result + (geografi != null ? geografi.hashCode() : 0);
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
     result = 31 * result + (nummerkod != null ? nummerkod.hashCode() : 0);
     result = 31 * result + (länIdentity != null ? länIdentity.hashCode() : 0);
@@ -87,12 +86,12 @@ public class Kommun extends AbstractSourced implements DomainEntityObject, Seria
     return result;
   }
 
-  public Koordinater getKoordinater() {
-    return koordinater;
+  public Geografi getGeografi() {
+    return geografi;
   }
 
-  public void setKoordinater(Koordinater koordinater) {
-    this.koordinater = koordinater;
+  public void setGeografi(Geografi geografi) {
+    this.geografi = geografi;
   }
 
   public Map<Integer, Demografi> getDemografiByÅr() {

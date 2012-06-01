@@ -40,7 +40,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
   @SecondaryKey(relate = Relationship.ONE_TO_ONE)
   private String _index_nummerkod;
 
-  private Koordinater koordinater = new Koordinater();
+  private Geografi geografi = new Geografi();
 
   /** uuid, local bdb identity. */
   @PrimaryKey
@@ -52,7 +52,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
         "namn=" + namn +
         ", alfakod=" + alfakod +
         ", nummerkod=" + nummerkod +
-        ", koordinater=" + koordinater+
+        ", geografi=" + geografi +
         ", identity='" + identity + '\'' +
         '}';
   }
@@ -69,7 +69,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
 
     Lan lan = (Lan) o;
 
-    if (koordinater != null ? !koordinater.equals(lan.koordinater) : lan.koordinater != null) return false;
+    if (geografi != null ? !geografi.equals(lan.geografi) : lan.geografi != null) return false;
     if (alfakod != null ? !alfakod.equals(lan.alfakod) : lan.alfakod != null) return false;
     if (identity != null ? !identity.equals(lan.identity) : lan.identity != null) return false;
     if (namn != null ? !namn.equals(lan.namn) : lan.namn != null) return false;
@@ -81,7 +81,7 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
   @Override
   public int hashCode() {
     int result = super.hashCode();
-    result = 31 * result + (koordinater != null ? koordinater.hashCode() : 0);
+    result = 31 * result + (geografi != null ? geografi.hashCode() : 0);
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
     result = 31 * result + (alfakod != null ? alfakod.hashCode() : 0);
     result = 31 * result + (nummerkod != null ? nummerkod.hashCode() : 0);
@@ -89,12 +89,12 @@ public class Lan extends AbstractSourced implements DomainEntityObject, Serializ
     return result;
   }
 
-  public Koordinater getKoordinater() {
-    return koordinater;
+  public Geografi getGeografi() {
+    return geografi;
   }
 
-  public void setKoordinater(Koordinater koordinater) {
-    this.koordinater = koordinater;
+  public void setGeografi(Geografi geografi) {
+    this.geografi = geografi;
   }
 
   @Override

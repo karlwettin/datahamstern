@@ -41,6 +41,8 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
 
   private Map<Integer, Demografi> demografiByÅr = new HashMap<Integer, Demografi>();
 
+  private Geografi geografi = new Geografi();
+
 
   @Override
   public String toString() {
@@ -49,6 +51,7 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
         ", tätortskod=" + tätortskod +
         ", kommunIdentity=" + kommunIdentity +
         ", demografiByÅr=" + demografiByÅr +
+        ", geografi=" + geografi +
         ", identity='" + identity + '\'' +
         '}';
   }
@@ -69,6 +72,7 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
     if (kommunIdentity != null ? !kommunIdentity.equals(ort.kommunIdentity) : ort.kommunIdentity != null) return false;
     if (namn != null ? !namn.equals(ort.namn) : ort.namn != null) return false;
     if (demografiByÅr != null ? !demografiByÅr.equals(ort.demografiByÅr) : ort.demografiByÅr!= null) return false;
+    if (geografi != null ? !geografi.equals(ort.geografi) : ort.geografi!= null) return false;
     if (tätortskod != null ? !tätortskod.equals(ort.tätortskod) : ort.tätortskod != null) return false;
 
     return true;
@@ -80,9 +84,18 @@ public class Ort extends AbstractSourced implements DomainEntityObject, Serializ
     result = 31 * result + (identity != null ? identity.hashCode() : 0);
     result = 31 * result + (namn != null ? namn.hashCode() : 0);
     result = 31 * result + (demografiByÅr != null ? demografiByÅr.hashCode() : 0);
+    result = 31 * result + (geografi != null ? geografi.hashCode() : 0);
     result = 31 * result + (tätortskod != null ? tätortskod.hashCode() : 0);
     result = 31 * result + (kommunIdentity != null ? kommunIdentity.hashCode() : 0);
     return result;
+  }
+
+  public Geografi getGeografi() {
+    return geografi;
+  }
+
+  public void setGeografi(Geografi geografi) {
+    this.geografi = geografi;
   }
 
   public Map<Integer, Demografi> getDemografiByÅr() {

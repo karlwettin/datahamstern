@@ -8,6 +8,7 @@ import se.datahamstern.command.Command;
 import se.datahamstern.domain.DomainStore;
 import se.datahamstern.domain.Koordinat;
 import se.datahamstern.domain.Lan;
+import se.datahamstern.domain.Ort;
 import se.datahamstern.event.Event;
 
 import java.util.ArrayList;
@@ -70,39 +71,31 @@ public class TatortscentroidCommand extends Command {
 
     JSONObject jsonObject = (JSONObject)jsonParser.parse(event.getJsonData());
 
-    String länsnummerkod = (String)jsonObject.remove("länsnummerkod");
-    JSONArray jsonPolygon = (JSONArray)jsonObject.remove("polygon");
+    String tätortskod = (String)jsonObject.remove("tätortskod");
+    Double latitud = (Double)jsonObject.remove("latitud");
+    Double longitud = (Double)jsonObject.remove("longitud");
 
     if (!jsonObject.isEmpty()) {
       throw new RuntimeException("Unknown fields left in json: " + jsonObject.toJSONString());
     }
 
-    Lan län = DomainStore.getInstance().getLänByNummerkod().get(länsnummerkod);
-    if (län == null) {
-      län = new Lan();
-      updateSourcedValue(län.getNummerkod(), länsnummerkod, event);
-      updateSourced(län, event);
+    Ort ort = DomainStore.getInstance().getOrtByTätortskod().get(tätortskod);
+    if (ort == null) {
+      ort = new Ort();
+      updateSourcedValue(ort.getTätortskod(), tätortskod, event);
+      updateSourced(ort, event);
     } else if (Datahamstern.getInstance().isRenderFullySourced()) {
-      updateSourcedValue(län.getNummerkod(), länsnummerkod, event);
-      updateSourced(län, event);
+      updateSourcedValue(ort.getTätortskod(), tätortskod, event);
+      updateSourced(ort, event);
     }
 
-    List<Koordinat> polygon = new ArrayList<Koordinat>(jsonPolygon.size());
-    for (int i=0; i<jsonPolygon.size(); i++) {
-      JSONObject jsonPolygonkoordinat = (JSONObject)jsonPolygon.get(i);
-      Double latitude = (Double)jsonPolygonkoordinat.remove("latitud");
-      Double longitude = (Double)jsonPolygonkoordinat.remove("longitud");
+    Koordinat centroid = new Koordinat();
+    centroid.setLatitude(latitud);
+    centroid.setLongitude(longitud);
 
-      if (!jsonObject.isEmpty()) {
-        throw new RuntimeException("Unknown fields left in json koordinat: " + jsonObject.toJSONString());
-      }
+    updateSourcedValue(ort.getGeografi().getCentroid(), centroid, event);
 
-      polygon.add(new Koordinat(latitude, longitude));
-    }
-
-    updateSourcedValue(län.getKoordinater().getPolygon(), polygon, event);
-
-    DomainStore.getInstance().put(län);
+    DomainStore.getInstance().put(ort);
 
   }
 }

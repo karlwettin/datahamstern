@@ -135,7 +135,7 @@ public class TatortsWikiFactory {
     Double north = null;
     Double east = null;
 
-    for (Koordinat koordinat : kommun.getKoordinater().getPolygon().get()) {
+    for (Koordinat koordinat : kommun.getGeografi().getPolygon().get()) {
 
       if (south == null) {
 
